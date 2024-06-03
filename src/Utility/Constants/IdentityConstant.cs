@@ -2,11 +2,14 @@
 {
     public class IdentityConstant
     {
-        public const string DefaultGroup = "GeneralGroup";
-        public const string DefaultGroupName = "General Group";
-        public const string DefaultKey = "Default";
-        public const string ApiClaimsType = "api";
-        public const string ApiClaimsValue = "{0}.{1}";
-        public const string ApiPolicyPrefix = "__api_";
+        public const string UserClaimName = "Role";
+
+        public const string AdminPolicy = "Admin";
+
+        public const string StaffPolicy = "Staff";
+
+        public const string CustomerPolicy = "Customer";
+        
+        public const string VeterinarianPolicy = "Veterinarian";
     }
 }
