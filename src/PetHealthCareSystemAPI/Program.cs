@@ -6,9 +6,10 @@ using Repository;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-/*_ = builder.Host.UseSerilog((httpHost, config) =>
-    _ = config.ReadFrom.Configuration(builder.Configuration));*/
 // Add services to the container.
+
+// add serilog and get configuration from appsettings.json
+builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Configuration); });
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
