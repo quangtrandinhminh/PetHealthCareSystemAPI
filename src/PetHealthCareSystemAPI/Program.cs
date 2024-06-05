@@ -1,10 +1,12 @@
 using System.Reflection;
 using BusinessObject.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PetHealthCareSystemAPI.Middlewares;
 using Repository;
 using Serilog;
+using Service.Utils;
 using Utility.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,9 +68,13 @@ builder.Services.AddSwaggerGen(o =>
         }
     });
     o.SwaggerDoc("v1", new OpenApiInfo { Title = "PetHealthCareSystem", Version = "v1" });
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    o.IncludeXmlComments(System.IO.Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
+    });
 
 var app = builder.Build();
 app.UseCors(myAllowSpecificOrigins);
