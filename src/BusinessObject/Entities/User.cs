@@ -1,30 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Utility.Enum;
 
 namespace BusinessObject.Entities;
 
 [Table("User")]
-[Index(nameof(User.Username), IsUnique = true)]
-[Index(nameof(User.Email), IsUnique = true)]
-[Index(nameof(User.Phone), IsUnique = true)]
-public class User : BaseEntity
+public class User : IdentityUser
 {
-    public User()
-    {
-        Role = UserRole.Customer;
-    }
-    
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string FullName { get; set; }
-    public string Email { get; set; }
-    public string Phone { get; set; }
+    public string? FullName { get; set; }
     public string? Address { get; set; }
     public string? Avatar { get; set; }
     public DateTimeOffset? BirthDate { get; set; }
-    public UserRole Role { get; set; }
-    
+    // Base Property
+    public string? CreatedBy { get; set; }
+    public string? LastUpdatedBy { get; set; }
+    public string? DeletedBy { get; set; }
+    public DateTimeOffset CreatedTime { get; set; }
+    public DateTimeOffset LastUpdatedTime { get; set; }
+    public DateTimeOffset? DeletedTime { get; set; }
+
     // for customer
     public ICollection<Pet>? Pets { get; set; }
     

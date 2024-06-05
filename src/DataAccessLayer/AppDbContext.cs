@@ -1,21 +1,24 @@
 ﻿using BusinessObject.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Utility.Enum;
 
 namespace Repository;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        
+
     }
 
     public AppDbContext()
     {
-    
+
     }
-    
+
     public DbSet<User> Users { get; set; }
     public DbSet<Pet> Pets { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
@@ -27,7 +30,7 @@ public class AppDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
     public DbSet<TransactionDetail> TransactionDetails { get; set; }
-    
+
     private string GetConnectionString()
     {
         IConfiguration config = new ConfigurationBuilder()
@@ -69,4 +72,34 @@ public class AppDbContext : DbContext
             .HasForeignKey(m => m.ServiceId)
             .OnDelete(DeleteBehavior.Restrict);
     }*/
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        List<IdentityRole> roles = new List<IdentityRole>
+      {
+          new IdentityRole
+          {
+              Name = UserRole.Admin.ToString(),
+              NormalizedName = UserRole.Admin.ToString().ToUpper()
+          },
+          new IdentityRole
+          {
+              Name = UserRole.Customer.ToString(),
+              NormalizedName = UserRole.Customer.ToString().ToUpper()
+          },
+          new IdentityRole
+          {
+              Name = UserRole.Staff.ToString(),
+              NormalizedName = UserRole.Staff.ToString().ToUpper()
+          },
+          new IdentityRole
+          {
+              Name = UserRole.Vet.ToString(),
+              NormalizedName = UserRole.Vet.ToString().ToUpper()
+          },
+      };
+        builder.Entity<IdentityRole>().HasData(roles);
+    }
 }
