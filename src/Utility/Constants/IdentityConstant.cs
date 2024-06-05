@@ -11,5 +11,8 @@
         public const string CustomerPolicy = "Customer";
         
         public const string VeterinarianPolicy = "Veterinarian";
+
+        public const string ApiClaimsType = "api";
+        public const string ApiPolicyPrefix = "__api_";
     }
 }

@@ -1,6 +1,7 @@
 using System.Reflection;
 using BusinessObject.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PetHealthCareSystemAPI.Middlewares;
@@ -37,6 +38,7 @@ builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Co
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
@@ -78,6 +80,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
     });
+
+builder.Services.AddAuthorization(cfg =>
+{
+    cfg.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+});
 
 var app = builder.Build();
 app.UseCors(myAllowSpecificOrigins);
