@@ -1,13 +1,15 @@
 ﻿using BusinessObject.Entities;
+using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Reflection.Emit;
 using Utility.Enum;
 
 namespace Repository;
 
-public class AppDbContext : IdentityDbContext<User>
+public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -19,7 +21,6 @@ public class AppDbContext : IdentityDbContext<User>
 
     }
 
-    public DbSet<User> Users { get; set; }
     public DbSet<Pet> Pets { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<MedicalRecord> MedicalRecords { get; set; }
@@ -30,6 +31,8 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
     public DbSet<TransactionDetail> TransactionDetails { get; set; }
+    public DbSet<UserRoleEntity> UserRoleEntity { get; set; }
+    public DbSet<RoleClaimEntity> RoleClaimEntity { get; set; }
 
     private string GetConnectionString()
     {
@@ -79,27 +82,36 @@ public class AppDbContext : IdentityDbContext<User>
 
         List<IdentityRole> roles = new List<IdentityRole>
       {
-          new IdentityRole
+          new()
           {
               Name = UserRole.Admin.ToString(),
               NormalizedName = UserRole.Admin.ToString().ToUpper()
           },
-          new IdentityRole
+          new()
           {
               Name = UserRole.Customer.ToString(),
               NormalizedName = UserRole.Customer.ToString().ToUpper()
           },
-          new IdentityRole
+          new()
           {
               Name = UserRole.Staff.ToString(),
               NormalizedName = UserRole.Staff.ToString().ToUpper()
           },
-          new IdentityRole
+          new()
           {
               Name = UserRole.Vet.ToString(),
               NormalizedName = UserRole.Vet.ToString().ToUpper()
           },
       };
         builder.Entity<IdentityRole>().HasData(roles);
+
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            var tableName = entityType.GetTableName();
+            if (tableName.StartsWith("AspNet"))
+            {
+                entityType.SetTableName(tableName.Substring(6));
+            }
+        }
     }
 }

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BusinessObject.Entities;
+using BusinessObject.Entities.Identity;
 
-namespace Service.Interfaces
+namespace Service.IServices
 {
     public interface ITokenService
     {
-        string CreateToken(User user);
+        string CreateToken(UserEntity userEntity);
     }
 }

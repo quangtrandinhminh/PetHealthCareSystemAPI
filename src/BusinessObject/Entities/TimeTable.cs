@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using BusinessObject.Entities.Base;
+using BusinessObject.Entities.Identity;
 
 namespace BusinessObject.Entities;
 
@@ -13,7 +14,7 @@ public class TimeTable : BaseEntity
     public string? Note { get; set; }
     
     [ForeignKey(nameof(VetID))]
-    public virtual User Vet { get; set; }
+    public virtual UserEntity Vet { get; set; }
     
     public virtual ICollection<Hospitalization>? Hospitalizations { get; set; }
     public virtual ICollection<Appointment>? Appointments { get; set; }

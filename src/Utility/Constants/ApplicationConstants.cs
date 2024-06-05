@@ -34,7 +34,7 @@
         public const string PASSWORD_WRONG = "Mat khau khong dung.";
         public const string EXISTED_USER = "Nguoi dung da ton tai.";
         public const string EXISTED_EMAIL = "Email da ton tai.";
-        public const string REGIST_USER_SUCCESS = "tao tai khoan thanh cong, vui long kiem tra email de xac thuc tai khoan.";
+        public const string REGIST_USER_SUCCESS = "Create account successfully! Please verify phone number to activate it";
         public const string TOKEN_INVALID = "token khong xac thuc.";
         public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
         public const string EMAIL_VALIDATE = "Email da duoc xav thuc.";

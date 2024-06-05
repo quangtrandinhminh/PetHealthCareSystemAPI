@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using BusinessObject.Entities.Base;
+using BusinessObject.Entities.Identity;
 
 namespace BusinessObject.Entities;
 
@@ -13,7 +14,7 @@ public class Pet : BaseEntity
 
     public int OwnerID { get; set; }
     [ForeignKey(nameof(OwnerID))] 
-    public virtual User User { get; set; }
+    public virtual UserEntity UserEntity { get; set; }
     
     public virtual ICollection<MedicalRecord>? MedicalRecords { get; set; }
 }

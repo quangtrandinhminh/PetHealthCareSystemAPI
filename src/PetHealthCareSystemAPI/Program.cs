@@ -1,5 +1,4 @@
 using System.Reflection;
-using BusinessObject.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +9,17 @@ using Microsoft.OpenApi.Models;
 using PetHealthCareSystemAPI.Middlewares;
 using Repository;
 using Serilog;
-using Service.Classes;
-using Service.Interfaces;
 using Service.Utils;
 using Utility.Config;
+using Service.IServices;
+using Service.Services;
+using BusinessObject.Entities.Identity;
+using Repository.Interface;
+using Repository.Repositories;
+using BusinessObject.Entities;
+using PetHealthCareSystemAPI.Auth;
+using WaterCity.WebApi.Auth;
+using BusinessObject.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,16 +45,22 @@ builder.Services.AddCors(options =>
 // Add serilog and get configuration from appsettings.json
 builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Configuration); });
 
-// Add DbContext and ConnectionString
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Register DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptionsAction =>
+        {
+            sqlServerOptionsAction.MigrationsAssembly(
+                typeof(AppDbContext).GetTypeInfo().Assembly.GetName().Name);
+            sqlServerOptionsAction.MigrationsHistoryTable("Migration");
+        }));
 
 // Add system setting from appsettings.json
 var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -79,55 +91,8 @@ builder.Services.AddSwaggerGen(o =>
     });
     o.SwaggerDoc("v1", new OpenApiInfo { Title = "PetHealthCareSystem", Version = "v1" });
 });
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
-    });
-
-builder.Services.AddAuthorization(cfg =>
-{
-    cfg.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-});
-
-builder.Services.AddSwaggerGen(option =>
-{
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
-});
-
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-{
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});
-
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddIdentity<User, IdentityRole>(options =>
+/*
+builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
@@ -162,12 +127,38 @@ builder.Services.AddAuthentication(options =>
         )
     };
 });
+*/
+builder.Services.AddHttpContextAccessor();
 
+
+builder.Services.AddIdentityCore<UserEntity>()
+    .AddRoles<RoleEntity>()
+    .AddUserStore<UserRepository>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+// Add DI
+builder.Services.AddScoped<MapperlyMapper>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// Add Authorization
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, ApiPolicyAuthorizationProvider>();
+builder.Services.AddSingleton<IAuthorizationHandler, ApiPolicyAuthorizationHandler>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
+    });
+
+builder.Services.AddAuthorization(cfg =>
+{
+    cfg.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+});
 
 var app = builder.Build();
-app.UseCors(myAllowSpecificOrigins);
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -176,17 +167,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// HTTP Pipeline
-
-app.UseMiddleware<ErrorHandlerMiddleware>();
-
 app.UseHttpsRedirection();
-
-app.UseCors(x => x
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .AllowCredentials()
-    .SetIsOriginAllowed(origin => true));
 
 app.UseAuthentication();
 

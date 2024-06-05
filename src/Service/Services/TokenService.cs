@@ -5,12 +5,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessObject.Entities;
+using BusinessObject.Entities.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Service.Interfaces;
+using Service.IServices;
 
-namespace Service.Classes
+namespace Service.Services
 {
     public class TokenService : ITokenService
     {
@@ -22,12 +22,12 @@ namespace Service.Classes
             _config = config;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
         }
-        public string CreateToken(User user)
+        public string CreateToken(UserEntity userEntity)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Email, userEntity.Email),
+                new Claim(JwtRegisteredClaimNames.GivenName, userEntity.UserName),
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

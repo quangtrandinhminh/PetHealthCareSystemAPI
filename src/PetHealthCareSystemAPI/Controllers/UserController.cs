@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
+using BusinessObject.DTO;
 using BusinessObject.DTO.User;
-using BusinessObject.Entities;
+using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Service.Classes;
-using Service.Interfaces;
+using Service.IServices;
+using Service.Services;
+using Utility.Constants;
 using Utility.Enum;
 
 namespace PetHealthCareSystemAPI.Controllers
@@ -19,17 +22,12 @@ namespace PetHealthCareSystemAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly SignInManager<User> _signinManager;
 
-        public UserController(UserManager<User> userManager, ITokenService tokenService,
-            SignInManager<User> signInManager)
+        public UserController(IUserService userSevices, ITokenService tokenService)
         {
-            _userManager = userManager;
+            _userService = userSevices;
             _tokenService = tokenService;
-            _signinManager = signInManager;
-            _userService = new UserService(_userManager, _signinManager);
         }
 
         [HttpGet]
@@ -40,65 +38,18 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpPost]
-        [Route("register")]
+        [Route("register"), AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = new User
-            {
-                UserName = registerDto.Username,
-                Email = registerDto.Email
-            };
-
-            var createdUser = await _userService.CreateCustomerAsync(user, registerDto.Password);
-
-            if (createdUser.Succeeded)
-            {
-                return Ok(
-                    new NewUserDto
-                    {
-                        Username = user.UserName,
-                        Email = user.Email,
-                        Token = _tokenService.CreateToken(user)
-                    });
-            }
-            else
-            {
-                return StatusCode(500, createdUser.Errors);
-            }
+            await _userService.Register(registerDto);
+            return Ok(BaseResponseDto.OkResponseModel(ReponseMessageIdentity.REGIST_USER_SUCCESS));
         }
 
         [HttpPost]
-        [Route("login")]
+        [Route("authenticate"), AllowAnonymous]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = await _userService.GetUserByUsernameAndPassword(loginDto.Username, loginDto.Password);
-
-            if (user == null)
-            {
-                return BadRequest("Incorrect username or password");
-            }
-
-            return Ok(
-                new ExistingUserDto()
-                {
-                    Address = user.Address,
-                    Avatar = user.Avatar,
-                    BirthDate = user.BirthDate,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    Token = _tokenService.CreateToken(user),
-                    Username = user.UserName,
-                    Role = await _userService.GetUserRoleByUsernameAsync(user.UserName)
-                }
-            );
+            return Ok(await _userService.Authenticate(loginDto));
         }
     }
 }

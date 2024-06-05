@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using Utility.Constants;
 using Utility.Exceptions;
-using ApplicationException = Utility.Exceptions.ApplicationException;
 
 
 namespace PetHealthCareSystemAPI.Middlewares
@@ -22,19 +21,19 @@ namespace PetHealthCareSystemAPI.Middlewares
             {
                 await _next(context);
             }
-            catch (ApplicationException ex)
+            catch (AppException ex)
             {
                 var response = context.Response;
 
                 response.ContentType = "application/json";
                 response.StatusCode = ex switch
                 {
-                    ApplicationException e => e.StatusCode,
+                    AppException e => e.StatusCode,
                     _ => StatusCodes.Status500InternalServerError
                 };
 
                 BaseResponseDto data;
-                if (ex is ApplicationException error)
+                if (ex is AppException error)
                     data = new BaseResponseDto(statusCode: response.StatusCode, code: error.Code, message: error.Message);
                 else
                     data = new BaseResponseDto(statusCode: response.StatusCode, code: ResponseCodeConstants.FAILED, data: ex, message: ex.Message);

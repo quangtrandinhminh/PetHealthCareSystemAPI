@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BusinessObject.Entities.Base;
+using BusinessObject.Entities.Identity;
 using Utility.Enum;
 
 namespace BusinessObject.Entities;
@@ -39,7 +40,7 @@ public class Transaction : BaseEntity
     public DateTimeOffset? RefundDate { get; set; }
     
     [ForeignKey(nameof(CustomerId))]
-    public User Customer { get; set; }
+    public UserEntity Customer { get; set; }
     
     // pay for appointment in the first time
     [ForeignKey(nameof(AppointmentId))]
