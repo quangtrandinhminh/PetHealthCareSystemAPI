@@ -23,11 +23,10 @@ public class User : IdentityUser
     // for customer
     public ICollection<Pet>? Pets { get; set; }
     
-    // for customer
+    // for staff and customer
     public ICollection<Appointment>? CreatedAppointments { get; set; }
     
     // for vet
     public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
-    
-    public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+    public virtual ICollection<TimeTable> TimeTables { get; set; }
 }

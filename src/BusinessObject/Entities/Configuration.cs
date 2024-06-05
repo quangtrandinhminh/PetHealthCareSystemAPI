@@ -1,4 +1,6 @@
-﻿namespace BusinessObject.Entities;
+﻿using BusinessObject.Entities.Base;
+
+namespace BusinessObject.Entities;
 
 public class Configuration : BaseEntity
 {

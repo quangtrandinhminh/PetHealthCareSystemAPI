@@ -1,10 +1,11 @@
 ﻿using System.Linq.Expressions;
+using BusinessObject.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Repository.IBase;
 using DataAccessLayer.Base;
 namespace Repository.Base
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity, new()
     {
         public void Add(T entity) => BaseDAO<T>.Add(entity);
 

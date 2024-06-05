@@ -1,14 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.Entities.Base;
+using Utility.Enum;
 
 namespace BusinessObject.Entities;
 
 public class Hospitalization : BaseEntity
 {
-    public string MedicalRecordId { get; set; }
-    public string? CageId { get; set; }
-    public string? VetId { get; set; }
-    public DateTimeOffset AdmitDate { get; set; }
-    public DateTimeOffset? DischargeDate { get; set; }
+    public int MedicalRecordId { get; set; }
+    public int CageId { get; set; }
+    public int? TimeTableId { get; set; }
+    public DateTimeOffset Date { get; set; }
+    public HospitalizationStatus DateStatus { get; set; }
     public string? Reason { get; set; }
     public string? Diagnosis { get; set; }
     public string? Treatment { get; set; }
@@ -18,8 +20,8 @@ public class Hospitalization : BaseEntity
     public virtual MedicalRecord MedicalRecord { get; set; }
     
     [ForeignKey(nameof(CageId))]
-    public virtual Cage? Cage { get; set; }
+    public virtual Cage Cage { get; set; }
     
-    [ForeignKey(nameof(VetId))]
-    public virtual User? Vet { get; set; }
+    [ForeignKey(nameof(TimeTableId))]
+    public virtual TimeTable? TimeTable { get; set; }
 }

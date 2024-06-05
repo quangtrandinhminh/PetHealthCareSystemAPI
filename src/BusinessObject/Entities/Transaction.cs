@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.Entities.Base;
 using Utility.Enum;
 
 namespace BusinessObject.Entities;
@@ -13,11 +14,11 @@ public class Transaction : BaseEntity
     }
     
     // Payment
-    public string CustomerId { get; set; }
-    public string? AppointmentId { get; set; }
-    public string? MedicalRecordId { get; set; }
+    public int CustomerId { get; set; }
+    public int? AppointmentId { get; set; }
+    public int? MedicalRecordId { get; set; }
     
-    public string? HospitalizationId { get; set; }
+    public int? HospitalizationId { get; set; }
     
     [Column(TypeName = "decimal(18, 0)")]
     [Range(0, Double.MaxValue)]

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Utility.Helpers;
 
-namespace BusinessObject.Entities
+namespace BusinessObject.Entities.Base
 {
     [Index(nameof(Id),IsUnique = true, Name = "Index_Id")]
     public abstract class BaseEntity
@@ -13,10 +13,10 @@ namespace BusinessObject.Entities
         }
         
         [Key]
-        public string Id { get; set; }
-        public string? CreatedBy { get; set; }
-        public string? LastUpdatedBy { get; set; }
-        public string? DeletedBy { get; set; }
+        public int Id { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastUpdatedBy { get; set; }
+        public int? DeletedBy { get; set; }
 
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
