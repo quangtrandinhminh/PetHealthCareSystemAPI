@@ -37,7 +37,10 @@ builder.Services.AddSerilog(config => { config.ReadFrom.Configuration(builder.Co
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Configuration.GetSection("SystemSetting").Bind(SystemSettingModel.Instance);
+var systemSettingModel = new SystemSettingModel();
+builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
+SystemSettingModel.Instance = systemSettingModel;
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

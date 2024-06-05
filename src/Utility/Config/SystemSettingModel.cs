@@ -5,7 +5,7 @@ namespace Utility.Config
 {
     public class SystemSettingModel
     {
-        public static SystemSettingModel Instance { get; set; }
+        private static SystemSettingModel _instance;
 
         public static IConfiguration Configs { get; set; }
         public string ApplicationName { get; set; } = Assembly.GetEntryAssembly()?.GetName().Name;
@@ -13,6 +13,22 @@ namespace Utility.Config
         public string? Domain { get; set; }
         public string SecretKey { get; set; }
         public string SecretCode { get; set; }
+
+        public static SystemSettingModel Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new SystemSettingModel();
+                }
+                return _instance;
+            }
+            set
+            {
+                _instance = value;
+            }
+        }
     }
 
     public class MailSettingModel
