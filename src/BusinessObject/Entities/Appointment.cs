@@ -1,23 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Utility.Enum;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("Appointment")]
-public class Appointment : BaseEntity
+public partial class Appointment
 {
-    public string VetId { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public int Id { get; set; }
+
+    public int? PetId { get; set; }
+
+    public int? TimetableId { get; set; }
+
     public string? Note { get; set; }
-    public AppointmentStatus Status { get; set; }
-    public AppointmentBookingType BookingType { get; set; }
+
+    public string? Status { get; set; }
+
+    public string? BookingType { get; set; }
+
     public short? Rating { get; set; }
+
     public string? Feedback { get; set; }
 
-    [ForeignKey(nameof(VetId))] 
-    public virtual User Vet { get; set; }
-    
-    public virtual ICollection<Pet> Pets { get; set; }
+    public bool? HasMedicalRecord { get; set; }
 
-    public virtual ICollection<Service> Services { get; set; }
+    public bool? IsActive { get; set; }
+
+    public virtual ICollection<AppointmentService> AppointmentServices { get; set; } = new List<AppointmentService>();
+
+    public virtual Pet? Pet { get; set; }
+
+    public virtual Timetable? Timetable { get; set; }
+
+    public virtual Transaction? Transaction { get; set; }
 }

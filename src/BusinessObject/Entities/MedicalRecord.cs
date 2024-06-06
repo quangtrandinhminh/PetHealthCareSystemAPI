@@ -1,25 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("MedicalRecord")]
-public class MedicalRecord : BaseEntity
+public partial class MedicalRecord
 {
-    public string PetId { get; set; }
-    public string? HospitalizationId { get; set; }
-    public string? RecordDetails { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public int Id { get; set; }
+
+    public int? PetId { get; set; }
+
+    public string? VetId { get; set; }
+
+    public DateTime? Datetime { get; set; }
+
     public string? Diagnosis { get; set; }
+
     public string? Treatment { get; set; }
-    public string? Note { get; set; }
-    public DateTimeOffset? NextAppointment { get; set; }
-    public decimal PetWeight { get; set; }
-    
-    [ForeignKey(nameof(PetId))]
-    public virtual Pet Pet { get; set; }
-    
-    [ForeignKey(nameof(HospitalizationId))]
-    public virtual Hospitalization? Hospitalization { get; set; }
-    
-    public virtual ICollection<MedicalItem>? MedicalItems { get; set; }
+
+    public string? RecordDetails { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual Pet? Pet { get; set; }
+
+    public virtual User? Vet { get; set; }
 }

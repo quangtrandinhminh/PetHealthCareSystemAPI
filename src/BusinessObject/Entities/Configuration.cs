@@ -1,7 +1,15 @@
-﻿namespace BusinessObject.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Configuration : BaseEntity
+namespace BusinessObject.Entities;
+
+public partial class Configuration
 {
-    public string ConfigKey { get; set; }
-    public string Value { get; set; }   
+    public int Id { get; set; }
+
+    public string? ConfigKey { get; set; }
+
+    public string? Value { get; set; }
+
+    public bool? IsActive { get; set; }
 }

@@ -1,52 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Utility.Enum;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("Transaction")]
-public class Transaction : BaseEntity
+public partial class Transaction
 {
-    protected Transaction()
-    {
-        Status = TransactionStatus.Pending;
-    }
-    
-    // Payment
-    public string CustomerId { get; set; }
-    public string? AppointmentId { get; set; }
-    public string? MedicalRecordId { get; set; }
-    
-    public string? HospitalizationId { get; set; }
-    
-    [Column(TypeName = "decimal(18, 0)")]
-    [Range(0, Double.MaxValue)]
-    public decimal Total { get; set; }
-    public DateTimeOffset? PaymentDate { get; set; }
-    public TransactionStatus Status { get; set; }
-    public PaymentMethod? PaymentMethod { get; set; }
+    public int Id { get; set; }
+
+    public string? CustomerId { get; set; }
+
+    public int? AppointmentId { get; set; }
+
+    public int? Total { get; set; }
+
+    public DateTime? PaymentDate { get; set; }
+
+    public string? Status { get; set; }
+
+    public string? PaymentMethod { get; set; }
+
     public string? PaymentNote { get; set; }
-    public string? PaymentId { get; set; }
-    public string? PaymentStaffName { get; set; }
-    public string? Note { get; set; }
-    
-    // Refund
-    [Column(TypeName = "decimal(5, 2)")]
-    [Range(0, 1)]
-    public  decimal? RefundPercentage { get; set; }
+
+    public double? RefundPercentage { get; set; }
+
     public string? RefundReason { get; set; }
-    public DateTimeOffset? RefundDate { get; set; }
-    
-    [ForeignKey(nameof(CustomerId))]
-    public User Customer { get; set; }
-    
-    // pay for appointment in the first time
-    [ForeignKey(nameof(AppointmentId))]
-    public Appointment? Appointment { get; set; }
-    
-    // pay for medical items or hospitalization in medical record
-    [ForeignKey(nameof(MedicalRecordId))]
-    public MedicalRecord? MedicalRecord { get; set; }
-    
-    public virtual ICollection<TransactionDetail> TransactionDetails { get; set; }
+
+    public DateTime? RefundDate { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual Appointment? Appointment { get; set; }
+
+    public virtual User? Customer { get; set; }
+
+    public virtual ICollection<TransactionDetail> TransactionDetails { get; set; } = new List<TransactionDetail>();
 }

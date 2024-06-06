@@ -1,26 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-public class TransactionDetail : BaseEntity
+public partial class TransactionDetail
 {
-    public string TransactionId { get; set; }
-    public string? ServiceId { get; set; }
-    public string? MedicalItemId { get; set; }
-    
-    [Range(1, int.MaxValue)]
-    public int Quantity { get; set; }
-    [Column(TypeName = "decimal(18, 0)")]
-    [Range(0, Double.MaxValue)]
-    public decimal SubTotal { get; set; }
-    
-    [ForeignKey(nameof(TransactionId))]
-    public Transaction Transaction { get; set; }
-    
-    [ForeignKey(nameof(ServiceId))]
-    public Service? Service { get; set; }
-    
-    [ForeignKey(nameof(MedicalItemId))]
-    public MedicalItem? MedicalItem { get; set; }
+    public int Id { get; set; }
+
+    public int? TransactionId { get; set; }
+
+    public int? ServiceId { get; set; }
+
+    public int? MedicalItemId { get; set; }
+
+    public int? Quantity { get; set; }
+
+    public int? SubTotal { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual MedicalItem? MedicalItem { get; set; }
+
+    public virtual Service? Service { get; set; }
+
+    public virtual Transaction? Transaction { get; set; }
 }

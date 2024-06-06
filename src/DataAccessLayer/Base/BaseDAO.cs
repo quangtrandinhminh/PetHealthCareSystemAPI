@@ -7,7 +7,7 @@ namespace DataAccessLayer.Base
     public class BaseDAO<T> where T : class, new()
     {
         protected static AppDbContext _context = new AppDbContext();
-        protected static DbSet<T> _dbSet;
+        protected static DbSet<T> _dbSet = _context.Set<T>();
 
         public static void Add(T entity)
         {

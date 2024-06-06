@@ -1,22 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("MedicalItem")]
-public class MedicalItem : BaseEntity
+public partial class MedicalItem
 {
-    protected MedicalItem()
-    {
-        Quantity = 0;
-    }
-    
-    public string Name { get; set; }
+    public int Id { get; set; }
+
+    public string? Name { get; set; }
+
     public string? Description { get; set; }
-    [Column(TypeName = "decimal(18, 0)")]
-    [Range(0, Double.MaxValue)]
-    public decimal Price { get; set; }
-    [Range(0, int.MaxValue)]
-    public int Quantity { get; set; }
+
+    public int? UnitPrice { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual ICollection<TransactionDetail> TransactionDetails { get; set; } = new List<TransactionDetail>();
 }

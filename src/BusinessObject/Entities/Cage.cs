@@ -1,17 +1,19 @@
-﻿using System.Collections;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("Cage")]
-public class Cage : BaseEntity
+public partial class Cage
 {
-    public int Capacity { get; set; }
-    public string? Material { get; set; }
-    public int? Room { get; set; }
-    public string? Address { get; set; }
-    public string? Description { get; set; }
-    public string? Note { get; set; }
-    
-    public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
+    public int Id { get; set; }
+
+    public int? PetId { get; set; }
+
+    public string? Type { get; set; }
+
+    public string? CageNumber { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual Pet? Pet { get; set; }
 }

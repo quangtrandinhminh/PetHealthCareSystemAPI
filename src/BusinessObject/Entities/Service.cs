@@ -1,18 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("Service")]
-public class  Service : BaseEntity
+public partial class Service
 {
-    public string Name { get; set; }
+    public int Id { get; set; }
+
+    public string? Name { get; set; }
+
     public string? Description { get; set; }
-    public int Duration { get; set; }
-    [Column(TypeName = "decimal(18, 0)")]
-    [Range(0, int.MaxValue)]
-    public decimal Price { get; set; }
-    
-    public virtual ICollection<Appointment>? Appointments { get; set; }
-    public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
+
+    public int? Duration { get; set; }
+
+    public int? Price { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual ICollection<AppointmentService> AppointmentServices { get; set; } = new List<AppointmentService>();
+
+    public virtual ICollection<TransactionDetail> TransactionDetails { get; set; } = new List<TransactionDetail>();
 }

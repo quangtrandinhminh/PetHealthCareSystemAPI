@@ -1,25 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-public class Hospitalization : BaseEntity
+public partial class Hospitalization
 {
-    public string MedicalRecordId { get; set; }
-    public string? CageId { get; set; }
-    public string? VetId { get; set; }
-    public DateTimeOffset AdmitDate { get; set; }
-    public DateTimeOffset? DischargeDate { get; set; }
-    public string? Reason { get; set; }
+    public int Id { get; set; }
+
+    public int? PetId { get; set; }
+
+    public int? TimetableId { get; set; }
+
+    public DateTime? Datetime { get; set; }
+
     public string? Diagnosis { get; set; }
+
     public string? Treatment { get; set; }
-    public string? Note { get; set; }
-    
-    [ForeignKey(nameof(MedicalRecordId))]
-    public virtual MedicalRecord MedicalRecord { get; set; }
-    
-    [ForeignKey(nameof(CageId))]
-    public virtual Cage? Cage { get; set; }
-    
-    [ForeignKey(nameof(VetId))]
-    public virtual User? Vet { get; set; }
+
+    public string? HospitalizationDetails { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual Pet? Pet { get; set; }
+
+    public virtual Timetable? Timetable { get; set; }
 }

@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="IServices\" />
-      <Folder Include="Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
       <ProjectReference Include="..\Repository\Repository.csproj" />
     </ItemGroup>

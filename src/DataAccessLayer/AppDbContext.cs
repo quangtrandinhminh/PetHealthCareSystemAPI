@@ -1,72 +1,90 @@
-﻿using BusinessObject.Entities;
+﻿using System;
+using System.Collections.Generic;
+using BusinessObject.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Utility.Enum;
 
 namespace Repository;
 
-public class AppDbContext : DbContext
+public partial class AppDbContext : IdentityDbContext<User>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        
+
     }
 
     public AppDbContext()
     {
-    
+
     }
-    
-    public DbSet<User> Users { get; set; }
-    public DbSet<Pet> Pets { get; set; }
-    public DbSet<Appointment> Appointments { get; set; }
-    public DbSet<MedicalRecord> MedicalRecords { get; set; }
-    public DbSet<Service> Services { get; set; }
-    public DbSet<Transaction> Transactions { get; set; }
-    public DbSet<TimeTable> TimeTables { get; set; }
-    public DbSet<Cage> Cage { get; set; }
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
-    public DbSet<Configuration> Configurations { get; set; }
-    public DbSet<TransactionDetail> TransactionDetails { get; set; }
-    
-    private string GetConnectionString()
+
+    public virtual DbSet<Appointment> Appointments { get; set; }
+
+    public virtual DbSet<AppointmentService> AppointmentServices { get; set; }
+
+    public virtual DbSet<Cage> Cages { get; set; }
+
+    public virtual DbSet<Configuration> Configurations { get; set; }
+
+    public virtual DbSet<Hospitalization> Hospitalizations { get; set; }
+
+    public virtual DbSet<MedicalItem> MedicalItems { get; set; }
+
+    public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
+
+    public virtual DbSet<Pet> Pets { get; set; }
+
+    public virtual DbSet<Service> Services { get; set; }
+
+    public virtual DbSet<Timetable> Timetables { get; set; }
+
+    public virtual DbSet<Transaction> Transactions { get; set; }
+
+    public virtual DbSet<TransactionDetail> TransactionDetails { get; set; }
+
+    public string GetConnectionString()
     {
-        IConfiguration config = new ConfigurationBuilder()
+        var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", true, true)
-            .Build();
-        var strConn = config["ConnectionStrings:DefaultConnection"];
-        return strConn;
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        IConfiguration configuration = builder.Build();
+        return configuration.GetConnectionString("DefaultConnection");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString());
 
-    /*protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Pet)
-            .WithMany(p => p.MedicalRecords)
-            .HasForeignKey(m => m.PetId)
-            .OnDelete(DeleteBehavior.Restrict);
+        List<IdentityRole> roles = new List<IdentityRole>
+        {
+            new IdentityRole
+            {
+                Name = UserRole.Admin.ToString(),
+                NormalizedName = UserRole.Admin.ToString().ToUpper()
+            },
+            new IdentityRole
+            {
+                Name = UserRole.Customer.ToString(),
+                NormalizedName = UserRole.Customer.ToString().ToUpper()
+            },
+            new IdentityRole
+            {
+                Name = UserRole.Staff.ToString(),
+                NormalizedName = UserRole.Staff.ToString().ToUpper()
+            },
+            new IdentityRole
+            {
+                Name = UserRole.Vet.ToString(),
+                NormalizedName = UserRole.Vet.ToString().ToUpper()
+            },
+        };
 
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Appointment)
-            .WithMany(a => a.MedicalRecords)
-            .HasForeignKey(m => m.AppointmentId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Vet)
-            .WithMany(u => u.MedicalRecords)
-            .HasForeignKey(m => m.VetId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Service)
-            .WithMany(s => s.MedicalRecords)
-            .HasForeignKey(m => m.ServiceId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }*/
+        modelBuilder.Entity<IdentityRole>().HasData(roles);
+    }
 }

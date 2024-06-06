@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Interface\**" />
+      <EmbeddedResource Remove="Interface\**" />
+      <None Remove="Interface\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
@@ -23,11 +29,6 @@
     <ItemGroup>
       <ProjectReference Include="..\BusinessObject\BusinessObject.csproj" />
       <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Interface\" />
-      <Folder Include="Repositories\" />
     </ItemGroup>
 
 </Project>

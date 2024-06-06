@@ -1,38 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using Utility.Enum;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusinessObject.Entities;
 
-[Table("User")]
-[Index(nameof(User.Username), IsUnique = true)]
-[Index(nameof(User.Email), IsUnique = true)]
-[Index(nameof(User.Phone), IsUnique = true)]
-public class User : BaseEntity
+public partial class User : IdentityUser
 {
-    public User()
-    {
-        Role = UserRole.Customer;
-    }
-    
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string FullName { get; set; }
-    public string Email { get; set; }
-    public string Phone { get; set; }
+    public string? FullName { get; set; }
+
     public string? Address { get; set; }
+
     public string? Avatar { get; set; }
-    public DateTimeOffset? BirthDate { get; set; }
-    public UserRole Role { get; set; }
-    
-    // for customer
-    public ICollection<Pet>? Pets { get; set; }
-    
-    // for customer
-    public ICollection<Appointment>? CreatedAppointments { get; set; }
-    
-    // for vet
-    public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
-    
-    public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+
+    public DateOnly? Birthdate { get; set; }
+
+    public string? Role { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
+
+    public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
+
+    public virtual ICollection<Timetable> Timetables { get; set; } = new List<Timetable>();
+
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

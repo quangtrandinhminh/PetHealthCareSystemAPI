@@ -1,16 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BusinessObject.Entities;
 
-[Table("TimeTable")]
-public class TimeTable : BaseEntity
+public partial class Timetable
 {
-    public string VetID { get; set; }
-    public DateTimeOffset DateTimeStart { get; set; }
-    public DateTimeOffset DateTimeEnd { get; set; }
-    public ICollection<DayOfWeek> DayOfWeeks { get; set; }
+    public int Id { get; set; }
+
+    public string? VetId { get; set; }
+
     public string? Note { get; set; }
-    
-    [ForeignKey(nameof(VetID))]
-    public virtual User Vet { get; set; }
+
+    public DateOnly? Date { get; set; }
+
+    public TimeOnly? StartTime { get; set; }
+
+    public TimeOnly? EndTime { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
+    public virtual ICollection<Hospitalization> Hospitalizations { get; set; } = new List<Hospitalization>();
+
+    public virtual User? Vet { get; set; }
 }
