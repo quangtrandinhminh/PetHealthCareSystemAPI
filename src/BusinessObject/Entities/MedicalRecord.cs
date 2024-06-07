@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BusinessObject.Entities.Base;
+using BusinessObject.Entities.Identity;
 
 namespace BusinessObject.Entities;
 
@@ -8,7 +9,6 @@ namespace BusinessObject.Entities;
 public class MedicalRecord : BaseEntity
 {
     public int PetId { get; set; }
-    public int VetId { get; set; }
     public string? RecordDetails { get; set; }
     public DateTimeOffset Date { get; set; }
     public string? Diagnosis { get; set; }
@@ -21,9 +21,6 @@ public class MedicalRecord : BaseEntity
     
     [ForeignKey(nameof(PetId))]
     public virtual Pet Pet { get; set; }
-    
-    [ForeignKey(nameof(VetId))]
-    public virtual User Vet { get; set; }
     
     public virtual ICollection<Hospitalization>? Hospitalization { get; set; }
     

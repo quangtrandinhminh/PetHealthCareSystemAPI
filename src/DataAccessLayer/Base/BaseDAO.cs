@@ -1,23 +1,42 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using BusinessObject.Entities.Base;
 using Repository;
 
 namespace DataAccessLayer.Base
 {
-    public class BaseDAO<T> where T : class, new()
+    public class BaseDAO<T> where T : BaseEntity, new()
     {
-        protected static AppDbContext _context = new AppDbContext();
-        protected static DbSet<T> _dbSet;
-
-        public static void Add(T entity)
-        {
-            _dbSet.Add(entity);
-            _context.SaveChanges();
-        }
+        protected static readonly AppDbContext _context = new AppDbContext();
+        private static DbSet<T> _dbSet;
 
         public static IQueryable<T> GetAll()
         {
-            return _dbSet.AsNoTracking();
+            return _dbSet.AsQueryable().AsNoTracking();
+        }
+
+        public static T GetById(int id)
+        {
+            return _dbSet.Find(id);
+        }
+
+        public static async Task<T> GetByIdAsync(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public static T Add(T entity)
+        {
+            entity.DeletedTime = null;
+            _dbSet.Add(entity);
+            _context.SaveChanges();
+            return entity;
+        }
+
+        public static async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
         public static void Delete(T entity)
@@ -43,10 +62,19 @@ namespace DataAccessLayer.Base
             return _context;
         }
         
-        public static void AddRange(IEnumerable<T> entities)
+        public static List<T> AddRange(IEnumerable<T> entities)
         {
-            _dbSet.AddRange(entities);
+            DateTimeOffset utcNow = DateTimeOffset.UtcNow;
+            List<T> list = new List<T>();
+            foreach (T val in entities)
+            {
+                val.CreatedTime = utcNow;
+                T item = Add(val);
+                list.Add(item);
+            }
+
             _context.SaveChanges();
+            return list;
         }
         
         public static void RemoveRange(IEnumerable<T> entities)

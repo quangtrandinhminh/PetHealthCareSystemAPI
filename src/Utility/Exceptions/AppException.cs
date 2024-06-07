@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Utility.Exceptions
 {
-    public class ApplicationException : System.Exception
+    public class AppException : System.Exception
     {
-        public ApplicationException(string code, string message = "", int statusCode = StatusCodes.Status500InternalServerError)
+        public AppException(string code, string message = "", int statusCode = StatusCodes.Status500InternalServerError)
             : base(message)
         {
             Code = code;
