@@ -23,9 +23,6 @@
         public const string EXISTED = "Already existed!";
     }
     
-    // Response message constants for entities: not found, existed, update success, delete success
-
-
     public class ReponseMessageIdentity
     {
         public const string INVALID_USER = "Nguoi dung khong ton tai.";
@@ -56,5 +53,24 @@
         public const string NHAMAYIDS_REQUIRED = "Nha may khong duoc de trong.";
         public const string ROLEIDS_REQUIRED = "Role khong duoc de trong.";
 
+    }
+
+    // Response message constants for entities: not found, existed, update success, delete success
+    public class ReponseMessageConstantsPet
+    {
+        public const string PET_NOT_FOUND = "Khong tim thay pet";
+        public const string PET_EXISTED = "Pet da ton tai";
+        public const string ADD_PET_SUCCESS = "Them pet thanh cong";
+        public const string UPDATE_PET_SUCCESS = "Cap nhat pet thanh cong";
+        public const string DELETE_PET_SUCCESS = "Xoa pet thanh cong";
+    }
+
+    public class ReponseMessageConstantsService
+    {
+        public const string SERVICE_NOT_FOUND = "Khong tim thay dich vu";
+        public const string SERVICE_EXISTED = "Dich vu da ton tai";
+        public const string ADD_SERVICE_SUCCESS = "Them dich vu thanh cong";
+        public const string UPDATE_SERVICE_SUCCESS = "Cap nhat dich vu thanh cong";
+        public const string DELETE_SERVICE_SUCCESS = "Xoa dich vu thanh cong";
     }
 }

@@ -11,12 +11,8 @@ namespace Repository.Interface
     public interface IUserRepository : IUserStore<UserEntity>
     {
         Task<IdentityResult> CreateAsync(UserEntity userEntity);
-        Task<UserEntity> GetUserByUsernameAndPassword(string username, string password);
-        Task<string> GetUserRoleByUsernameAsync(string username);
 
         Task<UserEntity> GetUserByEmail(string email);
         Task<UserEntity> GetUserByUserName(string userName);
-
-        Task AddUserToRoleAsync(UserEntity user, int roleId);
     }
 }

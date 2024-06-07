@@ -17,7 +17,7 @@ namespace DataAccessLayer.DAO
 {
     public class UserDao
     {
-        private static AppDbContext _context = new();
+        private static readonly AppDbContext _context = new();
         private static UserManager<UserEntity> _userManager;
         private static SignInManager<UserEntity> _signinManager;
 
@@ -39,52 +39,6 @@ namespace DataAccessLayer.DAO
         {
 
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-        }
-
-        public static async Task<UserEntity> GetUserByUsernameAndPassword(string username, string password)
-        {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == username);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            var result = await _signinManager.CheckPasswordSignInAsync(user, password, false);
-
-            if (!result.Succeeded) return null;
-
-            return user;
-        }
-
-        public static async Task<string> GetUserRoleByUsernameAsync(string username)
-        {
-            // Find the userEntity by username
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == username);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            var role = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == user.Id);
-            if (role == null)
-            {
-                return null;
-            }
-
-            var roleName = await _context.Roles.FirstOrDefaultAsync(x => x.Id == role.RoleId);
-            return roleName.Name;
-        }
-
-        public static async Task AddUserToRoleAsync(UserEntity user, int roleId)
-        {
-            await _context.UserRoles.AddAsync(new IdentityUserRole<int>
-            {
-                RoleId = roleId,
-                UserId = user.Id
-            });
-            await _context.SaveChangesAsync();
         }
     }
 }

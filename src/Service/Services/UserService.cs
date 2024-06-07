@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BusinessObject.DTO.User;
+using BusinessObject.DTO.Vet;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
@@ -86,7 +87,7 @@ namespace Service.Services
             // send sms to phone number here
         }
 
-        public async Task<UserResponseDto> Authenticate(LoginDto dto)
+        public async Task<LoginResponseDto> Authenticate(LoginDto dto)
         {
             _logger.Information("Authenticate user: {@dto}", dto);
             var account = await _userRepository.GetUserByUserName(dto.Username);
@@ -112,6 +113,11 @@ namespace Service.Services
             {
                 throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
             }
+        }
+
+        public Task<VetResponseDto> CreateVet(VetRequestDto dto)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task<string> GenerateJwtToken(UserEntity loggedUser, IList<string> roles, int hour)

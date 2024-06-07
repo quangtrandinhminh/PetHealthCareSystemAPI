@@ -20,6 +20,8 @@ using BusinessObject.Entities;
 using PetHealthCareSystemAPI.Auth;
 using WaterCity.WebApi.Auth;
 using BusinessObject.Mapper;
+using Repository.Base;
+using Repository.IBase;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,8 +62,8 @@ var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
 
+//Add controllers
 builder.Services.AddControllers().AddNewtonsoftJson();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(o =>
@@ -130,7 +132,7 @@ builder.Services.AddAuthentication(options =>
 */
 builder.Services.AddHttpContextAccessor();
 
-
+// Add Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
@@ -138,7 +140,8 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>()
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IPetRepository, PetRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Add Authorization
@@ -150,14 +153,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
     });
 
+// Add Authorization
 builder.Services.AddAuthorization(cfg =>
 {
     cfg.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 });
 
+//-----------------------------------------------------------------------------------------------
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlerMiddleware>();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

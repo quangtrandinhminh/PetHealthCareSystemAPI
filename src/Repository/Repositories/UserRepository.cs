@@ -24,12 +24,8 @@ namespace Repository.Repositories
 
         public async Task<IdentityResult> CreateAsync(UserEntity userEntity) => await UserDao.CreateAsync(userEntity);
 
-        public async Task<UserEntity> GetUserByUsernameAndPassword(string username, string password) => await UserDao.GetUserByUsernameAndPassword(username, password);
-
-        public async Task<string> GetUserRoleByUsernameAsync(string username) => await UserDao.GetUserRoleByUsernameAsync(username);
         public async Task<UserEntity> GetUserByEmail(string email) => await UserDao.GetUserByEmailAsync(email);
-        public async Task<UserEntity> GetUserByUserName(string userName) => await UserDao.GetUserByUserNameAsync(userName);
 
-        public async Task AddUserToRoleAsync(UserEntity user, int roleId) => await UserDao.AddUserToRoleAsync(user, roleId);
+        public async Task<UserEntity> GetUserByUserName(string userName) => await UserDao.GetUserByUserNameAsync(userName);
     }
 }
