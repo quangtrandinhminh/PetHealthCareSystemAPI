@@ -32,7 +32,7 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
     public DbSet<Configuration> Configurations { get; set; }
     public DbSet<TransactionDetail> TransactionDetails { get; set; }
     public DbSet<UserRoleEntity> UserRoleEntity { get; set; }
-    public DbSet<RoleClaimEntity> RoleClaimEntity { get; set; }
+    public DbSet<RoleEntity> Role { get; set; }
 
     private string GetConnectionString()
     {
@@ -47,65 +47,60 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString());
 
-    /*protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Pet)
-            .WithMany(p => p.MedicalRecords)
-            .HasForeignKey(m => m.PetId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<UserEntity>(b =>
+        {
+            b.Property(u => u.Id)
+                .ValueGeneratedOnAdd();
+            // Each User can have many entries in the UserRole join table
+            b.HasMany(e => e.UserRoles)
+                .WithOne(e => e.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+        });
 
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Appointment)
-            .WithMany(a => a.MedicalRecords)
-            .HasForeignKey(m => m.AppointmentId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<RoleEntity>(b =>
+        {
+            // Each Role can have many entries in the UserRole join table
+            b.HasMany(e => e.UserRoles)
+                .WithOne(e => e.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
+        });
 
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Vet)
-            .WithMany(u => u.MedicalRecords)
-            .HasForeignKey(m => m.VetId)
-            .OnDelete(DeleteBehavior.Restrict);
+        var roles = new List<RoleEntity>
+        {
+            new()
+            {
+                Id = 1,
+                Name = UserRole.Admin.ToString(),
+                NormalizedName = UserRole.Admin.ToString().ToUpper()
+            },
+            new()
+            {
+                Id = 2,
+                Name = UserRole.Staff.ToString(),
+                NormalizedName = UserRole.Staff.ToString().ToUpper()
+            },
+            new()
+            {
+                Id = 3,
+                Name = UserRole.Vet.ToString(),
+                NormalizedName = UserRole.Vet.ToString().ToUpper()
+            },
+            new()
+            {
+                Id = 4,
+                Name = UserRole.Customer.ToString(),
+                NormalizedName = UserRole.Customer.ToString().ToUpper()
+            },
+        };
+        modelBuilder.Entity<RoleEntity>().HasData(roles);
 
-        modelBuilder.Entity<MedicalRecord>()
-            .HasOne(m => m.Service)
-            .WithMany(s => s.MedicalRecords)
-            .HasForeignKey(m => m.ServiceId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }*/
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-
-        List<IdentityRole> roles = new List<IdentityRole>
-      {
-          new()
-          {
-              Name = UserRole.Admin.ToString(),
-              NormalizedName = UserRole.Admin.ToString().ToUpper()
-          },
-          new()
-          {
-              Name = UserRole.Customer.ToString(),
-              NormalizedName = UserRole.Customer.ToString().ToUpper()
-          },
-          new()
-          {
-              Name = UserRole.Staff.ToString(),
-              NormalizedName = UserRole.Staff.ToString().ToUpper()
-          },
-          new()
-          {
-              Name = UserRole.Vet.ToString(),
-              NormalizedName = UserRole.Vet.ToString().ToUpper()
-          },
-      };
-        builder.Entity<IdentityRole>().HasData(roles);
-
-        foreach (var entityType in builder.Model.GetEntityTypes())
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var tableName = entityType.GetTableName();
             if (tableName.StartsWith("AspNet"))

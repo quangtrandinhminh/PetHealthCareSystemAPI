@@ -22,12 +22,10 @@ namespace PetHealthCareSystemAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ITokenService _tokenService;
 
-        public UserController(IUserService userSevices, ITokenService tokenService)
+        public UserController(IUserService userSevices)
         {
             _userService = userSevices;
-            _tokenService = tokenService;
         }
 
         [HttpGet]

@@ -13,7 +13,5 @@ namespace Service.IServices
         Task Register(RegisterDto dto);
 
         Task<UserResponseDto> Authenticate(LoginDto dto);
-        Task<UserEntity> GetUserByUsernameAndPassword(string username, string password);
-        Task<string> GetUserRoleByUsernameAsync(string username);
     }
 }

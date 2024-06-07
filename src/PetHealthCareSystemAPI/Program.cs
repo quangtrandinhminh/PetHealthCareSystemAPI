@@ -131,10 +131,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddHttpContextAccessor();
 
 
-builder.Services.AddIdentityCore<UserEntity>()
-    .AddRoles<RoleEntity>()
-    .AddUserStore<UserRepository>()
-    .AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<UserEntity, RoleEntity>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();

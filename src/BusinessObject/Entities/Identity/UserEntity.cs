@@ -21,6 +21,8 @@ public class UserEntity : IdentityUser<int>
     public string? Avatar { get; set; }
     public DateTimeOffset? BirthDate { get; set; }
 
+    public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
+
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
     // Base Property
@@ -56,6 +58,8 @@ public class UserEntity : IdentityUser<int>
 
 public class RoleEntity : IdentityRole<int>
 {
+    public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
+
     [NotMapped]
     public override string ConcurrencyStamp { get => base.ConcurrencyStamp; set => base.ConcurrencyStamp = value; }
 
@@ -63,16 +67,10 @@ public class RoleEntity : IdentityRole<int>
     public override string NormalizedName { get => base.NormalizedName; set => base.NormalizedName = value; }
 }
 
-public class RoleClaimEntity : IdentityRoleClaim<int>
-{
-    public override Claim ToClaim()
-    {
-        return base.ToClaim();
-    }
-}
-
 public class UserRoleEntity : IdentityUserRole<int>
 {
+    public virtual UserEntity User { get; set; }
+    public virtual RoleEntity Role { get; set; }
 }
 
 public class RefreshToken : BaseEntity

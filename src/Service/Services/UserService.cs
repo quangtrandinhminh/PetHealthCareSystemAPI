@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
@@ -12,6 +13,7 @@ using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Repository.Interface;
@@ -20,45 +22,41 @@ using Serilog;
 using Service.IServices;
 using Service.Utils;
 using Utility.Constants;
+using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
 
 namespace Service.Services
 {
-    public class UserService : IUserService
+    public class UserService(IServiceProvider serviceProvider) : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly MapperlyMapper _mapper;
-        private readonly RoleManager<RoleEntity> _roleManager;
-        private readonly UserManager<UserEntity> _userManager;
-        private readonly ILogger _logger;
-
-        public UserService(IServiceProvider serviceProvider)
-        {
-            _logger = Log.Logger;
-            _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
-            _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
-            _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
-            _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
-        }
+        private readonly IUserRepository _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+        private readonly MapperlyMapper _mapper = serviceProvider.GetRequiredService<MapperlyMapper>();
+        private readonly RoleManager<RoleEntity> _roleManager = serviceProvider.GetRequiredService<RoleManager<RoleEntity>>();
+        private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
+        private readonly ILogger _logger = Log.Logger;
+        private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
 
         public async Task Register(RegisterDto dto)
         {
-            var validateUser = await _userRepository.GetUserByUserName(dto.UserName);
+            _logger.Information("Register new user: {@dto}", dto);
+            // get user by name
+            var validateUser = await _userManager.FindByNameAsync(dto.UserName);
             if (validateUser != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
             }
 
-            var existingUserWithEmail = await _userRepository.GetUserByEmail(dto.Email);
+            var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUserWithEmail != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
             }
 
-            if (dto.Password != dto.ConfirmPassword)
+            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
+            if (existingUserWithPhone != null)
             {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
 
             if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
@@ -66,65 +64,73 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
             }
 
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
+            }
+
             try
             {
                 var account = _mapper.Map(dto);
                 account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
+                account.SecurityStamp = Guid.NewGuid().ToString();
                 await _userRepository.CreateAsync(account);
-
-                await _userRepository.AddUserToRoleAsync(account, 4);
+                await _userManager.AddToRoleAsync(account, "Customer");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
             }
-            
+
+
             // send sms to phone number here
         }
 
         public async Task<UserResponseDto> Authenticate(LoginDto dto)
         {
+            _logger.Information("Authenticate user: {@dto}", dto);
             var account = await _userRepository.GetUserByUserName(dto.Username);
-            if (account == null || account.DeletedTime != null) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
+            if (account == null || account.DeletedTime != null) 
+                throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
+            // check password
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, account.PasswordHash))
-            {
                 throw new AppException(ErrorCode.UserPasswordWrong, ReponseMessageIdentity.PASSWORD_WRONG, StatusCodes.Status401Unauthorized);
+
+            try
+            {
+                var roles = await _userManager.GetRolesAsync(account);
+                var token = await GenerateJwtToken(account, roles, 1);
+                var refreshToken = GenerateRefreshToken(account.Id, 12);
+                var response = _mapper.Map(account);
+                response.Token = token;
+                response.RefreshToken = refreshToken.Token;
+                response.Role = roles;
+                return response;
             }
-
-            var role = await _userRepository.GetUserRoleByUsernameAsync(dto.Username);
-            var token = await GenerateJWTToken(account, role, 1);
-            var refreshToken = GenerateRefreshToken(account.Id, 12);
-            var response = _mapper.Map(account);
-            response.Role = role;
-            response.Token = token;
-            response.RefreshToken = refreshToken.Token;
-            return response;
+            catch (Exception e)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
+            }
         }
 
-        public async Task<UserEntity> GetUserByUsernameAndPassword(string username, string password)
-        {
-            var user = await _userRepository.GetUserByUsernameAndPassword(username, password);
-
-            return user;
-        }
-
-        public async Task<string> GetUserRoleByUsernameAsync(string username)
-        {
-            var role = await _userRepository.GetUserRoleByUsernameAsync(username);
-
-            return role;
-        }
-
-
-        private async Task<string> GenerateJWTToken(UserEntity loggedUser, string role, int hour)
+        private async Task<string> GenerateJwtToken(UserEntity loggedUser, IList<string> roles, int hour)
         {
             var claims = new List<Claim>();
             claims.AddRange(await _userManager.GetClaimsAsync(loggedUser));
-            var userRole = await _roleManager.FindByNameAsync(role);
-            if (userRole != null) claims.AddRange(await _roleManager.GetClaimsAsync(userRole));
+            // Add role claims
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+                // Use RoleManager to find the role and add its claims
+                var roleEntity = await _roleManager.FindByNameAsync(role);
+                if (roleEntity != null)
+                {
+                    var roleClaims = await _roleManager.GetClaimsAsync(roleEntity);
+                    claims.AddRange(roleClaims);
+                }
+            }
 
             claims.AddRange(new[]
             {
