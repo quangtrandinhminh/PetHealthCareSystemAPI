@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace WaterCity.WebApi.Auth
+namespace PetHealthCareSystemAPI.Auth
 {
     internal class ApiPolicyAuthorizationRequirement : IAuthorizationRequirement
     {

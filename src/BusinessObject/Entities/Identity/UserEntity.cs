@@ -35,7 +35,7 @@ public class UserEntity : IdentityUser<int>
 
     // Identity Property
     public DateTimeOffset? Verified { get; set; }
-    public string OTP;
+    public string? OTP { get; set; }
     public DateTimeOffset? OTPExpired { get; set; }
     public bool IsActive => PhoneNumberConfirmed;
     public override bool PhoneNumberConfirmed => Verified.HasValue;
