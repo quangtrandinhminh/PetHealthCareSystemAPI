@@ -56,6 +56,16 @@
     }
 
     // Response message constants for entities: not found, existed, update success, delete success
+
+    public class ResponseMessageConstantsVet
+    {
+        public const string VET_NOT_FOUND = "Khong tim thay bac si";
+        public const string VET_EXISTED = "Bac si da ton tai";
+        public const string ADD_VET_SUCCESS = "Them bac si thanh cong";
+        public const string UPDATE_VET_SUCCESS = "Cap nhat bac si thanh cong";
+        public const string DELETE_VET_SUCCESS = "Xoa bac si thanh cong";
+    }
+
     public class ReponseMessageConstantsPet
     {
         public const string PET_NOT_FOUND = "Khong tim thay pet";

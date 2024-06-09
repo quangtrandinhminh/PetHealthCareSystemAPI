@@ -14,5 +14,6 @@ namespace Service.IServices
         Task Register(RegisterDto dto);
         Task<LoginResponseDto> Authenticate(LoginDto dto);
         Task<VetResponseDto> CreateVet(VetRequestDto dto);
+        Task<IList<UserResponseDto>> GetVets();
     }
 }
