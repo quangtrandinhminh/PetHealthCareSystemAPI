@@ -3,7 +3,7 @@ using DataAccessLayer.Base;
 
 namespace DataAccessLayer.DAO;
 
-public class PetDao : BaseDAO<Pet>
+public class PetDao : BaseDao<Pet>
 {
     public static readonly AppDbContext _context = new();
 }
