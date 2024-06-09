@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Utility.Constants;
-using WaterCity.WebApi.Auth;
 
 namespace PetHealthCareSystemAPI.Auth
 {

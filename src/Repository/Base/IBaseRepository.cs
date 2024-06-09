@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 
-namespace Repository.IBase;
+namespace Repository.Base;
 
     public interface IBaseRepository<T> where T : class, new()
     {

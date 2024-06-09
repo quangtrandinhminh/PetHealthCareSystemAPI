@@ -1,13 +1,11 @@
 ﻿using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Reflection.Emit;
 using Utility.Enum;
 
-namespace Repository;
+namespace DataAccessLayer;
 
 public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
 {

@@ -28,6 +28,12 @@ namespace DataAccessLayer.Migrations
                 table: "Hospitalization",
                 newName: "HospitalizationDateStatus");
 
+            migrationBuilder.AddColumn<string>(
+                name: "OTP",
+                table: "Users",
+                type: "nvarchar(max)",
+                nullable: true);
+
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "AddmissionDate",
                 table: "MedicalRecord",
@@ -95,6 +101,10 @@ namespace DataAccessLayer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "MedicalItemMedicalRecord");
+
+            migrationBuilder.DropColumn(
+                name: "OTP",
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "AddmissionDate",

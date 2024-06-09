@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Utility.Constants;
 
-namespace WaterCity.WebApi.Auth
+namespace PetHealthCareSystemAPI.Auth
 {
     internal class ApiPolicyAuthorizationHandler : AuthorizationHandler<ApiPolicyAuthorizationRequirement>
     {

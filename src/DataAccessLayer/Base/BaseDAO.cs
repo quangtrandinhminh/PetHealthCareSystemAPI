@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using BusinessObject.Entities.Base;
-using Repository;
 
 namespace DataAccessLayer.Base
 {

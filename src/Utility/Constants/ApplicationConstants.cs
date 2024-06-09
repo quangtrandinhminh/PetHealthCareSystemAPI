@@ -1,4 +1,6 @@
-﻿namespace Utility.Constants
+﻿using System.Runtime.CompilerServices;
+
+namespace Utility.Constants
 {
     public class ApplicationConstants
     {
@@ -17,6 +19,8 @@
         public const string INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
         public const string INVALID_INPUT = "Invalid input!";
         public const string UNAUTHORIZED = "Unauthorized!";
+        public const string FORBIDDEN = "Forbidden!";
+        public const string EXPIRED = "Expired!"; 
     }
     public class ReponseMessageConstantsCommon
     {
@@ -33,9 +37,11 @@
         public const string EXISTED_EMAIL = "Email da ton tai.";
         public const string EXISTED_PHONE = "So dien thoai da ton tai.";
         public const string REGIST_USER_SUCCESS = "Create account successfully! Please verify phone number to activate it";
+        public const string VERIFY_PHONE_SUCCESS = "Verify phone successfully!";
         public const string TOKEN_INVALID = "token khong xac thuc.";
-        public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
-        public const string EMAIL_VALIDATE = "Email da duoc xav thuc.";
+        public const string TOKEN_EXPIRED = "token khong xac thuc hoac da het han.";
+        public const string EMAIL_VALIDATE = "Email da duoc xac thuc.";
+        public const string PHONE_VALIDATE = "Phone number is validated.";
         public const string ROLE_INVALID = "Roles khong xac thuc.";
         public const string CLAIM_NOTFOUND = "Khong tim thay claim.";
         public const string EXISTED_ROLE = "Role da ton tai.";
