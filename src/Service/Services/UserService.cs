@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
+using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
-using Repository.Interface;
+using Repository.Interfaces;
 using Repository.Repositories;
 using Serilog;
 using Service.IServices;
@@ -103,7 +104,7 @@ namespace Service.Services
                 var roles = await _userManager.GetRolesAsync(account);
                 var token = await GenerateJwtToken(account, roles, 1);
                 var refreshToken = GenerateRefreshToken(account.Id, 12);
-                var response = _mapper.Map(account);
+                var response = _mapper.UserToLoginResponseDto(account);
                 response.Token = token;
                 response.RefreshToken = refreshToken.Token;
                 response.Role = roles;
@@ -118,6 +119,23 @@ namespace Service.Services
         public Task<VetResponseDto> CreateVet(VetRequestDto dto)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IList<UserResponseDto>> GetVets()
+        {
+            var vets = await _userManager.GetUsersInRoleAsync(UserRole.Vet.ToString());
+            if (vets == null || vets.Count == 0)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsVet.VET_NOT_FOUND, StatusCodes.Status404NotFound);
+            }
+            var response = _mapper.Map(vets);
+            // get role of each vet
+            foreach (var vet in response)
+            {
+                
+                vet.Role = UserRole.Vet.ToString();
+            }
+            return response;
         }
 
         private async Task<string> GenerateJwtToken(UserEntity loggedUser, IList<string> roles, int hour)
