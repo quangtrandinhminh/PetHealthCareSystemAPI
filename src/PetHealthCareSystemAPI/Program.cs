@@ -14,14 +14,13 @@ using Utility.Config;
 using Service.IServices;
 using Service.Services;
 using BusinessObject.Entities.Identity;
-using Repository.Interface;
 using Repository.Repositories;
 using BusinessObject.Entities;
 using PetHealthCareSystemAPI.Auth;
-using WaterCity.WebApi.Auth;
 using BusinessObject.Mapper;
+using DataAccessLayer;
 using Repository.Base;
-using Repository.IBase;
+using Repository.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
