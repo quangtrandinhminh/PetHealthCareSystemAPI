@@ -26,6 +26,8 @@ namespace Utility.Constants
     {
         public const string EXISTED = "Already existed!";
     }
+
+
     
     public class ReponseMessageIdentity
     {
@@ -36,10 +38,9 @@ namespace Utility.Constants
         public const string EXISTED_USER = "Nguoi dung da ton tai.";
         public const string EXISTED_EMAIL = "Email da ton tai.";
         public const string EXISTED_PHONE = "So dien thoai da ton tai.";
-        public const string REGIST_USER_SUCCESS = "Create account successfully! Please verify phone number to activate it";
-        public const string VERIFY_PHONE_SUCCESS = "Verify phone successfully!";
         public const string TOKEN_INVALID = "token khong xac thuc.";
         public const string TOKEN_EXPIRED = "token khong xac thuc hoac da het han.";
+        public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
         public const string EMAIL_VALIDATE = "Email da duoc xac thuc.";
         public const string PHONE_VALIDATE = "Phone number is validated.";
         public const string ROLE_INVALID = "Roles khong xac thuc.";
@@ -58,6 +59,23 @@ namespace Utility.Constants
         public const string PHONGBANID_REQUIRED = "Phong ban khong duoc de trong.";
         public const string NHAMAYIDS_REQUIRED = "Nha may khong duoc de trong.";
         public const string ROLEIDS_REQUIRED = "Role khong duoc de trong.";
+
+    }
+
+    public class ResponseMessageIdentitySuccess
+    {
+        public const string REGIST_USER_SUCCESS = "Dang ky tai khoan thanh cong! Vui long xac thuc email de kich hoat tai khoan";
+        public const string VERIFY_PHONE_SUCCESS = "Xac thuc so dien thoai thanh cong!";
+        public const string VERIFY_EMAIL_SUCCESS = "Xac thuc email thanh cong!";
+        public const string FORGOT_PASSWORD_SUCCESS = "Yeu cau cap lai mat khau thanh cong, vui long kiem tra email";
+        public const string RESET_PASSWORD_SUCCESS = "Cap lai mat khau thanh cong!";
+        public const string CHANGE_PASSWORD_SUCCESS = "Doi mat khau thanh cong!";
+        public const string RESEND_EMAIL_SUCCESS = "Gui lai email xac thuc thanh cong!";
+        public const string UPDATE_USER_SUCCESS = "Cap nhat thong tin nguoi dung thanh cong!";
+        public const string DELETE_USER_SUCCESS = "Xoa nguoi dung thanh cong!";
+        public const string ADD_ROLE_SUCCESS = "Them role thanh cong!";
+        public const string UPDATE_ROLE_SUCCESS = "Cap nhat role thanh cong!";
+        public const string DELETE_ROLE_SUCCESS = "Xoa role thanh cong!";
 
     }
 
