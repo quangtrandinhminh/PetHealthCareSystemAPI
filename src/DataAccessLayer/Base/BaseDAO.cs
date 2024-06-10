@@ -6,7 +6,7 @@ namespace DataAccessLayer.Base
 {
     public class BaseDao<T> where T : BaseEntity, new()
     {
-        protected static readonly AppDbContext _context = new ();
+        private static readonly AppDbContext _context = new ();
         private static DbSet<T> _dbSet;
 
         public static IQueryable<T?> GetAll()
