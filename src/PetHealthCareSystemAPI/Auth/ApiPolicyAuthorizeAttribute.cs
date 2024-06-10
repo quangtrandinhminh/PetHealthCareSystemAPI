@@ -15,15 +15,12 @@ namespace PetHealthCareSystemAPI.Auth
                 Policy = $"{IdentityConstant.ApiPolicyPrefix}{value}";
             } 
         }
-        public string Group { get; set; }
-        public string GroupDisplayName { get; set; }
+
+        public string Role => Key;
         public string DisplayName { get; set; }
-        public ApiPolicyAuthorizeAttribute(string key, string group, string groupDisplayName, string displayName)
+        public ApiPolicyAuthorizeAttribute(string Role)
         {
-            Key = key;
-            Group = group;
-            GroupDisplayName = groupDisplayName;
-            DisplayName = displayName;
+            Key = Role;
         }
     }
 }
