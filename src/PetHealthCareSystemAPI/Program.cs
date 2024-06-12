@@ -132,6 +132,7 @@ builder.Services.AddScoped<IPetRepository, PetRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IService, ServiceService>();
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();

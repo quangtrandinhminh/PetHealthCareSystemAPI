@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Service.IServices;
+using Service.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,11 +10,18 @@ namespace PetHealthCareSystemAPI.Controllers
     [ApiController]
     public class ServiceController : ControllerBase
     {
+        private IService _iservice;
+
+        public ServiceController (IService service)
+        {
+            _iservice = service;
+        }
+
         // GET: api/<ServiceController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(await _iservice.GetAllServices());
         }
 
         // GET api/<ServiceController>/5
