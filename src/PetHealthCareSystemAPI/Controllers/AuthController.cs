@@ -21,7 +21,7 @@ namespace PetHealthCareSystemAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -31,8 +31,9 @@ namespace PetHealthCareSystemAPI.Controllers
             _authService = authSevices;
         }
 
-        [AllowAnonymous]
+
         [HttpPost]
+        [AllowAnonymous]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
@@ -40,8 +41,9 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
-        [AllowAnonymous]
+        
         [HttpPost]
+        [AllowAnonymous]
         [Route("authenticate")]
         public async Task<IActionResult> Login(LoginDto request)
         {
