@@ -108,8 +108,8 @@ namespace Service.Services
                 var roles = await _userManager.GetRolesAsync(account);
                 var token = await GenerateJwtToken(account, roles, 48);
                 var refreshToken = GenerateRefreshToken(account.Id, 12);
-                RemoveOldRefreshTokens(account.RefreshTokens);
-                _refreshTokenRepository.Add(refreshToken);
+                await RemoveOldRefreshTokens(account.RefreshTokens);
+                await _refreshTokenRepository.AddAsync(refreshToken);
                 var response = _mapper.UserToLoginResponseDto(account);
                 response.Token = token;
                 response.RefreshToken = refreshToken.Token;
@@ -128,16 +128,16 @@ namespace Service.Services
             var newRefreshToken = GenerateRefreshToken(account.Id, 12);
 
             newRefreshToken.UserId = account.Id;
-            _refreshTokenRepository.Add(newRefreshToken);
+            await _refreshTokenRepository.AddAsync(newRefreshToken);
 
-            RemoveOldRefreshTokens(account.RefreshTokens);
+            await RemoveOldRefreshTokens(account.RefreshTokens);
 
             try
             {
                 var roles = await _userManager.GetRolesAsync(account);
                 var jwtToken = await GenerateJwtToken(account, roles, 48);
                 var response = _mapper.UserToLoginResponseDto(account);
-                response.Token = token;
+                response.Token = jwtToken;
                 response.RefreshToken = newRefreshToken.Token;
                 response.Role = roles;
                 return response;
@@ -280,12 +280,13 @@ namespace Service.Services
             return refreshToken;
         }
 
-        private void RemoveOldRefreshTokens(ICollection<RefreshToken> refreshTokens)
+        private async Task RemoveOldRefreshTokens(ICollection<RefreshToken> refreshTokens)
         {
-            var removeList = refreshTokens.Where(x => !x.IsActive && x.CreatedTime.AddDays(2) <= CoreHelper.SystemTimeNow).ToList();
+            var removeList = refreshTokens.Where(x => !x.IsActive 
+                                                      && x.CreatedTime.AddDays(2) <= CoreHelper.SystemTimeNow).ToList();
             if (removeList.Any())
             {
-                _refreshTokenRepository.RemoveRange(removeList);
+                await _refreshTokenRepository.RemoveRangeAsync(removeList);
             }
         }
 

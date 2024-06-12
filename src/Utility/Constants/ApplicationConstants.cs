@@ -51,6 +51,7 @@ namespace Utility.Constants
         public const string NAME_REQUIRED = "Ten khong duoc de trong.";
         public const string USERCODE_REQUIRED = "Ma nguoi dung khong duoc de trong.";
         public const string PASSWORD_REQUIRED = "Mat khau khong duoc de trong.";
+        public const string PASSSWORD_LENGTH = "Mat khau phai co it nhat 8 ky tu.";
         public const string CONFIRM_PASSWORD_REQUIRED = "Xac nhan mat khau khong duoc de trong.";
         public const string EMAIL_REQUIRED = "Email khong duoc de trong.";
         public const string PHONENUMBER_REQUIRED = "So dien thoai khong duoc de trong.";
