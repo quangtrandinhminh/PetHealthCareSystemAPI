@@ -33,11 +33,20 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
 
-        // GET api/<PetController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [Authorize(Roles = "Customer")]
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
-            return "value";
+            var petId = User.GetUserId();
+
+            var list = await _petService.GetAllPetsForCustomerAsync(petId);
+
+            foreach (var pet in list)
+            {
+                if (pet.Id == id) return Ok(BaseResponseDto.OkResponseDto(pet, "No additional data"));
+            }
+
+            return Ok(BaseResponseDto.NotFoundResponseDto("Không tìm thấy thú cưng của bạn"));
         }
 
         // POST api/<PetController>
@@ -54,9 +63,11 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         // PUT api/<PetController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] PetUpdateRequestDto dto)
         {
+            // _petService.UpdatePetAsync(dto);
+            return NotFound();
         }
 
         // DELETE api/<PetController>/5
