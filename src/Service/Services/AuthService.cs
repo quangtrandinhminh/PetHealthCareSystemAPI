@@ -128,16 +128,16 @@ namespace Service.Services
             var newRefreshToken = GenerateRefreshToken(account.Id, 12);
 
             newRefreshToken.UserId = account.Id;
-            _refreshTokenRepository.Add(newRefreshToken);
+            await _refreshTokenRepository.AddAsync(newRefreshToken);
 
-            RemoveOldRefreshTokens(account.RefreshTokens);
+            await RemoveOldRefreshTokens(account.RefreshTokens);
 
             try
             {
                 var roles = await _userManager.GetRolesAsync(account);
                 var jwtToken = await GenerateJwtToken(account, roles, 48);
                 var response = _mapper.UserToLoginResponseDto(account);
-                response.Token = token;
+                response.Token = jwtToken;
                 response.RefreshToken = newRefreshToken.Token;
                 response.Role = roles;
                 return response;
