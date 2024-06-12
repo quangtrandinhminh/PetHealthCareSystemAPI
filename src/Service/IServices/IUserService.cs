@@ -5,6 +5,6 @@ namespace Service.IServices;
 
 public interface IUserService
 {
-    Task<VetResponseDto> CreateVet(VetRequestDto dto);
+    Task CreateVet(VetRequestDto dto);
     Task<IList<UserResponseDto>> GetVets();
 }
