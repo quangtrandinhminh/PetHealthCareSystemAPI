@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using BusinessObject.DTO;
+using BusinessObject.DTO.Vet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.IServices;
+using Service.Services;
+using Utility.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,8 +39,11 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // POST api/<VetController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("CreateVet")]
+        public async Task<IActionResult> PostAsync([FromBody] VetRequestDto dto)
         {
+            await _userService.CreateVet(dto);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
         // PUT api/<VetController>/5
