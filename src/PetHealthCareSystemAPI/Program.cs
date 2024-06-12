@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PetHealthCareSystemAPI.Middlewares;
 using Repository;
@@ -142,6 +141,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IService, ServiceService>();
 builder.Services.AddScoped<IPetService, PetService>();
 
 
