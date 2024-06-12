@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObject.DTO;
+using BusinessObject.DTO.Pet;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PetHealthCareSystemAPI.Extensions;
+using Service.IServices;
+using Utility.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,11 +14,23 @@ namespace PetHealthCareSystemAPI.Controllers
     [ApiController]
     public class PetController : ControllerBase
     {
-        // GET: api/<PetController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IPetService _petService;
+
+        public PetController(IPetService petService)
         {
-            return new string[] { "value1", "value2" };
+            _petService = petService;
+        }
+
+        // GET: api/<PetController>
+        [Authorize(Roles = "Customer")]
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var id = User.GetUserId();
+
+            var list = await _petService.GetAllPetsForCustomerAsync(id);
+
+            return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
 
         // GET api/<PetController>/5
@@ -24,8 +42,15 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // POST api/<PetController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Post([FromBody] PetRequestDto dto)
         {
+            var id = User.GetUserId();
+
+            dto.OwnerID = id;
+            await _petService.CreatePetAsync(dto);
+
+            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
 
         // PUT api/<PetController>/5

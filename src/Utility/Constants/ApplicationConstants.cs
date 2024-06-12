@@ -51,6 +51,7 @@ namespace Utility.Constants
         public const string NAME_REQUIRED = "Ten khong duoc de trong.";
         public const string USERCODE_REQUIRED = "Ma nguoi dung khong duoc de trong.";
         public const string PASSWORD_REQUIRED = "Mat khau khong duoc de trong.";
+        public const string PASSSWORD_LENGTH = "Mat khau phai co it nhat 8 ky tu.";
         public const string CONFIRM_PASSWORD_REQUIRED = "Xac nhan mat khau khong duoc de trong.";
         public const string EMAIL_REQUIRED = "Email khong duoc de trong.";
         public const string PHONENUMBER_REQUIRED = "So dien thoai khong duoc de trong.";
@@ -92,11 +93,12 @@ namespace Utility.Constants
 
     public class ReponseMessageConstantsPet
     {
-        public const string PET_NOT_FOUND = "Khong tim thay pet";
-        public const string PET_EXISTED = "Pet da ton tai";
-        public const string ADD_PET_SUCCESS = "Them pet thanh cong";
-        public const string UPDATE_PET_SUCCESS = "Cap nhat pet thanh cong";
-        public const string DELETE_PET_SUCCESS = "Xoa pet thanh cong";
+        public const string PET_NOT_FOUND = "Không tìm thấy thú cưng";
+        public const string PET_EXISTED = "Thú cưng đã tồn tại";
+        public const string ADD_PET_SUCCESS = "Thêm thú cưng thành công";
+        public const string UPDATE_PET_SUCCESS = "Cập nhật thú cưng thành công";
+        public const string DELETE_PET_SUCCESS = "Xóa thú cưng thành công";
+        public const string OWNER_NOT_FOUND = "Không tìm thấy chủ thú cưng";
     }
 
     public class ReponseMessageConstantsService
