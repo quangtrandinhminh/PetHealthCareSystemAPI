@@ -44,7 +44,7 @@ namespace Service.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
 
         public async Task Register(RegisterDto dto)
-        {
+        { 
             _logger.Information("Register new user: {@dto}", dto);
             // get user by name
             var validateUser = await _userManager.FindByNameAsync(dto.UserName);
