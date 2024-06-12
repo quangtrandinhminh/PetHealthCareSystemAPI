@@ -61,6 +61,10 @@ var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
 
+var mailSettingModel = new MailSettingModel();
+builder.Configuration.GetSection("MailSetting").Bind(mailSettingModel);
+MailSettingModel.Instance = mailSettingModel;
+
 // Add Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -133,6 +137,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();
