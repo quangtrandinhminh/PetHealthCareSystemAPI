@@ -19,6 +19,7 @@ public partial class MapperlyMapper
 
     // user
     public partial UserEntity Map(RegisterDto request);
+    public partial UserEntity Map(VetRequestDto request);
     public partial LoginResponseDto UserToLoginResponseDto(UserEntity entity);
     public partial UserResponseDto UserToUserResponseDto(UserEntity entity);
     public partial IList<UserResponseDto> Map(IList<UserEntity> entity);
@@ -33,6 +34,7 @@ public partial class MapperlyMapper
 
     // service
     public partial Service Map(ServiceRequestDto request);
+    public partial Service Map(ServiceResponseDto request);
     public partial ServiceResponseDto Map(Service entity);
     public partial IList<ServiceResponseDto> Map(IList<Service> entity);
     public partial void Map(ServiceRequestDto request, Service entity);
