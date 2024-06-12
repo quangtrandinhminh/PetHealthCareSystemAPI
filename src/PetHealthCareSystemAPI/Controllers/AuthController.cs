@@ -21,7 +21,7 @@ namespace PetHealthCareSystemAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -103,6 +103,13 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             await _authService.ReSendEmail(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESEND_EMAIL_SUCCESS));
+        }
+
+        [HttpGet("test-author")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult TestAuthorize()
+        {
+            return Ok();
         }
     }
 }

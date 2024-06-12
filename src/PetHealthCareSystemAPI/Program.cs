@@ -21,6 +21,7 @@ using BusinessObject.Mapper;
 using DataAccessLayer;
 using Repository.Base;
 using Repository.Interfaces;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyOrigin();
             //.AllowCredentials();
-                                      
+
         });
 });
 
@@ -104,19 +105,24 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     options.UseSecurityTokenValidators = true;
     options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
 });
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
-    });*/
+    });
 
 // Add Authorization
 builder.Services.AddAuthorization(cfg =>
 {
-    cfg.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    cfg.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    cfg.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -127,12 +133,17 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Add DI
 builder.Services.AddScoped<MapperlyMapper>();
+// Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPetRepository, PetRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+// Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPetService, PetService>();
+
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();
