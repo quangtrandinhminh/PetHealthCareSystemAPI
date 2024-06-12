@@ -66,7 +66,8 @@ namespace PetHealthCareSystemAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] PetUpdateRequestDto dto)
         {
-            _petService.UpdatePetAsync(dto);
+            // _petService.UpdatePetAsync(dto);
+            return NotFound();
         }
 
         // DELETE api/<PetController>/5

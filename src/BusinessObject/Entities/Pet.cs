@@ -12,9 +12,10 @@ public class Pet : BaseEntity
     public string? Breed { get; set; }
     public DateTimeOffset DateOfBirth { get; set; }
     public bool IsNeutered { get; set; }
+    public string? Gender { get; set; }
 
     public int OwnerID { get; set; }
-    [ForeignKey(nameof(OwnerID))] 
+    [ForeignKey(nameof(OwnerID))]
     public virtual UserEntity Owner { get; set; }
 
     public virtual ICollection<AppointmentPet> AppointmentPets { get; set; }
