@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObject.DTO;
+using BusinessObject.DTO.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Service.IServices;
 using Service.Services;
+using Utility.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,9 +23,12 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // GET: api/<ServiceController>
         [HttpGet]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _iservice.GetAllServices());
+            var list = await _iservice.GetAllService();
+
+            return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
 
         // GET api/<ServiceController>/5
@@ -33,8 +40,11 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // POST api/<ServiceController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<OkObjectResult> PostAsync([FromBody] ServiceResponseDto dto)
         {
+            await _iservice.CreateServiceAsync(dto);
+
+            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
 
         // PUT api/<ServiceController>/5
