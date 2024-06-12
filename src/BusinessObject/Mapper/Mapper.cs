@@ -27,6 +27,7 @@ public partial class MapperlyMapper
     // pet 
     public partial Pet Map(PetRequestDto request);
     public partial PetResponseDto Map(Pet entity);
+    public partial Pet Map(PetUpdateRequestDto request);
     public partial IList<PetResponseDto> Map(IList<Pet> entity);
     public partial void Map(PetRequestDto request, Pet entity);
 
