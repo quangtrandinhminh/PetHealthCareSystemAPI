@@ -92,11 +92,12 @@ namespace Utility.Constants
 
     public class ReponseMessageConstantsPet
     {
-        public const string PET_NOT_FOUND = "Khong tim thay pet";
-        public const string PET_EXISTED = "Pet da ton tai";
-        public const string ADD_PET_SUCCESS = "Them pet thanh cong";
-        public const string UPDATE_PET_SUCCESS = "Cap nhat pet thanh cong";
-        public const string DELETE_PET_SUCCESS = "Xoa pet thanh cong";
+        public const string PET_NOT_FOUND = "Không tìm thấy thú cưng";
+        public const string PET_EXISTED = "Thú cưng đã tồn tại";
+        public const string ADD_PET_SUCCESS = "Thêm thú cưng thành công";
+        public const string UPDATE_PET_SUCCESS = "Cập nhật thú cưng thành công";
+        public const string DELETE_PET_SUCCESS = "Xóa thú cưng thành công";
+        public const string OWNER_NOT_FOUND = "Không tìm thấy chủ thú cưng";
     }
 
     public class ReponseMessageConstantsService
