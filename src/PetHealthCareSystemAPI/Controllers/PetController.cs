@@ -33,8 +33,8 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
 
-        [Authorize(Roles = "Customer")]
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
             var petId = User.GetUserId();
@@ -64,16 +64,22 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // PUT api/<PetController>/5
         [HttpPut]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Put([FromBody] PetUpdateRequestDto dto)
-        {
-            // _petService.UpdatePetAsync(dto);
-            return NotFound();
+        { 
+            await _petService.UpdatePetAsync(dto);
+
+            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.UPDATE_PET_SUCCESS));
         }
 
         // DELETE api/<PetController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Delete(int id)
         {
+            await _petService.DeletePetAsync(id);
+
+            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.DELETE_PET_SUCCESS));
         }
     }
 }
