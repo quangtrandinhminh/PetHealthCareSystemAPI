@@ -22,6 +22,9 @@ public class PetUpdateRequestDto
     [MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
     public string? Breed { get; set; }
 
+    [Required(ErrorMessage = "Phải chọn giới tính")]
+    public string? Gender { get; set; }
+
     [Required]
     public DateTimeOffset DateOfBirth { get; set; }
 

@@ -27,7 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Add CORS policy
-const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string myAllowSpecificOrigins = "http://localhost:5173";
 builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
 builder.Services.AddCors(options =>
 {
@@ -148,6 +148,8 @@ builder.Services.AddScoped<IPetService, PetService>();
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseCors(myAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
