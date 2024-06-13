@@ -27,6 +27,4 @@ public class PetRequestDto
 
     [Required]
     public bool IsNeutered { get; set; }
-
-    public int OwnerID { get; set; }
 }
