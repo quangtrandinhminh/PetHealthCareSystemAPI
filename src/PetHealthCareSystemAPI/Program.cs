@@ -61,6 +61,10 @@ var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
 
+var vnPaySetting = new VnPaySetting();
+builder.Configuration.GetSection("VnPaySetting").Bind(vnPaySetting);
+VnPaySetting.Instance = vnPaySetting;
+
 // Add Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<AppDbContext>()
