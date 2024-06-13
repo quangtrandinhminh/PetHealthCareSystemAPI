@@ -24,7 +24,8 @@ namespace PetHealthCareSystemAPI.Controllers
         // GET: api/<PetController>
         [Authorize(Roles = "Customer")]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [Route("GetAllPetsForCustomer")]
+        public async Task<IActionResult> GetAllPetsForCustomer()
         {
             var id = User.GetUserId();
 
@@ -33,9 +34,10 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> Get([FromRoute] int id)
+        [Route("GetPetForCustomer/{id:int}")]
+        public async Task<IActionResult> GetPetForCustomer([FromRoute] int id)
         {
             var petId = User.GetUserId();
 
@@ -52,30 +54,32 @@ namespace PetHealthCareSystemAPI.Controllers
         // POST api/<PetController>
         [HttpPost]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> Post([FromBody] PetRequestDto dto)
+        [Route("AddPet")]
+        public async Task<IActionResult> AddPet([FromBody] PetRequestDto dto)
         {
             var id = User.GetUserId();
 
-            dto.OwnerID = id;
-            await _petService.CreatePetAsync(dto);
+            await _petService.CreatePetAsync(dto, id);
 
             return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
 
         // PUT api/<PetController>/5
         [HttpPut]
+        [Route("UpdatePet")]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> Put([FromBody] PetUpdateRequestDto dto)
-        { 
+        public async Task<IActionResult> UpdatePet([FromBody] PetUpdateRequestDto dto)
+        {
             await _petService.UpdatePetAsync(dto);
 
             return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.UPDATE_PET_SUCCESS));
         }
 
         // DELETE api/<PetController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> Delete(int id)
+        [Route("RemovePet/{id:int}")]
+        public async Task<IActionResult> RemovePet(int id)
         {
             await _petService.DeletePetAsync(id);
 
