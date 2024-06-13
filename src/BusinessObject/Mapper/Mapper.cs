@@ -1,4 +1,5 @@
 ﻿using BusinessObject.DTO.MedicalItem;
+using System.Globalization;
 using BusinessObject.DTO.Pet;
 using BusinessObject.DTO.Service;
 using BusinessObject.DTO.TimeTable;
@@ -28,9 +29,27 @@ public partial class MapperlyMapper
 
     // pet 
     public partial Pet Map(PetRequestDto request);
-    public partial PetResponseDto Map(Pet entity);
+    // Custom mapping method for Pet to PetResponseDto with date formatting
+    public PetResponseDto Map(Pet entity)
+    {
+        var response = new PetResponseDto
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Species = entity.Species,
+            Breed = entity.Breed,
+            Gender = entity.Gender,
+            DateOfBirth = entity.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+            IsNeutered = entity.IsNeutered
+        };
+        return response;
+    }
+    // Custom mapping method for IList<Pet> to IList<PetResponseDto> with date formatting
+    public IList<PetResponseDto> Map(IList<Pet> entities)
+    {
+        return entities.Select(Map).ToList();
+    }
     public partial Pet Map(PetUpdateRequestDto request);
-    public partial IList<PetResponseDto> Map(IList<Pet> entity);
     public partial void Map(PetRequestDto request, Pet entity);
 
     // service

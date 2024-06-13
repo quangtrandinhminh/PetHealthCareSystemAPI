@@ -29,9 +29,9 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
         return listDto.ToList();
     }
 
-    public async Task CreatePetAsync(PetRequestDto pet)
+    public async Task CreatePetAsync(PetRequestDto pet, int ownerId)
     {
-        var user = await _userManager.FindByIdAsync(pet.OwnerID.ToString());
+        var user = await _userManager.FindByIdAsync(ownerId.ToString());
 
         if (user == null)
         {
@@ -39,7 +39,10 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
                 StatusCodes.Status400BadRequest);
         }
 
-        await _petRepo.CreatePetAsync(_mapper.Map(pet));
+        var createPet = _mapper.Map(pet);
+        createPet.OwnerID = ownerId;
+
+        await _petRepo.CreatePetAsync(createPet);
     }
 
     public async Task UpdatePetAsync(PetUpdateRequestDto pet)
