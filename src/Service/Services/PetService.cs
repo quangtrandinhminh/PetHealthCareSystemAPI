@@ -52,7 +52,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         var existPet = findPet.FirstOrDefault();
 
-        if (existPet == null)
+        if (existPet == null || existPet.DeletedBy != null)
         {
             throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.PET_NOT_FOUND,
                 StatusCodes.Status400BadRequest);
@@ -84,7 +84,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         var existPet = findPet.FirstOrDefault();
 
-        if (existPet == null)
+        if (existPet == null || existPet.DeletedBy != null)
         {
             throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.PET_NOT_FOUND,
                 StatusCodes.Status400BadRequest);
