@@ -138,11 +138,13 @@ builder.Services.AddScoped<IPetRepository, PetRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IMedicalItemRepository, MedicalItemRepository>();
 // Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IService, ServiceService>();
 builder.Services.AddScoped<IPetService, PetService>();
+builder.Services.AddScoped<IMedicalItemService, MedicalItemService>();
 
 
 //-----------------------------------------------------------------------------------------------
