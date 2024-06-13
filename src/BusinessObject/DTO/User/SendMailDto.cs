@@ -1,7 +1,11 @@
-﻿namespace BusinessObject.DTO.User;
+﻿using Utility.Enum;
+
+namespace BusinessObject.DTO.User;
 
 public class SendMailDto
 {
-    public string ReceiveAddress { get; set; }
-    public string Content { get; set; }
+    public string Name { get; set; }
+    public string Token { get; set; }
+    public MailType Type { get; set; }
+    public string Email { get; set; }
 }

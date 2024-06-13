@@ -4,5 +4,5 @@ namespace Service.IServices;
 
 public interface IEmailService
 {
-    Task SendMailAsync(SendMailDto model);
+    void SendMail(SendMailDto model);
 }

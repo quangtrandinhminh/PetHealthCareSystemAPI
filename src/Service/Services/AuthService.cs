@@ -42,6 +42,7 @@ namespace Service.Services
         private readonly ILogger _logger = Log.Logger;
         private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
+        private readonly IEmailService _emailService = serviceProvider.GetRequiredService<IEmailService>();
 
         public async Task Register(RegisterDto dto)
         {
@@ -75,11 +76,11 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
             }
 
+            var account = _mapper.Map(dto);
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            account.SecurityStamp = Guid.NewGuid().ToString();
             try
             {
-                var account = _mapper.Map(dto);
-                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-                account.SecurityStamp = Guid.NewGuid().ToString();
                 await _userRepository.CreateAsync(account);
                 await _userManager.AddToRoleAsync(account, "Customer");
             }
@@ -88,8 +89,15 @@ namespace Service.Services
                 throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
             }
 
-
-            // send sms to phone number here
+            // send email to verify
+            var mailRequest = new SendMailDto()
+            {
+                Name = account.NormalizedUserName,
+                Email = account.Email,
+                Token = account.OTP,
+                Type = MailType.Verify
+            };
+            _emailService.SendMail(mailRequest);
         }
 
         public async Task<LoginResponseDto> Authenticate(LoginDto dto)
@@ -222,17 +230,17 @@ namespace Service.Services
             if (account == null) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status400BadRequest);
             if (account.OTP == null) throw new AppException(ErrorCode.Validated, ReponseMessageIdentity.EMAIL_VALIDATE, StatusCodes.Status400BadRequest);
 
-            /*account.OTP = StringHelper.Generate(6, false, false, true, false);
+            //account.OTP = StringHelper.Generate(6, false, false, true, false);
             await _userRepository.UpdateAsync(account);
 
-            var mailRequest = new SendMailModel
+            var mailRequest = new SendMailDto()
             {
                 Name = account.NormalizedUserName,
                 Email = account.Email,
-                Token = account.VerificationToken,
-                Type = MailTypeEnum.Verify
+                Token = account.OTP,
+                Type = MailType.Verify
             };
-            _emailService.SendMail(mailRequest);*/
+            _emailService.SendMail(mailRequest);
         }
 
         private async Task<string> GenerateJwtToken(UserEntity loggedUser, IList<string> roles, int hour)
