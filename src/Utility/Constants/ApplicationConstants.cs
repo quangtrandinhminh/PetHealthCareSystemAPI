@@ -59,7 +59,7 @@ namespace Utility.Constants
         public const string PHONENUMBER_LENGTH = "So dien thoai phai co chinh xac 10 so.";
         public const string PHONGBANID_REQUIRED = "Phong ban khong duoc de trong.";
         public const string NHAMAYIDS_REQUIRED = "Nha may khong duoc de trong.";
-        public const string ROLEIDS_REQUIRED = "Role khong duoc de trong.";
+        public const string ROLES_REQUIRED = "Role khong duoc de trong.";
 
     }
 

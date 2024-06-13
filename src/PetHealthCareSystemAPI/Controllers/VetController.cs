@@ -27,7 +27,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("list")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _userService.GetVets());
+            return Ok(await _userService.GetVetsAsync());
         }
 
         // GET api/<VetController>/5
@@ -39,10 +39,10 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // POST api/<VetController>
         [HttpPost]
-        [Route("CreateVet")]
+        [Route("CreateVetAsync")]
         public async Task<IActionResult> PostAsync([FromBody] VetRequestDto dto)
         {
-            await _userService.CreateVet(dto);
+            await _userService.CreateVetAsync(dto);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 

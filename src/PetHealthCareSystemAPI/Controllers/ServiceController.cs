@@ -24,10 +24,10 @@ namespace PetHealthCareSystemAPI.Controllers
         // GET: api/<ServiceController>
         [HttpGet]
         [Authorize(Roles = "Customer")]
-        [Route("GetAllService")]
+        [Route("GetAllServiceAsync")]
         public async Task<IActionResult> Get()
         {
-            var list = await _iservice.GetAllService();
+            var list = await _iservice.GetAllServiceAsync();
 
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
