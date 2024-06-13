@@ -111,5 +111,14 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             return Ok();
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("StaffRegister")]
+        public async Task<IActionResult> StaffRegister([FromBody] RegisterDto request)
+        {
+            await _authService.StaffRegistor(request);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+        }
     }
 }
