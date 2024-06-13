@@ -70,6 +70,7 @@ namespace PetHealthCareSystemAPI.Controllers
             Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
 
+        [AllowAnonymous]
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail(VerifyEmailDto request)
         {
@@ -98,6 +99,7 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.RESET_PASSWORD_SUCCESS));
         }
 
+        [AllowAnonymous]
         [HttpPost("resend-email")]
         public async Task<IActionResult> ResendEmail(ResendEmailDto request)
         {

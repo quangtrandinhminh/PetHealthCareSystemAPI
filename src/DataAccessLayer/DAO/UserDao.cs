@@ -53,6 +53,7 @@ namespace DataAccessLayer.DAO
 
         public static IQueryable<UserEntity> Get(Expression<Func<UserEntity, bool>>? predicate = null, params Expression<Func<UserEntity, object>>[] includeProperties)
         {
+            _context.ChangeTracker.Clear();
             IQueryable<UserEntity> reault = _context.Users.AsNoTracking();
             if (predicate != null)
             {

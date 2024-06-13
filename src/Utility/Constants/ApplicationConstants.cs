@@ -39,7 +39,8 @@ namespace Utility.Constants
         public const string EXISTED_EMAIL = "Email da ton tai.";
         public const string EXISTED_PHONE = "So dien thoai da ton tai.";
         public const string TOKEN_INVALID = "token khong xac thuc.";
-        public const string TOKEN_EXPIRED = "token khong xac thuc hoac da het han.";
+        public const string TOKEN_EXPIRED = "token da het han.";
+        public const string TOKEN_NOT_EXPIRED = "Vui long kiem tra otp trong email cua ban";
         public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
         public const string EMAIL_VALIDATE = "Email da duoc xac thuc.";
         public const string PHONE_VALIDATE = "Phone number is validated.";
@@ -60,7 +61,7 @@ namespace Utility.Constants
         public const string PHONGBANID_REQUIRED = "Phong ban khong duoc de trong.";
         public const string NHAMAYIDS_REQUIRED = "Nha may khong duoc de trong.";
         public const string ROLEIDS_REQUIRED = "Role khong duoc de trong.";
-
+        public const string VALIDATE_REQUIRED = "Vui long xac thuc email";
     }
 
     public class ResponseMessageIdentitySuccess

@@ -49,7 +49,7 @@ namespace Service.Services
                 };
                 mailmsg.To.Add(model.Email);
 
-                mailmsg.Body = $"OTP: {model.Token}";
+                mailmsg.Body = $"OTP: {model.Token} will be expired at {model.Expired}";
 
                 SmtpClient smtp = new SmtpClient();
 
@@ -83,7 +83,7 @@ namespace Service.Services
                 };
                 mailmsg.To.Add(model.Email);
 
-                mailmsg.Body = $"OTP reset: {model.Token}";
+                mailmsg.Body = $"OTP reset: {model.Token} will be expired at {model.Expired}";
 
                 SmtpClient smtp = new SmtpClient();
 

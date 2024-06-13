@@ -79,25 +79,27 @@ namespace Service.Services
             var account = _mapper.Map(dto);
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             account.SecurityStamp = Guid.NewGuid().ToString();
+            (account.OTP, account.OTPExpired) = GenerateOtpAsync(6, 5);
             try
             {
                 await _userRepository.CreateAsync(account);
                 await _userManager.AddToRoleAsync(account, "Customer");
+
+                // send email to verify
+                var mailRequest = new SendMailDto()
+                {
+                    Name = account.UserName,
+                    Email = account.Email,
+                    Token = account.OTP,
+                    Expired = account.OTPExpired.ToString(),
+                    Type = MailType.Verify
+                };
+                _emailService.SendMail(mailRequest);
             }
             catch (Exception e)
             {
                 throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
             }
-
-            // send email to verify
-            var mailRequest = new SendMailDto()
-            {
-                Name = account.NormalizedUserName,
-                Email = account.Email,
-                Token = account.OTP,
-                Type = MailType.Verify
-            };
-            _emailService.SendMail(mailRequest);
         }
 
         public async Task<LoginResponseDto> Authenticate(LoginDto dto)
@@ -111,6 +113,9 @@ namespace Service.Services
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, account.PasswordHash))
                 throw new AppException(ErrorCode.UserPasswordWrong, ReponseMessageIdentity.PASSWORD_WRONG, StatusCodes.Status401Unauthorized);
 
+            if (!account.Verified.HasValue)
+                throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.VALIDATE_REQUIRED, StatusCodes.Status401Unauthorized);
+            
             try
             {
                 var roles = await _userManager.GetRolesAsync(account);
@@ -164,9 +169,20 @@ namespace Service.Services
             if (account == null || account.OTP != dto.Token)
                 throw new AppException(ErrorCode.TokenInvalid, ReponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
 
-            account.Verified = CoreHelper.SystemTimeNow;
-            account.OTP = null;
-            await _userRepository.UpdateAsync(account);
+            if (account.OTPExpired < CoreHelper.SystemTimeNow)
+                throw new AppException(ErrorCode.TokenExpired, ReponseMessageIdentity.TOKEN_EXPIRED, StatusCodes.Status401Unauthorized);
+
+            try
+            {
+                account.Verified = CoreHelper.SystemTimeNow;
+                account.OTP = null;
+                account.OTPExpired = null;
+                await _userRepository.UpdateAsync(account);
+            }
+            catch (Exception e)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
+            }
         }
 
         public async Task ForgotPassword(ForgotPasswordDto model)
@@ -229,15 +245,17 @@ namespace Service.Services
             var account = await GetUserByUserName(model.UserName);
             if (account == null) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status400BadRequest);
             if (account.OTP == null) throw new AppException(ErrorCode.Validated, ReponseMessageIdentity.EMAIL_VALIDATE, StatusCodes.Status400BadRequest);
+            if (account.OTPExpired > CoreHelper.SystemTimeNow) throw new AppException(ErrorCode.UnAuthenticated, ReponseMessageIdentity.TOKEN_NOT_EXPIRED, StatusCodes.Status400BadRequest);
 
-            //account.OTP = StringHelper.Generate(6, false, false, true, false);
+            (account.OTP, account.OTPExpired) = GenerateOtpAsync(6, 5);
             await _userRepository.UpdateAsync(account);
 
             var mailRequest = new SendMailDto()
             {
-                Name = account.NormalizedUserName,
+                Name = account.UserName,
                 Email = account.Email,
                 Token = account.OTP,
+                Expired = account.OTPExpired.ToString(),
                 Type = MailType.Verify
             };
             _emailService.SendMail(mailRequest);
@@ -317,9 +335,10 @@ namespace Service.Services
             return (refreshToken, account);
         }
 
-        private async Task<UserEntity?> GetUserByUserName(string userName, CancellationToken cancellationToken = default)
+        private async Task<UserEntity?> GetUserByUserName(string userName)
         {
-            var user = await _userRepository.GetSingleAsync(_ => _.UserName == userName, x => x.RefreshTokens);
+            var user = await _userRepository.GetSingleAsync(_ => _.UserName == userName, 
+                x => x.RefreshTokens);
 
             if (user != null && user.DeletedTime != null)
             {
@@ -339,6 +358,16 @@ namespace Service.Services
             }
 
             return user;
+        }
+
+        private (string, DateTimeOffset) GenerateOtpAsync(int length, int minutes)
+        {
+            // Generate OTP
+            var otp = new Random().Next((int)Math.Pow(10, length - 1), (int)Math.Pow(10, length) - 1).ToString();
+
+            // Calculate OTP expiration time
+            var otpExpire = CoreHelper.SystemTimeNow.AddMinutes(minutes);
+            return (otp, otpExpire);
         }
     }
 }
