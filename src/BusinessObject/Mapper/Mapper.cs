@@ -3,6 +3,7 @@ using System.Globalization;
 using BusinessObject.DTO.Pet;
 using BusinessObject.DTO.Service;
 using BusinessObject.DTO.TimeTable;
+using BusinessObject.DTO.Transaction;
 using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
 using BusinessObject.Entities;
@@ -69,4 +70,11 @@ public partial class MapperlyMapper
     public partial MedicalResponseDto Map(MedicalItem entity);
     public partial IList<MedicalResponseDto> Map(IList<MedicalItem> entity);
     public partial void Map(ServiceRequestDto request, MedicalItem entity);
+
+    // transaction
+    //public partial Transaction Map(TransactionRequestDto request);
+    public partial Transaction Map(TransactionResponseDto request);
+    public partial TransactionResponseDto Map(Transaction entity);
+    public partial IList<TransactionResponseDto> Map(IList<Transaction> entity);
+    //public partial void Map(TransactionRequestDto request, Transaction entity);
 }

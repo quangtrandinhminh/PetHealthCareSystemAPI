@@ -158,3 +158,20 @@ VALUES
 (N'Pneumonitis Vaccine', N'Vắc-xin phòng bệnh viêm phổi ở mèo', 35, 160, 2, 2, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 0, N'Vắc-xin hàng năm');
 GO
 
+-- Insert sample data into Transaction table
+INSERT INTO [Transaction] (CustomerId, Total, Status, CreatedTime, LastUpdatedTime)
+VALUES 
+    (1, 1000.00, 1, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET()),
+    (2, 1500.00, 2, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET());
+
+-- Insert sample data into TransactionDetail table
+INSERT INTO TransactionDetail (TransactionId, ServiceId, Quantity, SubTotal)
+VALUES 
+    (1, 1, 2, 400.00),
+    (2, 2, 1, 500.00);
+
+INSERT INTO TransactionDetail (TransactionId, MedicalItemId, Quantity, SubTotal)
+VALUES 
+    (1, 1, 5, 100.00),
+    (2, 2, 3, 90.00);
+

@@ -61,7 +61,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
             await _petService.CreatePetAsync(dto, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.ADD_PET_SUCCESS));
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
 
         // PUT api/<PetController>/5
@@ -74,7 +74,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
             await _petService.UpdatePetAsync(dto, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.UPDATE_PET_SUCCESS));
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS));
         }
 
         // DELETE api/<PetController>/5
@@ -87,7 +87,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
             await _petService.DeletePetAsync(id, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.DELETE_PET_SUCCESS));
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.DELETE_PET_SUCCESS));
         }
     }
 }

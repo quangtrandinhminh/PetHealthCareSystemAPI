@@ -91,7 +91,7 @@ namespace Utility.Constants
         public const string DELETE_VET_SUCCESS = "Xoa bac si thanh cong";
     }
 
-    public class ReponseMessageConstantsPet
+    public class ResponseMessageConstantsPet
     {
         public const string PET_NOT_FOUND = "Không tìm thấy thú cưng";
         public const string PET_EXISTED = "Thú cưng đã tồn tại";
@@ -102,12 +102,21 @@ namespace Utility.Constants
         public const string NOT_YOUR_PET = "Thú cưng không phải là của bạn";
     }
 
-    public class ReponseMessageConstantsService
+    public class ResponseMessageConstantsService
     {
         public const string SERVICE_NOT_FOUND = "Khong tim thay dich vu";
         public const string SERVICE_EXISTED = "Dich vu da ton tai";
         public const string ADD_SERVICE_SUCCESS = "Them dich vu thanh cong";
         public const string UPDATE_SERVICE_SUCCESS = "Cap nhat dich vu thanh cong";
         public const string DELETE_SERVICE_SUCCESS = "Xoa dich vu thanh cong";
+    }
+
+    public class ResponseMessageConstantsTransaction
+    {
+        public const string TRANSACTION_NOT_FOUND = "Khong tim thay giao dich";
+        public const string TRANSACTION_EXISTED = "Giao dich da ton tai";
+        public const string ADD_TRANSACTION_SUCCESS = "Them giao dich thanh cong";
+        public const string UPDATE_TRANSACTION_SUCCESS = "Cap nhat giao dich thanh cong";
+        public const string DELETE_TRANSACTION_SUCCESS = "Xoa giao dich thanh cong";
     }
 }

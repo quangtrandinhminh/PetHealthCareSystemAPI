@@ -43,7 +43,7 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             await _medicalItemRepo.CreateMedicalItem(dto);
 
-            return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.ADD_PET_SUCCESS));
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
 
         // PUT api/<ServiceController>/5
