@@ -9,7 +9,7 @@ namespace BusinessObject.Entities;
 public class Appointment : BaseEntity
 {
     public int TimeTableId { get; set; }
-    public DateTimeOffset AppointmentDateTime { get; set; }
+    public DateOnly AppointmentDate { get; set; }
     public string? Note { get; set; }
     public AppointmentStatus Status { get; set; }
     public AppointmentBookingType BookingType { get; set; }
