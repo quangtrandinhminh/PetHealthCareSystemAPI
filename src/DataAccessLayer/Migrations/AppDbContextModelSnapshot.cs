@@ -60,8 +60,8 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTimeOffset>("AppointmentDateTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateOnly>("AppointmentDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("BookingType")
                         .HasColumnType("int");
@@ -226,8 +226,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("Date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<int?>("DeletedBy")
                         .HasColumnType("int");
@@ -732,15 +732,14 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("DayOfWeeks")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("DeletedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<int?>("LastUpdatedBy")
                         .HasColumnType("int");
@@ -751,10 +750,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("TimeEnd")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly>("TimeStart")
+                    b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
 
                     b.HasKey("Id");

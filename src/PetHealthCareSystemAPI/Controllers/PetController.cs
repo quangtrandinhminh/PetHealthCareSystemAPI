@@ -27,9 +27,9 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("GetAllPetsForCustomer")]
         public async Task<IActionResult> GetAllPetsForCustomer()
         {
-            var id = User.GetUserId();
+            var ownerId = User.GetUserId();
 
-            var list = await _petService.GetAllPetsForCustomerAsync(id);
+            var list = await _petService.GetAllPetsForCustomerAsync(ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
@@ -39,9 +39,9 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("GetPetForCustomer/{id:int}")]
         public async Task<IActionResult> GetPetForCustomer([FromRoute] int id)
         {
-            var petId = User.GetUserId();
+            var ownerId = User.GetUserId();
 
-            var list = await _petService.GetAllPetsForCustomerAsync(petId);
+            var list = await _petService.GetAllPetsForCustomerAsync(ownerId);
 
             foreach (var pet in list)
             {
@@ -57,9 +57,9 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("AddPet")]
         public async Task<IActionResult> AddPet([FromBody] PetRequestDto dto)
         {
-            var id = User.GetUserId();
+            var ownerId = User.GetUserId();
 
-            await _petService.CreatePetAsync(dto, id);
+            await _petService.CreatePetAsync(dto, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
@@ -70,7 +70,9 @@ namespace PetHealthCareSystemAPI.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdatePet([FromBody] PetUpdateRequestDto dto)
         {
-            await _petService.UpdatePetAsync(dto);
+            var ownerId = User.GetUserId();
+
+            await _petService.UpdatePetAsync(dto, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.UPDATE_PET_SUCCESS));
         }
@@ -81,7 +83,9 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("RemovePet/{id:int}")]
         public async Task<IActionResult> RemovePet(int id)
         {
-            await _petService.DeletePetAsync(id);
+            var ownerId = User.GetUserId();
+
+            await _petService.DeletePetAsync(id, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ReponseMessageConstantsPet.DELETE_PET_SUCCESS));
         }

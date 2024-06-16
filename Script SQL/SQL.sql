@@ -2,6 +2,9 @@
 GO
 
 /* Insert Data to table Service */
+DELETE Service
+GO
+
 INSERT INTO [dbo].[Service] (Name, Description, Duration, Price, CreatedBy, LastUpdatedBy, DeletedBy, CreatedTime, LastUpdatedTime, DeletedTime)
 VALUES 
     (N'Kiểm soát bọ chét khi tắm (theo toa)', NULL, 30, 200000, NULL, NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), NULL),
@@ -23,6 +26,9 @@ VALUES
     (N'Chương trình chăm sóc sức khỏe', NULL, 1440, 10000000, NULL, NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), NULL);
 GO
 
+DELETE Cage
+GO
+
 /* Insert Data to table Cage */
 INSERT INTO [dbo].[Cage] ([Capacity], [Material], [Room], [Address], [Description], [Note], [CreatedBy], [LastUpdatedBy], [DeletedBy], [CreatedTime], [LastUpdatedTime], [DeletedTime], [IsAvailable])
 VALUES 
@@ -36,6 +42,9 @@ VALUES
     (2, 'Plastic', 108, '123 Pet St', 'Small plastic cage for reptiles', NULL, 1, 1, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), NULL, 1)
 GO
 
+DELETE TimeTable
+GO
+
 /* Insert Data to table TimeTable */
 -- Helper variables for times
 DECLARE @StartTime TIME = '08:00:00';
@@ -45,8 +54,8 @@ DECLARE @Interval INT = 30; -- interval in minutes
 -- Insert Book intervals for 08:00 to 12:00
 WHILE @StartTime < @EndTime
 BEGIN
-    INSERT INTO [dbo].[TimeTable] ([DayOfWeeks], [Note], [CreatedBy], [LastUpdatedBy], [DeletedBy], [CreatedTime], [LastUpdatedTime], [DeletedTime], [TimeStart], [TimeEnd])
-    VALUES ('Monday', 'Book', 1, 1, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), NULL, @StartTime, DATEADD(MINUTE, @Interval, @StartTime));
+    INSERT INTO [dbo].[TimeTable] ([Note], [CreatedTime], [LastUpdatedTime], [StartTime], [EndTime])
+    VALUES ('Book', SYSDATETIMEOFFSET(),  SYSDATETIMEOFFSET(), @StartTime, DATEADD(MINUTE, @Interval, @StartTime));
     
     SET @StartTime = DATEADD(MINUTE, @Interval, @StartTime);
 END
@@ -58,8 +67,8 @@ SET @EndTime = '17:00:00';
 -- Insert Book intervals for 13:00 to 17:00
 WHILE @StartTime < @EndTime
 BEGIN
-    INSERT INTO [dbo].[TimeTable] ([DayOfWeeks], [Note], [CreatedBy], [LastUpdatedBy], [DeletedBy], [CreatedTime], [LastUpdatedTime], [DeletedTime], [TimeStart], [TimeEnd])
-    VALUES ('Monday', 'Book', 1, 1, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), NULL, @StartTime, DATEADD(MINUTE, @Interval, @StartTime));
+    INSERT INTO [dbo].[TimeTable] ([Note], [CreatedTime], [LastUpdatedTime], [StartTime], [EndTime])
+    VALUES ('Book', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), @StartTime, DATEADD(MINUTE, @Interval, @StartTime));
     
     SET @StartTime = DATEADD(MINUTE, @Interval, @StartTime);
 END
@@ -79,8 +88,8 @@ FETCH NEXT FROM CheckCursor INTO @CheckStartTime, @CheckEndTime;
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-    INSERT INTO [dbo].[TimeTable] ([DayOfWeeks], [Note], [CreatedBy], [LastUpdatedBy], [DeletedBy], [CreatedTime], [LastUpdatedTime], [DeletedTime], [TimeStart], [TimeEnd])
-    VALUES ('Monday', 'Check', 1, 1, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), NULL, @CheckStartTime, @CheckEndTime);
+    INSERT INTO [dbo].[TimeTable] ([Note], [CreatedTime], [LastUpdatedTime], [StartTime], [EndTime])
+    VALUES ('Check', SYSDATETIMEOFFSET(),  SYSDATETIMEOFFSET(), @CheckStartTime, @CheckEndTime);
     
     FETCH NEXT FROM CheckCursor INTO @CheckStartTime, @CheckEndTime;
 END;
@@ -88,6 +97,9 @@ END;
 CLOSE CheckCursor;
 DEALLOCATE CheckCursor;
 
+
+DELETE MedicalItem
+GO
 
 /* Insert Data to table MedicalItem */
 -- Thuốc cho chó
