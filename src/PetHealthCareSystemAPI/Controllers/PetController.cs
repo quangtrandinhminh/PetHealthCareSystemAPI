@@ -41,7 +41,7 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             var ownerId = User.GetUserId();
 
-            var pet = _petService.GetPetForCustomerAsync(ownerId, id);
+            var pet = await _petService.GetPetForCustomerAsync(ownerId, id);
 
             if (pet != null)
             {
