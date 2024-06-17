@@ -1,4 +1,8 @@
-﻿namespace Service.IServices;
+﻿using BusinessObject.DTO.TimeTable;
+using BusinessObject.DTO.User;
+using BusinessObject.DTO.Vet;
+
+namespace Service.IServices;
 
 public interface IAppointmentService
 {
@@ -6,4 +10,6 @@ public interface IAppointmentService
     Task CreateAppointmentAsync(AppointmentRequestDto appointment);
     Task UpdateAppointmentAsync(AppointmentUpdateRequestDto appointment);
     Task DeleteAppointmentAsync(int id);*/
+    Task<List<TimeTableResponseDto>> GetAllTimeFramesForBookingAsync();
+    Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDate(DateOnly date, int timetableId);
 }

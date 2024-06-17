@@ -39,7 +39,7 @@ public partial class MapperlyMapper
             Species = entity.Species,
             Breed = entity.Breed,
             Gender = entity.Gender,
-            DateOfBirth = entity.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+            DateOfBirth = entity.DateOfBirth,
             IsNeutered = entity.IsNeutered
         };
         return response;
