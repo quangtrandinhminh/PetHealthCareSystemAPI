@@ -33,7 +33,9 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
     {
         var list = await _petRepo.GetAllPetsByCustomerIdAsync(ownerId);
 
-        return _mapper.Map(list.Where(e => e.Id == petId).FirstOrDefault());
+        var pet = list.Where(e => e.Id == petId).FirstOrDefault();
+
+        return _mapper.Map(pet);
     }
 
     public async Task CreatePetAsync(PetRequestDto pet, int ownerId)

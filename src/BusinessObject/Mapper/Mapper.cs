@@ -30,25 +30,8 @@ public partial class MapperlyMapper
     // pet 
     public partial Pet Map(PetRequestDto request);
     // Custom mapping method for Pet to PetResponseDto with date formatting
-    public PetResponseDto Map(Pet entity)
-    {
-        var response = new PetResponseDto
-        {
-            Id = entity.Id,
-            Name = entity.Name,
-            Species = entity.Species,
-            Breed = entity.Breed,
-            Gender = entity.Gender,
-            DateOfBirth = entity.DateOfBirth,
-            IsNeutered = entity.IsNeutered
-        };
-        return response;
-    }
-    // Custom mapping method for IList<Pet> to IList<PetResponseDto> with date formatting
-    public IList<PetResponseDto> Map(IList<Pet> entities)
-    {
-        return entities.Select(Map).ToList();
-    }
+    public partial PetResponseDto Map(Pet entity);
+    public partial IList<PetResponseDto> Map(IList<Pet> entities);
     public partial Pet Map(PetUpdateRequestDto request);
     public partial void Map(PetRequestDto request, Pet entity);
 
