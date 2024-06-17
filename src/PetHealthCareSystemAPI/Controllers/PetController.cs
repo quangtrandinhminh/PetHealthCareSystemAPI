@@ -24,7 +24,7 @@ namespace PetHealthCareSystemAPI.Controllers
         // GET: api/<PetController>
         [Authorize(Roles = "Customer")]
         [HttpGet]
-        [Route("GetAllPetsForCustomer")]
+        [Route("get-all-for-customer")]
         public async Task<IActionResult> GetAllPetsForCustomer()
         {
             var ownerId = User.GetUserId();
@@ -36,7 +36,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Customer")]
-        [Route("GetPetForCustomer/{id:int}")]
+        [Route("get-for-customer/{id:int}")]
         public async Task<IActionResult> GetPetForCustomer([FromRoute] int id)
         {
             var ownerId = User.GetUserId();
@@ -54,7 +54,7 @@ namespace PetHealthCareSystemAPI.Controllers
         // POST api/<PetController>
         [HttpPost]
         [Authorize(Roles = "Customer")]
-        [Route("AddPet")]
+        [Route("add")]
         public async Task<IActionResult> AddPet([FromBody] PetRequestDto dto)
         {
             var ownerId = User.GetUserId();
@@ -66,7 +66,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // PUT api/<PetController>/5
         [HttpPut]
-        [Route("UpdatePet")]
+        [Route("update")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdatePet([FromBody] PetUpdateRequestDto dto)
         {
@@ -80,7 +80,7 @@ namespace PetHealthCareSystemAPI.Controllers
         // DELETE api/<PetController>/5
         [HttpDelete]
         [Authorize(Roles = "Customer")]
-        [Route("RemovePet/{id:int}")]
+        [Route("remove/{id:int}")]
         public async Task<IActionResult> RemovePet(int id)
         {
             var ownerId = User.GetUserId();
