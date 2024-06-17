@@ -31,7 +31,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
             var list = await _petService.GetAllPetsForCustomerAsync(ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
+            return Ok(BaseResponseDto.OkResponseDto(list));
         }
 
         [HttpGet]
@@ -41,14 +41,14 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             var ownerId = User.GetUserId();
 
-            var list = await _petService.GetAllPetsForCustomerAsync(ownerId);
+            var pet = _petService.GetPetForCustomerAsync(ownerId, id);
 
-            foreach (var pet in list)
+            if (pet != null)
             {
-                if (pet.Id == id) return Ok(BaseResponseDto.OkResponseDto(pet, "No additional data"));
+                return Ok(BaseResponseDto.OkResponseDto(pet));
             }
 
-            return Ok(BaseResponseDto.NotFoundResponseDto("Không tìm thấy thú cưng của bạn"));
+            return Ok(BaseResponseDto.NotFoundResponseDto(ReponseMessageConstantsPet.PET_NOT_FOUND));
         }
 
         // POST api/<PetController>
