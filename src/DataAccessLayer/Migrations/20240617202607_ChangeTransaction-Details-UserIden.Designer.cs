@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240616094851_ChangeTransaction")]
-    partial class ChangeTransaction
+    [Migration("20240617202607_ChangeTransaction-Details-UserIden")]
+    partial class ChangeTransactionDetailsUserIden
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -486,6 +486,24 @@ namespace DataAccessLayer.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b43c8e65-9188-4a90-af4d-06e51f3dcd9b",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 18, 3, 26, 6, 535, DateTimeKind.Unspecified).AddTicks(5707), new TimeSpan(0, 7, 0, 0, 0)),
+                            Email = "admin@email.com",
+                            EmailConfirmed = false,
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 18, 3, 26, 6, 535, DateTimeKind.Unspecified).AddTicks(5707), new TimeSpan(0, 7, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "$2a$11$vevZ.NGOVnJir0ag8fFmdeb57tNS7fM2V/H.WRKptOONkaBEIict6",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.MedicalItem", b =>
@@ -860,26 +878,14 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("LastUpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<int?>("MedicalItemId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 0)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -900,9 +906,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ServiceId");
 
                     b.HasIndex("TransactionId");
-
-                    b.HasIndex(new[] { "Id" }, "Index_Id")
-                        .IsUnique();
 
                     b.ToTable("TransactionDetails");
                 });

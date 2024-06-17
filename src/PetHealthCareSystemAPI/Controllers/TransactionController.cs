@@ -1,13 +1,21 @@
 ﻿using BusinessObject.DTO;
 using BusinessObject.DTO.Transaction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PetHealthCareSystemAPI.Extensions;
 using Service.IServices;
 using Utility.Constants;
+using Utility.Enum;
+using Utility.Helpers;
 
 namespace PetHealthCareSystemAPI.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
 public class TransactionController : Controller
 {
+    
     private ITransactionService _transactionService;
 
     public TransactionController(ITransactionService transactionService)
@@ -16,35 +24,44 @@ public class TransactionController : Controller
     }
 
     [HttpGet]
-    [Route("get-all-transactions")]
+    [Route("transactions")]
     public async Task<IActionResult> GetAllTransaction()
     {
         var response = await _transactionService.GetAllTransactionsAsync();
         return Ok(BaseResponseDto.OkResponseDto(response));
     }
 
-    [HttpGet("{id}")]
-    public string Get(int id)
+    [HttpGet]
+    [Route("dropdown-data")]
+    public IActionResult GetTransactionDropdownData()
     {
-        return "value";
+        var response = _transactionService.GetTransactionDropdownData();
+        return Ok(BaseResponseDto.OkResponseDto(response));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetTransactionById(int id)
+    {
+        var response = await _transactionService.GetTransactionByIdAsync(id);
+        return Ok(BaseResponseDto.OkResponseDto(response));
+    }
+
+    [HttpGet]
+    [Route("customer/{customerId:int}/transactions")]
+    public async Task<IActionResult> GetTransactionsByCustomerId(int customerId)
+    {
+        var response = await _transactionService.GetTransactionsByCustomerIdAsync(customerId);
+        return Ok(BaseResponseDto.OkResponseDto(response));
     }
 
     [HttpPost]
-    [Route("Create Transaction")]
-    public async Task<OkObjectResult> PostAsync([FromBody] TransactionResponseDto dto)
+    [Authorize(Roles = "Customer, Staff")]
+    [Route("create")]
+    public async Task<IActionResult> PostAsync([FromBody] TransactionRequestDto dto)
     {
-        //await _transactionService.CreateTransactionAsync(dto);
+        var userId = User.GetUserId();
+        await _transactionService.CreateTransactionAsync(dto, userId);
 
-        return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
-    }
-
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
+        return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.ADD_TRANSACTION_SUCCESS));
     }
 }

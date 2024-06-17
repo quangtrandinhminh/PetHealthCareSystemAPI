@@ -8,6 +8,7 @@ using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
 using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
+using Microsoft.EntityFrameworkCore.Query;
 using Riok.Mapperly.Abstractions;
 
 namespace BusinessObject.Mapper;
@@ -72,9 +73,19 @@ public partial class MapperlyMapper
     public partial void Map(ServiceRequestDto request, MedicalItem entity);
 
     // transaction
-    //public partial Transaction Map(TransactionRequestDto request);
+    public partial Transaction Map(TransactionRequestDto request);
     public partial Transaction Map(TransactionResponseDto request);
     public partial TransactionResponseDto Map(Transaction entity);
+    public partial TransactionResponseWithDetailsDto TransactionToTransactionResponseWithDetails(Transaction entity);
+
     public partial IList<TransactionResponseDto> Map(IList<Transaction> entity);
-    //public partial void Map(TransactionRequestDto request, Transaction entity);
+    public partial void Map(TransactionRequestDto request, Transaction entity);
+
+    // transaction detail
+    public partial TransactionDetail Map(TransactionDetailRequestDto request);
+    public partial TransactionDetail Map(TransactionDetailResponseDto request);
+    public partial TransactionDetailResponseDto Map(TransactionDetail entity);
+    public partial IList<TransactionDetailResponseDto> Map(IList<TransactionDetail> entity);
+    public partial void Map(TransactionDetailRequestDto request, TransactionDetail entity);
+
 }

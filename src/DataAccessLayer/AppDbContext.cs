@@ -53,8 +53,6 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
 
         modelBuilder.Entity<UserEntity>(b =>
         {
-            b.Property(u => u.Id)
-                .ValueGeneratedOnAdd();
             // Each User can have many entries in the UserRole join table
             b.HasMany(e => e.UserRoles)
                 .WithOne(e => e.User)
@@ -97,6 +95,18 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
             .WithMany(p => p.AppointmentPets)
             .HasForeignKey(ap => ap.PetId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        var admin = new UserEntity
+        {
+            Id = 1,
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@email.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("12345678"),
+            SecurityStamp = Guid.NewGuid().ToString(),
+        };
+        modelBuilder.Entity<UserEntity>().HasData(admin);
+
 
         var roles = new List<RoleEntity>
         {

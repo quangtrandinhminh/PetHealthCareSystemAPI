@@ -4,7 +4,7 @@ using Utility.Enum;
 
 namespace BusinessObject.DTO.Transaction;
 
-public class TransactionResponseDto
+public class TransactionResponseWithDetailsDto
 {
     public int Id { get; set; }
     public int CustomerId { get; set; }
@@ -24,4 +24,5 @@ public class TransactionResponseDto
     public decimal? RefundPercentage { get; set; }
     public string? RefundReason { get; set; }
     public DateTimeOffset? RefundDate { get; set; }
+    public IList<TransactionDetailResponseDto> TransactionDetails { get; set; }
 }
