@@ -35,6 +35,11 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         var pet = list.Where(e => e.Id == petId).FirstOrDefault();
 
+        if (pet == null)
+        {
+            return null;
+        }
+
         return _mapper.Map(pet);
     }
 
