@@ -1,6 +1,8 @@
-﻿using BusinessObject.DTO.TimeTable;
+﻿using BusinessObject.DTO.Appointment;
+using BusinessObject.DTO.TimeTable;
 using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
+using BusinessObject.Entities;
 using BusinessObject.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
@@ -35,5 +37,10 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         var freeVetList = vetList.Where(e => !appointmentList.Any(ee => ee.VetId == e.Id)).ToList();
 
         return freeVetList;
+    }
+
+    public async Task BookOnlineAppointment(AppointmentBookRequestDto appointmentBookRequestDto)
+    {
+        
     }
 }   
