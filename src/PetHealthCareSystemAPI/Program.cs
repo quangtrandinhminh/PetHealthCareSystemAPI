@@ -61,6 +61,10 @@ var systemSettingModel = new SystemSettingModel();
 builder.Configuration.GetSection("SystemSetting").Bind(systemSettingModel);
 SystemSettingModel.Instance = systemSettingModel;
 
+var vnPaySetting = new VnPaySetting();
+builder.Configuration.GetSection("VnPaySetting").Bind(vnPaySetting);
+VnPaySetting.Instance = vnPaySetting;
+
 // Add Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -144,7 +148,6 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IHospitalizationRepository, HospitalizationRepository>();
 builder.Services.AddScoped<ITimeTableRepository, TimeTableRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-builder.Services.AddScoped<ITransactionDetailRepository, TransactionDetailRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Service

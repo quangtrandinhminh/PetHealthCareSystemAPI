@@ -29,6 +29,7 @@ public class Transaction : BaseEntity
     public PaymentMethod? PaymentMethod { get; set; }
     public string? PaymentNote { get; set; }
     public string? PaymentId { get; set; }
+    public int? PaymentStaffId { get; set; }
     public string? PaymentStaffName { get; set; }
     public string? Note { get; set; }
     

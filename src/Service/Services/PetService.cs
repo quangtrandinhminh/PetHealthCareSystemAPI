@@ -49,7 +49,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         if (user == null)
         {
-            throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.OWNER_NOT_FOUND,
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.OWNER_NOT_FOUND,
                 StatusCodes.Status400BadRequest);
         }
 
@@ -68,13 +68,13 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         if (existPet == null || existPet.DeletedBy != null)
         {
-            throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.PET_NOT_FOUND,
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.PET_NOT_FOUND,
                 StatusCodes.Status400BadRequest);
         }
 
         if (existPet.OwnerID != ownerId)
         {
-            throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.NOT_YOUR_PET,
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.NOT_YOUR_PET,
                 StatusCodes.Status400BadRequest);
         }
 
@@ -93,13 +93,13 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         if (existPet == null || existPet.DeletedBy != null)
         {
-            throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.PET_NOT_FOUND,
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.PET_NOT_FOUND,
                 StatusCodes.Status400BadRequest);
         }
 
         if (existPet.OwnerID != ownerId)
         {
-            throw new AppException(ResponseCodeConstants.FAILED, ReponseMessageConstantsPet.NOT_YOUR_PET,
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.NOT_YOUR_PET,
                 StatusCodes.Status400BadRequest);
         }
 

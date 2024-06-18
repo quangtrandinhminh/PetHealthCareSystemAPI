@@ -158,3 +158,20 @@ VALUES
 (N'Pneumonitis Vaccine', N'Vắc-xin phòng bệnh viêm phổi ở mèo', 35, 160, 2, 2, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 0, N'Vắc-xin hàng năm');
 GO
 
+-- Insert sample data into Transaction table
+INSERT INTO [dbo].[Transaction] ([CustomerId], Total, Status, CreatedTime, LastUpdatedTime)
+VALUES 
+    (1, 650000, 1, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET()),
+    (1, 635000, 2, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET());
+
+-- Insert sample data into TransactionDetail table
+INSERT INTO TransactionDetails (TransactionId, ServiceId, [Name], [Price], Quantity, SubTotal)
+VALUES 
+    (1, 1, N'Kiểm soát bọ chét khi tắm (theo toa)', 200000, 2, 400000),
+    (2, 2, N'Tư vấn/Đào tạo Hành vi', 500000, 1, 500000);
+
+INSERT INTO TransactionDetails (TransactionId, MedicalItemId, [Name], [Price], Quantity, SubTotal)
+VALUES 
+    (1, 1, N'Bravecto Chews',50000, 5, 250000),
+    (2, 2, N'Heartgard Plus',45000, 3, 135000);
+
