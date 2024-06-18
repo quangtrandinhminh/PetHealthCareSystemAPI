@@ -6,119 +6,147 @@ namespace DataAccessLayer.Base
 {
     public class BaseDao<T> where T : BaseEntity, new()
     {
-        private static readonly AppDbContext _context = new();
-        private static DbSet<T> _dbSet = _context.Set<T>();
-
         public static IQueryable<T?> GetAll()
         {
-            return _dbSet.AsQueryable().AsNoTracking();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return dbSet.AsQueryable().AsNoTracking();
         }
 
         public static async Task<List<T?>> GetAllAsync()
         {
-            return await _dbSet.AsQueryable().AsNoTracking().ToListAsync();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return await dbSet.AsQueryable().AsNoTracking().ToListAsync();
         }
 
         public static T? GetById(int id)
         {
-            return _dbSet.Find(id);
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return dbSet.Find(id);
         }
 
         public static async Task<T?> GetByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return await dbSet.FindAsync(id);
         }
 
         public static T Add(T entity)
         {
-            _dbSet.Add(entity);
-            _context.SaveChanges();
-            _context.Entry(entity).State = EntityState.Detached;
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            dbSet.Add(entity);
+            context.SaveChanges();
+            context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 
         public static async Task<T> AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            _context.Entry(entity).State = EntityState.Detached;
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            await dbSet.AddAsync(entity);
+            await context.SaveChangesAsync();
+            context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 
         public static void AddRange(IEnumerable<T> entities)
         {
-            _context.AddRange(entities);
-            _context.SaveChanges();
+            using var context = new AppDbContext();
+            context.AddRange(entities);
+            context.SaveChanges();
         }
 
         public static async Task AddRangeAsync(IEnumerable<T?> entities)
         {
-            await _dbSet.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            await dbSet.AddRangeAsync(entities);
+            await context.SaveChangesAsync();
             foreach (var entity in entities)
             {
-                _context.Entry(entity).State = EntityState.Detached;
+                context.Entry(entity).State = EntityState.Detached;
             }
         }
 
         public static void Update(T entity)
         {
-            var tracker = _context.Attach(entity);
+            using var context = new AppDbContext();
+            var tracker = context.Attach(entity);
             tracker.State = EntityState.Modified;
-            _context.SaveChanges();
-            _context.Entry(entity).State = EntityState.Detached;
+            context.SaveChanges();
+            context.Entry(entity).State = EntityState.Detached;
         }
 
         public static async Task UpdateAsync(T entity)
         {
-            var tracker = _context.Attach(entity);
+            using var context = new AppDbContext();
+            var tracker = context.Attach(entity);
             tracker.State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            _context.Entry(entity).State = EntityState.Detached;
+            await context.SaveChangesAsync();
+            context.Entry(entity).State = EntityState.Detached;
         }
 
         public static async Task UpdateRangeAsync(IEnumerable<T?> entities)
         {
-            _dbSet.UpdateRange(entities);
-            await _context.SaveChangesAsync();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            dbSet.UpdateRange(entities);
+            await context.SaveChangesAsync();
             foreach (var entity in entities)
             {
-                _context.Entry(entity).State = EntityState.Detached;
+                context.Entry(entity).State = EntityState.Detached;
             }
         }
 
         public static void Delete(T? entity)
         {
-            _dbSet.Remove(entity);
-            _context.SaveChanges();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            dbSet.Remove(entity);
+            context.SaveChanges();
         }
 
         public static async Task DeleteAsync(T? entity)
         {
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            dbSet.Remove(entity);
+            await context.SaveChangesAsync();
         }
 
         public static void RemoveRange(IEnumerable<T?> entities)
         {
-            _dbSet.RemoveRange(entities);
-            _context.SaveChanges();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            dbSet.RemoveRange(entities);
+            context.SaveChanges();
         }
 
         public static async Task RemoveRangeAsync(IEnumerable<T?> entities)
         {
-            _dbSet.RemoveRange(entities);
-            await _context.SaveChangesAsync();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            dbSet.RemoveRange(entities);
+            await context.SaveChangesAsync();
         }
 
         public static IQueryable<T?> FindByCondition(Expression<Func<T?, bool>> expression)
         {
-            return _dbSet.Where(expression).AsQueryable().AsNoTracking();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return dbSet.Where(expression).AsQueryable().AsNoTracking();
         }
 
         public static async Task<IList<T?>> FindByConditionAsync(Expression<Func<T?, bool>> expression)
         {
-            return await _dbSet.Where(expression).AsQueryable().AsNoTracking().ToListAsync();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return await dbSet.Where(expression).AsQueryable().AsNoTracking().ToListAsync();
         }
     }
 }

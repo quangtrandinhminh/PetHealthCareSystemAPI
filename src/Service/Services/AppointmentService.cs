@@ -26,9 +26,10 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         return response.ToList();
     }
 
-    public async Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDate(DateOnly date, int timetableId)
+    public async Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDateAsync(DateOnly date, int timetableId)
     {
         var vetList = (await _userService.GetVetsAsync()).ToList();
+
         var appointmentList = (await _appointmentRepo.GetAllAsync()).Where(e => e.AppointmentDate == date && e.TimeTableId == timetableId);
 
         var freeVetList = vetList.Where(e => !appointmentList.Any(ee => ee.VetId == e.Id)).ToList();
