@@ -11,7 +11,6 @@ using Utility.Constants;
 
 namespace PetHealthCareSystemAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VetController : ControllerBase

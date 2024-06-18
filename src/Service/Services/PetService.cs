@@ -29,6 +29,20 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
         return listDto.ToList();
     }
 
+    public async Task<PetResponseDto> GetPetForCustomerAsync(int ownerId, int petId)
+    {
+        var list = await _petRepo.GetAllPetsByCustomerIdAsync(ownerId);
+
+        var pet = list.Where(e => e.Id == petId).FirstOrDefault();
+
+        if (pet == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map(pet);
+    }
+
     public async Task CreatePetAsync(PetRequestDto pet, int ownerId)
     {
         var user = await _userManager.FindByIdAsync(ownerId.ToString());

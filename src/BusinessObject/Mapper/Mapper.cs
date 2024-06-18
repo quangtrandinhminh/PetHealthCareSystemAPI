@@ -31,7 +31,6 @@ public partial class MapperlyMapper
 
     // pet 
     public partial Pet Map(PetRequestDto request);
-    // Custom mapping method for Pet to PetResponseDto with date formatting
     public PetResponseDto Map(Pet entity)
     {
         var response = new PetResponseDto
@@ -41,9 +40,10 @@ public partial class MapperlyMapper
             Species = entity.Species,
             Breed = entity.Breed,
             Gender = entity.Gender,
-            DateOfBirth = entity.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+            DateOfBirth = DateOnly.FromDateTime(entity.DateOfBirth.Date),
             IsNeutered = entity.IsNeutered
         };
+
         return response;
     }
     // Custom mapping method for IList<Pet> to IList<PetResponseDto> with date formatting
