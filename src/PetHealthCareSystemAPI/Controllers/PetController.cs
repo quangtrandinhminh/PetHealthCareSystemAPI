@@ -37,7 +37,7 @@ namespace PetHealthCareSystemAPI.Controllers
             }
             catch
             {
-                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, null));
             }
         }
 
@@ -57,11 +57,11 @@ namespace PetHealthCareSystemAPI.Controllers
                     return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, pet));
                 }
 
-                return Ok(BaseResponseDto.NotFoundResponseDto(ResponseMessageConstantsPet.PET_NOT_FOUND, ResponseMessageConstantsCommon.NO_DATA));
+                return BadRequest(BaseResponseDto.NotFoundResponseDto(ResponseMessageConstantsPet.PET_NOT_FOUND, null));
             }
             catch
             {
-                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, null));
             }
         }
 
@@ -77,11 +77,11 @@ namespace PetHealthCareSystemAPI.Controllers
 
                 await _petService.CreatePetAsync(dto, ownerId);
 
-                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS, ResponseMessageConstantsCommon.NO_DATA));
+                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS, null));
             }
             catch
             {
-                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, null));
             }
         }
 
@@ -97,11 +97,11 @@ namespace PetHealthCareSystemAPI.Controllers
 
                 await _petService.UpdatePetAsync(dto, ownerId);
 
-                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS, ResponseMessageConstantsCommon.NO_DATA));
+                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS, null));
             }
             catch
             {
-                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, null));
             }
         }
 
@@ -121,7 +121,7 @@ namespace PetHealthCareSystemAPI.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, null));
             }
         }
     }

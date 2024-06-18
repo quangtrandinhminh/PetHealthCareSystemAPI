@@ -1,6 +1,8 @@
-﻿using BusinessObject.DTO.TimeTable;
+﻿using BusinessObject.DTO.Appointment;
+using BusinessObject.DTO.TimeTable;
 using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
+using BusinessObject.Entities;
 
 namespace Service.IServices;
 
@@ -12,4 +14,6 @@ public interface IAppointmentService
     Task DeleteAppointmentAsync(int id);*/
     Task<List<TimeTableResponseDto>> GetAllTimeFramesForBookingAsync();
     Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDateAsync(DateOnly date, int timetableId);
+    Task BookOnlineAppointment(AppointmentBookRequestDto appointmentBookRequestDto);
+
 }

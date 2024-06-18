@@ -29,6 +29,8 @@ namespace Utility.Constants
         public const string SUCCESS = "Thao tác thành công";
         public const string NO_DATA = "Không có dữ liệu trả về";
         public const string SERVER_ERROR = "Lỗi từ phía server vui lòng liên hệ đội ngũ phát triển";
+        public const string DATE_WRONG_FORMAT = "Dữ liệu ngày không đúng định dạng yyyy-mm-dd";
+        public const string DATA_NOT_ENOUGH = "Dữ liệu đưa vào không đầy đủ";
     }
 
     public class ResponseMessageIdentity
