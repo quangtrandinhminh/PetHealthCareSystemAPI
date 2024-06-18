@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "User",
+			"name": "Auth",
 			"item": [
 				{
 					"name": "VerifyPhone",
@@ -44,7 +44,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"cus1\",\r\n    \"fullname\": \"cus seven\",\r\n    \"email\": \"quangtdmse171391@fpt.edu.vn\",\r\n    \"Password\": \"12345678\",\r\n    \"ConfirmPassword\": \"12345678\",\r\n    \"phonenumber\": \"0901472180\"\r\n}",
+							"raw": "{\r\n    \"username\": \"cus13\",\r\n    \"fullname\": \"cus seven\",\r\n    \"email\": \"qua1555tdmse171391@fpt.edu.vn\",\r\n    \"Password\": \"12345\",\r\n    \"ConfirmPassword\": \"12345\",\r\n    \"phonenumber\": \"0949458323\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -92,34 +92,6 @@
 					"response": []
 				},
 				{
-					"name": "TestAuthenWithAdminRole",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluMUBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiYWRtaW4xIiwibmJmIjoxNzE3NTc0OTk4LCJleHAiOjE3MTgxNzk3OTgsImlhdCI6MTcxNzU3NDk5OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MjQ2IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MjQ2In0.1Z1E1L5MRwfz5BRCKoosXb2E55EeLMyRoecGIUN8X-Mjz17GqDl2uwInB6Oh5c4KflqVnFA-KyXCEt4F0ef8TA",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/user",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"user"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "SendOTP",
 					"request": {
 						"method": "POST",
@@ -141,62 +113,6 @@
 							"path": [
 								"user",
 								"send-otp-to-phone"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{baseUrl}}/api/Auth/register",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"cus1\",\r\n    \"fullname\": \"cus seven\",\r\n    \"email\": \"osjdj3434@gmail.com\",\r\n    \"Password\": \"12345678\",\r\n    \"ConfirmPassword\": \"12345678\",\r\n    \"phonenumber\": \"0930009822\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/Auth/register",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"Auth",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{baseUrl}}api/Auth/authenticate",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"cus1\",\r\n  \"password\": \"12345678\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/Auth/authenticate",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"Auth",
-								"authenticate"
 							]
 						}
 					},
@@ -296,7 +212,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQ3VzdG9tZXIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIxIiwiVXNlck5hbWUiOiJjdXMxIiwidW5pcXVlX25hbWUiOiJKb2hueSBEZXB0IiwiZW1haWwiOiJqb2huQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDk3MTc4ODk4MyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvZXhwaXJlZCI6IjYvMTUvMjAyNCIsIm5iZiI6MTcxODI1MjM2NywiZXhwIjoxNzIyMzk5NTY3LCJpYXQiOjE3MTgyNTIzNjd9.yhKxj2zo9twEwEMut_VQGvFACJke2WfasEtZ_WZUbhE",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQ3VzdG9tZXIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIxIiwiVXNlck5hbWUiOiJjdXMxIiwidW5pcXVlX25hbWUiOiJKb2hueSBEZXB0IiwiZW1haWwiOiJqb2huQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDk3MTc4ODk4MyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvZXhwaXJlZCI6IjYvMjAvMjAyNCIsIm5iZiI6MTcxODcxMjkyMiwiZXhwIjoxNzIyODYwMTIyLCJpYXQiOjE3MTg3MTI5MjJ9.RnH6Jxkjb2sa3EOhkyd3Ix3H6JvO0KPKtXB7ePiccok",
 									"type": "string"
 								}
 							]
@@ -304,13 +220,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/Pet",
+							"raw": "{{baseUrl}}/pet/customer/all",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"api",
-								"Pet"
+								"pet",
+								"customer",
+								"all"
 							]
 						}
 					},
@@ -332,14 +249,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/Pet/1",
+							"raw": "{{baseUrl}}/pet/customer/555",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"api",
-								"Pet",
-								"1"
+								"pet",
+								"customer",
+								"555"
 							],
 							"query": [
 								{
@@ -367,13 +284,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/Pet",
+							"raw": "{{baseUrl}}/Pet/customer/add",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"api",
-								"Pet"
+								"Pet",
+								"customer",
+								"add"
 							]
 						}
 					},
@@ -404,13 +322,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/Pet",
+							"raw": "{{baseUrl}}/Pet/customer/update",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"api",
-								"Pet"
+								"Pet",
+								"customer",
+								"update"
 							]
 						}
 					},
@@ -432,14 +351,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/Pet/1",
+							"raw": "{{baseUrl}}/pet/customer/remove",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"api",
-								"Pet",
-								"1"
+								"pet",
+								"customer",
+								"remove"
 							],
 							"query": [
 								{
@@ -456,6 +375,160 @@
 		},
 		{
 			"name": "Transaction",
+			"item": [
+				{
+					"name": "Create transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"paymentMethod\": 1,\r\n  \"paymentDate\": \"\",\r\n  \"status\": 1,\r\n  \"services\": [\r\n    {\r\n      \"serviceId\": 1,\r\n      \"quantity\": 1\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Transaction/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Transaction",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all transactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/transaction/get-all?pageNumber=1&pageSize=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"transaction",
+								"get-all"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get transactions by customer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/transaction/customer/your-transactions?pageNumber=1&pageSize=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"transaction",
+								"customer",
+								"your-transactions"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get transaction by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/transaction/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"transaction",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointmnet",
 			"item": []
 		}
 	],
