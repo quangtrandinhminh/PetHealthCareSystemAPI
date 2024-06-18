@@ -18,3 +18,23 @@ public class TransactionRequestDto
     public List<TransactionServicesDto>? Services { get; set; }
     public List<TransactionMedicalItemsDto>? MedicalItems { get; set; }
 }
+
+public class TransactionServicesDto
+{
+    [Required]
+    public int ServiceId { get; set; }
+
+    [Required]
+    [Range(1, int.MaxValue)]
+    public int Quantity { get; set; }
+}
+
+public class TransactionMedicalItemsDto
+{
+    [Required]
+    public int MedicalItemId { get; set; }
+
+    [Required]
+    [Range(1, int.MaxValue)]
+    public int Quantity { get; set; }
+}

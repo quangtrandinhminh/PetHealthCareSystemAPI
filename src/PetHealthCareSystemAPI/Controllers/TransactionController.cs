@@ -24,10 +24,10 @@ public class TransactionController : Controller
     }
 
     [HttpGet]
-    [Route("transactions")]
-    public async Task<IActionResult> GetAllTransaction()
+    [Route("get-all")]
+    public async Task<IActionResult> GetAllTransaction([FromRoute] int pageNumber = 1, int pageSize = 10)
     {
-        var response = await _transactionService.GetAllTransactionsAsync();
+        var response = await _transactionService.GetAllTransactionsAsync(pageNumber, pageSize);
         return Ok(BaseResponseDto.OkResponseDto(response));
     }
 
@@ -47,10 +47,13 @@ public class TransactionController : Controller
     }
 
     [HttpGet]
-    [Route("customer/{customerId:int}/transactions")]
-    public async Task<IActionResult> GetTransactionsByCustomerId(int customerId)
+    [Route("customer/your-transactions")]
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> GetTransactionsByCustomerId([FromRoute] int pageNumber = 1, int pageSize = 10)
     {
-        var response = await _transactionService.GetTransactionsByCustomerIdAsync(customerId);
+        var customerId = User.GetUserId();
+        var response = await _transactionService.
+            GetTransactionsByCustomerIdAsync(customerId, pageNumber, pageSize);
         return Ok(BaseResponseDto.OkResponseDto(response));
     }
 

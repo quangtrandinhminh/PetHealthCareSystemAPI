@@ -77,15 +77,9 @@ public partial class MapperlyMapper
     public partial Transaction Map(TransactionResponseDto request);
     public partial TransactionResponseDto Map(Transaction entity);
     public partial TransactionResponseWithDetailsDto TransactionToTransactionResponseWithDetails(Transaction entity);
-
-    public partial IList<TransactionResponseDto> Map(IList<Transaction> entity);
+    public partial IQueryable<TransactionResponseDto> Map(IQueryable<Transaction> entity);
     public partial void Map(TransactionRequestDto request, Transaction entity);
 
     // transaction detail
-    public partial TransactionDetail Map(TransactionDetailRequestDto request);
-    public partial TransactionDetail Map(TransactionDetailResponseDto request);
-    public partial TransactionDetailResponseDto Map(TransactionDetail entity);
     public partial IList<TransactionDetailResponseDto> Map(IList<TransactionDetail> entity);
-    public partial void Map(TransactionDetailRequestDto request, TransactionDetail entity);
-
 }

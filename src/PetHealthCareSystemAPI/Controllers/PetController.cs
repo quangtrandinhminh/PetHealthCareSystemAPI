@@ -48,7 +48,7 @@ namespace PetHealthCareSystemAPI.Controllers
                 return Ok(BaseResponseDto.OkResponseDto(pet));
             }
 
-            return Ok(BaseResponseDto.NotFoundResponseDto(ReponseMessageConstantsPet.PET_NOT_FOUND));
+            return Ok(BaseResponseDto.NotFoundResponseDto(ResponseMessageConstantsPet.PET_NOT_FOUND));
         }
 
         // POST api/<PetController>

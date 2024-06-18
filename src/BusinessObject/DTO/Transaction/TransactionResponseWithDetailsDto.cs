@@ -26,3 +26,14 @@ public class TransactionResponseWithDetailsDto
     public DateTimeOffset? RefundDate { get; set; }
     public IList<TransactionDetailResponseDto> TransactionDetails { get; set; }
 }
+
+public class TransactionDetailResponseDto
+{
+    public int TransactionId { get; set; }
+    public int? ServiceId { get; set; }
+    public int? MedicalItemId { get; set; }
+    public string? Name { get; set; }
+    public int Quantity { get; set; }
+    public decimal Price { get; set; }
+    public decimal SubTotal { get; set; }
+}

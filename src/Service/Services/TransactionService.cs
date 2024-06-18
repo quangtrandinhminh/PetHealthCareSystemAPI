@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Repository.Extensions;
 using Repository.Interfaces;
 using Serilog;
 using Service.IServices;
@@ -32,34 +33,35 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
     private readonly IServiceRepository _serviceRepository = serviceProvider.GetRequiredService<IServiceRepository>();
     private readonly IMedicalItemRepository _medicalItemRepository = serviceProvider.GetRequiredService<IMedicalItemRepository>();
 
-    public async Task<IList<TransactionResponseDto>> GetAllTransactionsAsync()
+    public async Task<PaginatedList<TransactionResponseDto>> GetAllTransactionsAsync(int pageNumber, int pageSize)
     {
         _logger.Information("Get all transactions");
-        var transactions = await _transactionRepository.GetAllWithCondition(
+        var transactions = _transactionRepository.GetAllWithCondition(
             t => t.DeletedTime == null,
-            t => t.Customer).ToListAsync();
-        if (transactions == null || transactions.Count == 0)
+            t => t.Customer);
+        if (transactions == null)
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
         var response = _mapper.Map(transactions);
-        return response;
+        return await PaginatedList<TransactionResponseDto>.CreateAsync(response, pageNumber, pageSize);
     }
 
-    public async Task<IList<TransactionResponseDto>> GetTransactionsByCustomerIdAsync(int customerId)
+    public async Task<PaginatedList<TransactionResponseDto>> GetTransactionsByCustomerIdAsync(int customerId, int pageNumber, int pageSize)
     {
         _logger.Information("Get all transactions by customer id");
-        var transactions = await _transactionRepository.GetAllWithCondition(t =>
+        var transactions = _transactionRepository.GetAllWithCondition(t =>
             t.CustomerId == customerId && t.DeletedTime == null,
-            t => t.Customer).ToListAsync() ;
-        if (transactions == null || transactions.Count == 0)
+            t => t.Customer);
+        if (transactions == null)
         {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, 
+                ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
         var response = _mapper.Map(transactions);
-        return response;
+        return await PaginatedList<TransactionResponseDto>.CreateAsync(response, pageNumber, pageSize);
     }
 
     public async Task<TransactionResponseWithDetailsDto> GetTransactionByIdAsync(int id)
