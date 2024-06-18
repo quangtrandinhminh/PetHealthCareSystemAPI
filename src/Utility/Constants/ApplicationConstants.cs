@@ -26,10 +26,11 @@ namespace Utility.Constants
     public class ResponseMessageConstantsCommon
     {
         public const string EXISTED = "Already existed!";
+        public const string SUCCESS = "Thao tác thành công";
+        public const string NO_DATA = "Không có dữ liệu trả về";
+        public const string SERVER_ERROR = "Lỗi từ phía server vui lòng liên hệ đội ngũ phát triển";
     }
 
-
-    
     public class ResponseMessageIdentity
     {
         public const string INVALID_USER = "Nguoi dung khong ton tai.";
@@ -134,11 +135,11 @@ namespace Utility.Constants
 
     public class ResponseMessageConstantsAppointment
     {
-        public const string APPOINTMENT_NOT_FOUND = "Khong tim thay lich hen";
-        public const string APPOINTMENT_EXISTED = "Lich hen da ton tai";
-        public const string ADD_APPOINTMENT_SUCCESS = "Them lich hen thanh cong";
-        public const string UPDATE_APPOINTMENT_SUCCESS = "Cap nhat lich hen thanh cong";
-        public const string DELETE_APPOINTMENT_SUCCESS = "Xoa lich hen thanh cong";
+        public const string APPOINTMENT_NOT_FOUND = "Không tìm thấy lịch hẹn";
+        public const string APPOINTMENT_EXISTED = "Lịch hẹn đã tồn tại";
+        public const string ADD_APPOINTMENT_SUCCESS = "Thêm lịch hẹn thành công";
+        public const string UPDATE_APPOINTMENT_SUCCESS = "Cập nhật lịch hẹn thành công";
+        public const string DELETE_APPOINTMENT_SUCCESS = "Xóa lịch hẹn thành công";
     }
 
     public class ResponseMessageConstantsMedicalRecord

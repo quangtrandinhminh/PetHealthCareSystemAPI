@@ -17,7 +17,9 @@ namespace DataAccessLayer.Base
         public static IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null, 
             params Expression<Func<T, object>>[] includeProperties)
         {
-            IQueryable<T> queryable = _dbSet.AsNoTracking();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            IQueryable<T> queryable = dbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();
             if (includeProperties?.Any() ?? false)
             {
@@ -41,7 +43,9 @@ namespace DataAccessLayer.Base
         public static IQueryable<T> Get(Expression<Func<T, bool>> predicate = null
             , bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            IQueryable<T> source = _dbSet.AsNoTracking();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            IQueryable<T> source = dbSet.AsNoTracking();
             if (predicate != null)
             {
                 source = source.Where(predicate);
@@ -84,7 +88,9 @@ namespace DataAccessLayer.Base
         public async Task<T> GetSingleAsyncWithProperties(Expression<Func<T, bool>> predicate,
             bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            var query = _dbSet.AsQueryable();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            var query = dbSet.AsQueryable();
 
             if (!isIncludeDeleted)
             {
@@ -222,7 +228,9 @@ namespace DataAccessLayer.Base
 
         public static IQueryable<T> Get(Expression<Func<T, bool>>? predicate = null, params Expression<Func<T, object>>[] includeProperties)
         {
-            IQueryable<T> reault = _dbSet.AsNoTracking();
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            IQueryable<T> reault = dbSet.AsNoTracking();
             if (predicate != null)
             {
                 reault = reault.Where(predicate);
@@ -245,9 +253,11 @@ namespace DataAccessLayer.Base
         {
             try
             {
-                if (_context.Entry(entity).State == EntityState.Detached)
+                using var context = new AppDbContext();
+                var dbSet = context.Set<T>();
+                if (context.Entry(entity).State == EntityState.Detached)
                 {
-                    _dbSet.Attach(entity);
+                    dbSet.Attach(entity);
                 }
             }
             catch
@@ -259,14 +269,16 @@ namespace DataAccessLayer.Base
         {
             try
             {
+                using var context = new AppDbContext();
+                var dbSet = context.Set<T>();
                 foreach (var entity in entities)
                 {
-                    if (_context.Entry(entity).State != EntityState.Detached)
+                    if (context.Entry(entity).State != EntityState.Detached)
                     {
                         entities.Remove(entity);
                     }
                 }
-                _dbSet.AttachRange(entities);
+                dbSet.AttachRange(entities);
             }
             catch
             {
