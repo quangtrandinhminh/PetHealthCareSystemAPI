@@ -50,29 +50,29 @@ namespace Service.Services
             var validateUser = await _userManager.FindByNameAsync(dto.UserName);
             if (validateUser != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
             }
 
             var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUserWithEmail != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
             }
 
             var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
             if (existingUserWithPhone != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
 
             if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
             {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
             }
 
             if (dto.Password != dto.ConfirmPassword)
             {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
             }
 
             try
@@ -97,11 +97,11 @@ namespace Service.Services
             _logger.Information("Authenticate user: {@dto}", dto);
             var account = await GetUserByUserName(dto.Username);
             if (account == null || account.DeletedTime != null)
-                throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
             // check password
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, account.PasswordHash))
-                throw new AppException(ErrorCode.UserPasswordWrong, ReponseMessageIdentity.PASSWORD_WRONG, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.UserPasswordWrong, ResponseMessageIdentity.PASSWORD_WRONG, StatusCodes.Status401Unauthorized);
 
             try
             {
@@ -154,7 +154,7 @@ namespace Service.Services
             var account = await GetUserByUserName(dto.UserName);
 
             if (account == null || account.OTP != dto.Token)
-                throw new AppException(ErrorCode.TokenInvalid, ReponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
 
             account.Verified = CoreHelper.SystemTimeNow;
             account.OTP = null;
@@ -164,7 +164,7 @@ namespace Service.Services
         public async Task ForgotPassword(ForgotPasswordDto model)
         {
             var account = await GetUserByUserName(model.UserName);
-            if (account == null) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
+            if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
             // create reset token that expires after 1 day
             /*account.OTP = StringHelper.Generate(6, false, false, true, false);
@@ -186,11 +186,11 @@ namespace Service.Services
         {
             var account = await GetUserByUserName(model.UserName);
 
-            if (account == null) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
+            if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
             if (account.OTP != model.Token || account.OTPExpired < CoreHelper.SystemTimeNow)
             {
-                throw new AppException(ErrorCode.TokenInvalid, ReponseMessageIdentity.TOKEN_INVALID_OR_EXPIRED, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID_OR_EXPIRED, StatusCodes.Status401Unauthorized);
             }
 
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
@@ -205,11 +205,11 @@ namespace Service.Services
         {
             var account = await GetUserByUserName(dto.UserName);
 
-            if (account == null || !account.IsActive) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
+            if (account == null || !account.IsActive) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status401Unauthorized);
 
             if (!BCrypt.Net.BCrypt.Verify(dto.OldPassword, account.PasswordHash))
             {
-                throw new AppException(ErrorCode.UserPasswordWrong, ReponseMessageIdentity.UNAUTHENTICATED, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.UserPasswordWrong, ResponseMessageIdentity.UNAUTHENTICATED, StatusCodes.Status401Unauthorized);
             }
 
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
@@ -219,8 +219,8 @@ namespace Service.Services
         public async Task ReSendEmail(ResendEmailDto model)
         {
             var account = await GetUserByUserName(model.UserName);
-            if (account == null) throw new AppException(ErrorCode.UserInvalid, ReponseMessageIdentity.INVALID_USER, StatusCodes.Status400BadRequest);
-            if (account.OTP == null) throw new AppException(ErrorCode.Validated, ReponseMessageIdentity.EMAIL_VALIDATE, StatusCodes.Status400BadRequest);
+            if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status400BadRequest);
+            if (account.OTP == null) throw new AppException(ErrorCode.Validated, ResponseMessageIdentity.EMAIL_VALIDATE, StatusCodes.Status400BadRequest);
 
             /*account.OTP = StringHelper.Generate(6, false, false, true, false);
             await _userRepository.UpdateAsync(account);
@@ -297,13 +297,13 @@ namespace Service.Services
                 , _ => _.RefreshTokens);
             if (account == null || account.DeletedTime != null)
             {
-                throw new AppException(ErrorCode.TokenInvalid, ReponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
             }
 
             var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
             if (!refreshToken.IsActive)
             {
-                throw new AppException(ErrorCode.TokenExpired, ReponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
+                throw new AppException(ErrorCode.TokenExpired, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
             }
 
             return (refreshToken, account);
@@ -340,29 +340,29 @@ namespace Service.Services
             var validateUser = await _userManager.FindByNameAsync(dto.UserName);
             if (validateUser != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
             }
 
             var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUserWithEmail != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
             }
 
             var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
             if (existingUserWithPhone != null)
             {
-                throw new AppException(ResponseCodeConstants.EXISTED, ReponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
             }
 
             if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
             {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
             }
 
             if (dto.Password != dto.ConfirmPassword)
             {
-                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ReponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
             }
 
             try

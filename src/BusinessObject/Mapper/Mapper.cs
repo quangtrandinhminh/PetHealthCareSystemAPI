@@ -3,10 +3,12 @@ using System.Globalization;
 using BusinessObject.DTO.Pet;
 using BusinessObject.DTO.Service;
 using BusinessObject.DTO.TimeTable;
+using BusinessObject.DTO.Transaction;
 using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
 using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
+using Microsoft.EntityFrameworkCore.Query;
 using Riok.Mapperly.Abstractions;
 
 namespace BusinessObject.Mapper;
@@ -69,4 +71,15 @@ public partial class MapperlyMapper
     public partial MedicalResponseDto Map(MedicalItem entity);
     public partial IList<MedicalResponseDto> Map(IList<MedicalItem> entity);
     public partial void Map(ServiceRequestDto request, MedicalItem entity);
+
+    // transaction
+    public partial Transaction Map(TransactionRequestDto request);
+    public partial Transaction Map(TransactionResponseDto request);
+    public partial TransactionResponseDto Map(Transaction entity);
+    public partial TransactionResponseWithDetailsDto TransactionToTransactionResponseWithDetails(Transaction entity);
+    public partial IQueryable<TransactionResponseDto> Map(IQueryable<Transaction> entity);
+    public partial void Map(TransactionRequestDto request, Transaction entity);
+
+    // transaction detail
+    public partial IList<TransactionDetailResponseDto> Map(IList<TransactionDetail> entity);
 }
