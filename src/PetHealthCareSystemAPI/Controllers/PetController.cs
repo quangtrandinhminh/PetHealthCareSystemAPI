@@ -27,11 +27,18 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("customer/all")]
         public async Task<IActionResult> GetAllPetsForCustomer()
         {
-            var ownerId = User.GetUserId();
+            try
+            {
+                var ownerId = User.GetUserId();
 
-            var list = await _petService.GetAllPetsForCustomerAsync(ownerId);
+                var list = await _petService.GetAllPetsForCustomerAsync(ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(list));
+                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, list));
+            }
+            catch
+            {
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+            }
         }
 
         [HttpGet]
@@ -39,16 +46,23 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("customer/{id:int}")]
         public async Task<IActionResult> GetPetForCustomer([FromRoute] int id)
         {
-            var ownerId = User.GetUserId();
-
-            var pet = await _petService.GetPetForCustomerAsync(ownerId, id);
-
-            if (pet != null)
+            try
             {
-                return Ok(BaseResponseDto.OkResponseDto(pet));
-            }
+                var ownerId = User.GetUserId();
 
-            return Ok(BaseResponseDto.NotFoundResponseDto(ResponseMessageConstantsPet.PET_NOT_FOUND));
+                var pet = await _petService.GetPetForCustomerAsync(ownerId, id);
+
+                if (pet != null)
+                {
+                    return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, pet));
+                }
+
+                return Ok(BaseResponseDto.NotFoundResponseDto(ResponseMessageConstantsPet.PET_NOT_FOUND, ResponseMessageConstantsCommon.NO_DATA));
+            }
+            catch
+            {
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+            }
         }
 
         // POST api/<PetController>
@@ -57,11 +71,18 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("customer/add")]
         public async Task<IActionResult> AddPet([FromBody] PetRequestDto dto)
         {
-            var ownerId = User.GetUserId();
+            try
+            {
+                var ownerId = User.GetUserId();
 
-            await _petService.CreatePetAsync(dto, ownerId);
+                await _petService.CreatePetAsync(dto, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
+                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS, ResponseMessageConstantsCommon.NO_DATA));
+            }
+            catch
+            {
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+            }
         }
 
         // PUT api/<PetController>/5
@@ -70,11 +91,18 @@ namespace PetHealthCareSystemAPI.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdatePet([FromBody] PetUpdateRequestDto dto)
         {
-            var ownerId = User.GetUserId();
+            try
+            {
+                var ownerId = User.GetUserId();
 
-            await _petService.UpdatePetAsync(dto, ownerId);
+                await _petService.UpdatePetAsync(dto, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS));
+                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS, ResponseMessageConstantsCommon.NO_DATA));
+            }
+            catch
+            {
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+            }
         }
 
         // DELETE api/<PetController>/5
@@ -83,11 +111,18 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("customer/remove/{id:int}")]
         public async Task<IActionResult> RemovePet(int id)
         {
-            var ownerId = User.GetUserId();
+            try
+            {
+                var ownerId = User.GetUserId();
 
-            await _petService.DeletePetAsync(id, ownerId);
+                await _petService.DeletePetAsync(id, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.DELETE_PET_SUCCESS));
+                return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.DELETE_PET_SUCCESS, id));
+            }
+            catch (Exception)
+            {
+                return BadRequest(BaseResponseDto.InternalErrorResponseDto(ResponseMessageConstantsCommon.SERVER_ERROR, ResponseMessageConstantsCommon.NO_DATA));
+            }
         }
     }
 }

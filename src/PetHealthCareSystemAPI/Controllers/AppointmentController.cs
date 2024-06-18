@@ -17,7 +17,7 @@ namespace PetHealthCareSystemAPI.Controllers
             serviceProvider.GetRequiredService<IAppointmentService>();
 
         [HttpGet]
-        [Route("GetTimeFrame")]
+        [Route("customer/time-frames")]
         public async Task<IActionResult> GetTimeFrameForBooking()
         {
             var timeframes = await _appointmentService.GetAllTimeFramesForBookingAsync();
@@ -26,7 +26,7 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetVetFreeTimeFrame")]
+        [Route("customer/free-vet-time-frames")]
         public async Task<IActionResult> GetVetFreeTimeFrame([FromQuery] GetFreeVetQueryObject qo)
         {
             if (!DateOnly.TryParse(qo.Date, out DateOnly date))
@@ -39,13 +39,13 @@ namespace PetHealthCareSystemAPI.Controllers
                 return BadRequest(BaseResponseDto.BadRequestResponseDto(null));
             }
 
-            var freeVetList = await _appointmentService.GetFreeWithTimeFrameAndDate(date, qo.TimetableId);
+            var freeVetList = await _appointmentService.GetFreeWithTimeFrameAndDateAsync(date, qo.TimetableId);
 
             return Ok(BaseResponseDto.OkResponseDto(freeVetList));
         }
 
         [HttpPost]
-        [Route("BookAppointment")]
+        [Route("customer/book")]
         public async Task<IActionResult> BookAppointment()
         {
             var ownerId = User.GetUserId();

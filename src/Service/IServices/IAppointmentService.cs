@@ -11,5 +11,5 @@ public interface IAppointmentService
     Task UpdateAppointmentAsync(AppointmentUpdateRequestDto appointment);
     Task DeleteAppointmentAsync(int id);*/
     Task<List<TimeTableResponseDto>> GetAllTimeFramesForBookingAsync();
-    Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDate(DateOnly date, int timetableId);
+    Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDateAsync(DateOnly date, int timetableId);
 }
