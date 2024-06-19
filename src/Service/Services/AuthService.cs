@@ -220,7 +220,7 @@ namespace Service.Services
         {
             var account = await GetUserByUserName(model.UserName);
             if (account == null) throw new AppException(ErrorCode.UserInvalid, ResponseMessageIdentity.INVALID_USER, StatusCodes.Status400BadRequest);
-            if (account.OTP == null) throw new AppException(ErrorCode.Validated, ResponseMessageIdentity.EMAIL_VALIDATE, StatusCodes.Status400BadRequest);
+            if (account.OTP == null) throw new AppException(ErrorCode.Validated, ResponseMessageIdentity.EMAIL_VALIDATED, StatusCodes.Status400BadRequest);
 
             /*account.OTP = StringHelper.Generate(6, false, false, true, false);
             await _userRepository.UpdateAsync(account);

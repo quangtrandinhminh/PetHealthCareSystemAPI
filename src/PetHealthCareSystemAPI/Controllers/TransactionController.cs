@@ -67,4 +67,15 @@ public class TransactionController : Controller
 
         return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.ADD_TRANSACTION_SUCCESS));
     }
+
+    [HttpPut]
+    //[Authorize(Roles = "Staff")]
+    [Route("staff/update-payment/{id:int}")]
+    public async Task<IActionResult> UpdatePaymentByStaff(int id)
+    {
+        var userId = User.GetUserId();
+        await _transactionService.UpdatePaymentByStaffAsync(id, 1);
+
+        return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.UPDATE_PAYMENT_SUCCESS));
+    }
 }
