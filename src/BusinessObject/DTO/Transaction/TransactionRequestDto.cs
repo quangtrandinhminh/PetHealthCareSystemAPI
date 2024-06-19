@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Utility.Constants;
 using Utility.Enum;
 
 namespace BusinessObject.DTO.Transaction;
@@ -12,6 +13,9 @@ public class TransactionRequestDto
     [Required]
     public int PaymentMethod { get; set; }
     public DateTimeOffset? PaymentDate { get; set; }
+    public string? PaymentId { get; set; }
+    public string? PaymentNote { get; set; }
+    public string? Note { get; set; }
 
     [Required]
     public int Status { get; set; }

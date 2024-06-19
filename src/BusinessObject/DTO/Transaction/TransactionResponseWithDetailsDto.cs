@@ -14,8 +14,8 @@ public class TransactionResponseWithDetailsDto
     public int? HospitalizationId { get; set; }
     public decimal Total { get; set; }
     public DateTimeOffset? PaymentDate { get; set; }
-    public TransactionStatus Status { get; set; }
-    public PaymentMethod? PaymentMethod { get; set; }
+    public string Status { get; set; }
+    public string? PaymentMethod { get; set; }
     public string? PaymentNote { get; set; }
     public string? PaymentId { get; set; }
     public int? PaymentStaffId { get; set; }

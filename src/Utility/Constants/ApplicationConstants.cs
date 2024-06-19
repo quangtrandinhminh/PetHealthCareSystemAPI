@@ -42,8 +42,8 @@ namespace Utility.Constants
         public const string TOKEN_INVALID = "token khong xac thuc.";
         public const string TOKEN_EXPIRED = "token khong xac thuc hoac da het han.";
         public const string TOKEN_INVALID_OR_EXPIRED = "token khong xac thuc hoac da het han.";
-        public const string EMAIL_VALIDATE = "Email da duoc xac thuc.";
-        public const string PHONE_VALIDATE = "Phone number is validated.";
+        public const string EMAIL_VALIDATED = "Email da duoc xac thuc.";
+        public const string PHONE_VALIDATED = "Phone number is validated.";
         public const string ROLE_INVALID = "Roles khong xac thuc.";
         public const string CLAIM_NOTFOUND = "Khong tim thay claim.";
         public const string EXISTED_ROLE = "Role da ton tai.";
@@ -127,9 +127,13 @@ namespace Utility.Constants
         public const string TRANSACTION_EXISTED = "Giao dich da ton tai";
         public const string INVALID_TRANSACTION = "Giao dich khong hop le";
         public const string TRANSACTION_DETAIL_REQUIRED = "Vui long nhap chi tiet giao dich";
+        public const string INVALID_TRANSACTION_STATUS = "Trang thai giao dich khong hop le";
+        public const string INVALID_PAYMENT_METHOD = "Phuong thuc thanh toan khong hop le";
+        public const string PAYMENT_REQUIRED = "Vui long nhap ma giao dich";
         public const string ADD_TRANSACTION_SUCCESS = "Them giao dich thanh cong";
-        public const string UPDATE_TRANSACTION_SUCCESS = "Cap nhat giao dich thanh cong";
+        public const string UPDATE_PAYMENT_SUCCESS = "Cap nhat thanh toan thanh cong";
         public const string DELETE_TRANSACTION_SUCCESS = "Xoa giao dich thanh cong";
+        public const string TRANSACTION_PAID = "Giao dich da thanh toan";
     }
 
     public class ResponseMessageConstantsAppointment
