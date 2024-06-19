@@ -37,21 +37,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AppointmentService");
                 });
 
-            modelBuilder.Entity("BusinessObject.AppointmentPet", b =>
-                {
-                    b.Property<int>("AppointmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PetId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AppointmentId", "PetId");
-
-                    b.HasIndex("PetId");
-
-                    b.ToTable("AppointmentPets");
-                });
-
             modelBuilder.Entity("BusinessObject.Entities.Appointment", b =>
                 {
                     b.Property<int>("Id")
@@ -110,6 +95,21 @@ namespace DataAccessLayer.Migrations
                         .IsUnique();
 
                     b.ToTable("Appointment");
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.AppointmentPet", b =>
+                {
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppointmentId", "PetId");
+
+                    b.HasIndex("PetId");
+
+                    b.ToTable("AppointmentPets");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Cage", b =>
@@ -489,14 +489,14 @@ namespace DataAccessLayer.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "31fcbe78-5861-447d-91b8-78f319d31c4c",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 18, 20, 47, 3, 564, DateTimeKind.Unspecified).AddTicks(9937), new TimeSpan(0, 7, 0, 0, 0)),
+                            ConcurrencyStamp = "329b5fcc-2b7f-4d30-849a-e0eea84df0a3",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 19, 11, 50, 40, 453, DateTimeKind.Unspecified).AddTicks(8418), new TimeSpan(0, 7, 0, 0, 0)),
                             Email = "admin@email.com",
                             EmailConfirmed = false,
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 18, 20, 47, 3, 564, DateTimeKind.Unspecified).AddTicks(9937), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 19, 11, 50, 40, 453, DateTimeKind.Unspecified).AddTicks(8418), new TimeSpan(0, 7, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$nETz./dqkTcz4/PVwqE46eljFXbq3GS95DukiIzHDJysSkdP3lwn.",
+                            PasswordHash = "$2a$11$slshYgB6UGRQtWYB8dSKiubM3R0j.Ihf2huTgluDKaix9ovYX/PFG",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -1058,7 +1058,18 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BusinessObject.AppointmentPet", b =>
+            modelBuilder.Entity("BusinessObject.Entities.Appointment", b =>
+                {
+                    b.HasOne("BusinessObject.Entities.TimeTable", "TimeTable")
+                        .WithMany("Appointments")
+                        .HasForeignKey("TimeTableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TimeTable");
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.AppointmentPet", b =>
                 {
                     b.HasOne("BusinessObject.Entities.Appointment", "Appointment")
                         .WithMany("AppointmentPets")
@@ -1075,17 +1086,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Appointment");
 
                     b.Navigation("Pet");
-                });
-
-            modelBuilder.Entity("BusinessObject.Entities.Appointment", b =>
-                {
-                    b.HasOne("BusinessObject.Entities.TimeTable", "TimeTable")
-                        .WithMany("Appointments")
-                        .HasForeignKey("TimeTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TimeTable");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Hospitalization", b =>

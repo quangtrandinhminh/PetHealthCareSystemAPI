@@ -19,7 +19,7 @@ public class Appointment : BaseEntity
 
     [ForeignKey(nameof(TimeTableId))]
     public virtual TimeTable TimeTable { get; set; }
-    
+
     public virtual ICollection<AppointmentPet> AppointmentPets { get; set; }
 
     public virtual ICollection<Service> Services { get; set; }

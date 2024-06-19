@@ -51,6 +51,10 @@ public partial class MapperlyMapper
     {
         return entities.Select(Map).ToList();
     }
+    public List<PetResponseDto?> Map(List<Pet?> entities)
+    {
+        return entities.Select(Map).ToList();
+    }
     public partial Pet Map(PetUpdateRequestDto request);
     public partial void Map(PetRequestDto request, Pet entity);
 
@@ -59,6 +63,10 @@ public partial class MapperlyMapper
     public partial Service Map(ServiceResponseDto request);
     public partial ServiceResponseDto Map(Service entity);
     public partial IList<ServiceResponseDto> Map(IList<Service> entity);
+    public List<ServiceResponseDto?> Map(ICollection<Service?> entities)
+    {
+        return entities.Select(Map).ToList();
+    }
     public partial void Map(ServiceRequestDto request, Service entity);
 
     // timetable
