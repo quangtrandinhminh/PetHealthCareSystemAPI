@@ -42,6 +42,32 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
         return response;
     }
 
+    public async Task<UserResponseDto> GetVetByIdAsync(int id)
+    {
+        var vets = await _userManager.GetUsersInRoleAsync(UserRole.Vet.ToString());
+
+        if (vets == null || vets.Count == 0)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsVet.VET_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var response = _mapper.Map(vets);
+
+        foreach (var vet in response)
+        {
+            vet.Role = UserRole.Vet.ToString();
+        }
+
+        var vetResponse = response.Where(e => e.Id == id).FirstOrDefault();
+
+        if (vetResponse == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsVet.VET_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        return vetResponse;
+    }
+
     public Task<IList<UserResponseDto>> GetStaffAsync()
     {
         throw new NotImplementedException();

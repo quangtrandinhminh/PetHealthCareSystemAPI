@@ -8,7 +8,6 @@ public class AppointmentBookRequestDto
     public int VetId { get; set; }
     public string? Note { get; set; }
     public int TimetableId { get; set; }
-    public DateOnly AppointmentDate { get; set; }
+    public string AppointmentDate { get; set; }
     public List<int> PetIdList { get; set; }
-    public AppointmentBookingType BookingType { get; set; }
 }

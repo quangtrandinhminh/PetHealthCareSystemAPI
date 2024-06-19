@@ -149,6 +149,7 @@ builder.Services.AddScoped<IHospitalizationRepository, HospitalizationRepository
 builder.Services.AddScoped<ITimeTableRepository, TimeTableRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAppointmentPetRepository, AppointmentPetRepository>();
 
 // Service
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
