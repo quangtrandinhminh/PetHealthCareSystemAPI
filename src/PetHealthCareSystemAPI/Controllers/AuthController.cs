@@ -41,6 +41,15 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("admin/roles/all")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var roles = await _authService.GetAllRoles();
+            return Ok(BaseResponseDto.OkResponseDto(roles));
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("admin/register")]

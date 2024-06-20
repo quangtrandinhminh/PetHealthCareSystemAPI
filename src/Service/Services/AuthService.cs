@@ -43,6 +43,13 @@ namespace Service.Services
         private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
 
+
+        // get all roles
+        public async Task<IList<RoleResponseDto>> GetAllRoles()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+            return _mapper.Map(roles);
+        }
         public async Task Register(RegisterDto dto)
         {
             _logger.Information("Register new user: {@dto}", dto);
@@ -95,7 +102,7 @@ namespace Service.Services
         // register by admin
         public async Task RegisterByAdmin(RegisterDto dto, int role)
         {
-            _logger.Information("Register new user: {@dto}", dto);
+            _logger.Information("Register new user by admin: {@dto}", dto);
             // check role is valid in system
             var roleEntity = await _roleManager.FindByIdAsync(role.ToString());
             if (roleEntity == null)
@@ -179,6 +186,8 @@ namespace Service.Services
         public async Task<LoginResponseDto> RefreshToken(string token)
         {
             var (refreshToken, account) = await GetRefreshToken(token);
+            refreshToken.Expires = CoreHelper.SystemTimeNow;
+            await _refreshTokenRepository.UpdateAsync(refreshToken);
             var newRefreshToken = GenerateRefreshToken(account.Id, 48);
 
             newRefreshToken.UserId = account.Id;

@@ -17,7 +17,7 @@ namespace DataAccessLayer.Base
         public static IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null, 
             params Expression<Func<T, object>>[] includeProperties)
         {
-            using var context = new AppDbContext();
+            var context = new AppDbContext();
             var dbSet = context.Set<T>();
             IQueryable<T> queryable = dbSet.AsNoTracking();
             includeProperties = includeProperties?.Distinct().ToArray();

@@ -22,6 +22,7 @@ public partial class MapperlyMapper
     // public partial void UserToLoginResponseDto(dto request, entity entity); --for update
 
     // user
+    public partial IList<RoleResponseDto> Map(IList<RoleEntity> entity);
     public partial UserEntity Map(RegisterDto request);
     public partial UserEntity Map(VetRequestDto request);
     public partial LoginResponseDto UserToLoginResponseDto(UserEntity entity);
