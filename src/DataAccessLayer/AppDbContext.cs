@@ -107,7 +107,6 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
         };
         modelBuilder.Entity<UserEntity>().HasData(admin);
 
-
         var roles = new List<RoleEntity>
         {
             new()
@@ -136,6 +135,13 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
             },
         };
         modelBuilder.Entity<RoleEntity>().HasData(roles);
+
+        var adminUserRole = new UserRoleEntity
+        {
+            UserId = admin.Id,
+            RoleId = 1
+        };
+        modelBuilder.Entity<UserRoleEntity>().HasData(adminUserRole);
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {

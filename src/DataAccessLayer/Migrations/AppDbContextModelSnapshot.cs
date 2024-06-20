@@ -37,6 +37,21 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AppointmentService");
                 });
 
+            modelBuilder.Entity("BusinessObject.AppointmentPet", b =>
+                {
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppointmentId", "PetId");
+
+                    b.HasIndex("PetId");
+
+                    b.ToTable("AppointmentPets");
+                });
+
             modelBuilder.Entity("BusinessObject.Entities.Appointment", b =>
                 {
                     b.Property<int>("Id")
@@ -95,21 +110,6 @@ namespace DataAccessLayer.Migrations
                         .IsUnique();
 
                     b.ToTable("Appointment");
-                });
-
-            modelBuilder.Entity("BusinessObject.Entities.AppointmentPet", b =>
-                {
-                    b.Property<int>("AppointmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PetId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AppointmentId", "PetId");
-
-                    b.HasIndex("PetId");
-
-                    b.ToTable("AppointmentPets");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Cage", b =>
@@ -489,14 +489,14 @@ namespace DataAccessLayer.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "329b5fcc-2b7f-4d30-849a-e0eea84df0a3",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 19, 11, 50, 40, 453, DateTimeKind.Unspecified).AddTicks(8418), new TimeSpan(0, 7, 0, 0, 0)),
+                            ConcurrencyStamp = "56fcf32f-0819-4f8a-bc8f-8fe2c397999c",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 20, 13, 41, 51, 87, DateTimeKind.Unspecified).AddTicks(8259), new TimeSpan(0, 7, 0, 0, 0)),
                             Email = "admin@email.com",
                             EmailConfirmed = false,
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 19, 11, 50, 40, 453, DateTimeKind.Unspecified).AddTicks(8418), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 20, 13, 41, 51, 87, DateTimeKind.Unspecified).AddTicks(8259), new TimeSpan(0, 7, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$slshYgB6UGRQtWYB8dSKiubM3R0j.Ihf2huTgluDKaix9ovYX/PFG",
+                            PasswordHash = "$2a$11$JbJuByAkufJMx2AbDrdAmuJZy7icySnElKS7mJY0CpqvzNSPTJnNS",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -841,6 +841,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTimeOffset?>("RefundDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("RefundPaymentId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("RefundPercentage")
                         .HasColumnType("decimal(5, 2)");
 
@@ -1041,6 +1044,13 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("UserRoles");
 
                     b.HasDiscriminator().HasValue("UserRoleEntity");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("AppointmentService", b =>
@@ -1058,18 +1068,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Appointment", b =>
-                {
-                    b.HasOne("BusinessObject.Entities.TimeTable", "TimeTable")
-                        .WithMany("Appointments")
-                        .HasForeignKey("TimeTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TimeTable");
-                });
-
-            modelBuilder.Entity("BusinessObject.Entities.AppointmentPet", b =>
+            modelBuilder.Entity("BusinessObject.AppointmentPet", b =>
                 {
                     b.HasOne("BusinessObject.Entities.Appointment", "Appointment")
                         .WithMany("AppointmentPets")
@@ -1086,6 +1085,17 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Appointment");
 
                     b.Navigation("Pet");
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.Appointment", b =>
+                {
+                    b.HasOne("BusinessObject.Entities.TimeTable", "TimeTable")
+                        .WithMany("Appointments")
+                        .HasForeignKey("TimeTableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TimeTable");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Hospitalization", b =>
@@ -1133,7 +1143,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.HasOne("BusinessObject.Entities.Service", null)
-                        .WithMany("MedicalRecords")
+                        .WithMany("AppointmentServices")
                         .HasForeignKey("ServiceId");
 
                     b.HasOne("BusinessObject.Entities.Identity.UserEntity", null)
@@ -1310,7 +1320,7 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("BusinessObject.Entities.Service", b =>
                 {
-                    b.Navigation("MedicalRecords");
+                    b.Navigation("AppointmentServices");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.TimeTable", b =>

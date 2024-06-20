@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240618134704_Fix")]
-    partial class Fix
+    [Migration("20240620064151_ChangeTransaction-UpdateAdmin")]
+    partial class ChangeTransactionUpdateAdmin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -492,14 +492,14 @@ namespace DataAccessLayer.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "31fcbe78-5861-447d-91b8-78f319d31c4c",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 18, 20, 47, 3, 564, DateTimeKind.Unspecified).AddTicks(9937), new TimeSpan(0, 7, 0, 0, 0)),
+                            ConcurrencyStamp = "56fcf32f-0819-4f8a-bc8f-8fe2c397999c",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 6, 20, 13, 41, 51, 87, DateTimeKind.Unspecified).AddTicks(8259), new TimeSpan(0, 7, 0, 0, 0)),
                             Email = "admin@email.com",
                             EmailConfirmed = false,
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 18, 20, 47, 3, 564, DateTimeKind.Unspecified).AddTicks(9937), new TimeSpan(0, 7, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 6, 20, 13, 41, 51, 87, DateTimeKind.Unspecified).AddTicks(8259), new TimeSpan(0, 7, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "$2a$11$nETz./dqkTcz4/PVwqE46eljFXbq3GS95DukiIzHDJysSkdP3lwn.",
+                            PasswordHash = "$2a$11$JbJuByAkufJMx2AbDrdAmuJZy7icySnElKS7mJY0CpqvzNSPTJnNS",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -844,6 +844,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTimeOffset?>("RefundDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("RefundPaymentId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("RefundPercentage")
                         .HasColumnType("decimal(5, 2)");
 
@@ -1044,6 +1047,13 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("UserRoles");
 
                     b.HasDiscriminator().HasValue("UserRoleEntity");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("AppointmentService", b =>
@@ -1136,7 +1146,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.HasOne("BusinessObject.Entities.Service", null)
-                        .WithMany("MedicalRecords")
+                        .WithMany("AppointmentServices")
                         .HasForeignKey("ServiceId");
 
                     b.HasOne("BusinessObject.Entities.Identity.UserEntity", null)
@@ -1313,7 +1323,7 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("BusinessObject.Entities.Service", b =>
                 {
-                    b.Navigation("MedicalRecords");
+                    b.Navigation("AppointmentServices");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.TimeTable", b =>

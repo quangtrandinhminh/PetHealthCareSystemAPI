@@ -37,6 +37,7 @@ public class Transaction : BaseEntity
     [Column(TypeName = "decimal(5, 2)")]
     [Range(0, 1)]
     public  decimal? RefundPercentage { get; set; }
+    public string ? RefundPaymentId { get; set; }
     public string? RefundReason { get; set; }
     public DateTimeOffset? RefundDate { get; set; }
     

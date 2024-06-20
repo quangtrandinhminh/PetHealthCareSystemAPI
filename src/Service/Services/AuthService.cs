@@ -44,7 +44,7 @@ namespace Service.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
 
         public async Task Register(RegisterDto dto)
-        { 
+        {
             _logger.Information("Register new user: {@dto}", dto);
             // get user by name
             var validateUser = await _userManager.FindByNameAsync(dto.UserName);
@@ -92,6 +92,60 @@ namespace Service.Services
             // send sms to phone number here
         }
 
+        // register by admin
+        public async Task RegisterByAdmin(RegisterDto dto, int role)
+        {
+            _logger.Information("Register new user: {@dto}", dto);
+            // check role is valid in system
+            var roleEntity = await _roleManager.FindByIdAsync(role.ToString());
+            if (roleEntity == null)
+            {
+                throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageIdentity.ROLE_INVALID, StatusCodes.Status400BadRequest);
+            }
+
+            // get user by name
+            var validateUser = await _userManager.FindByNameAsync(dto.UserName);
+            if (validateUser != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_USER, StatusCodes.Status400BadRequest);
+            }
+
+            var existingUserWithEmail = await _userManager.FindByEmailAsync(dto.Email);
+            if (existingUserWithEmail != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_EMAIL, StatusCodes.Status400BadRequest);
+            }
+
+            var existingUserWithPhone = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == dto.PhoneNumber);
+            if (existingUserWithPhone != null)
+            {
+                throw new AppException(ResponseCodeConstants.EXISTED, ResponseMessageIdentity.EXISTED_PHONE, StatusCodes.Status400BadRequest);
+            }
+
+            if (!string.IsNullOrEmpty(dto.PhoneNumber) && !Regex.IsMatch(dto.PhoneNumber, @"^\d{10}$"))
+            {
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PHONENUMBER_INVALID, StatusCodes.Status400BadRequest);
+            }
+
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.PASSWORD_NOT_MATCH, StatusCodes.Status400BadRequest);
+            }
+
+            try
+            {
+                var account = _mapper.Map(dto);
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+                account.SecurityStamp = Guid.NewGuid().ToString();
+                await _userRepository.CreateAsync(account);
+                await _userManager.AddToRoleAsync(account, roleEntity.NormalizedName);
+            }
+            catch (Exception e)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, e.Message, StatusCodes.Status400BadRequest);
+            }
+        }
+
         public async Task<LoginResponseDto> Authenticate(LoginDto dto)
         {
             _logger.Information("Authenticate user: {@dto}", dto);
@@ -106,8 +160,8 @@ namespace Service.Services
             try
             {
                 var roles = await _userManager.GetRolesAsync(account);
-                var token = await GenerateJwtToken(account, roles, 48);
-                var refreshToken = GenerateRefreshToken(account.Id, 12);
+                var token = await GenerateJwtToken(account, roles, 24);
+                var refreshToken = GenerateRefreshToken(account.Id, 48);
                 await RemoveOldRefreshTokens(account.RefreshTokens);
                 await _refreshTokenRepository.AddAsync(refreshToken);
                 var response = _mapper.UserToLoginResponseDto(account);
@@ -125,7 +179,7 @@ namespace Service.Services
         public async Task<LoginResponseDto> RefreshToken(string token)
         {
             var (refreshToken, account) = await GetRefreshToken(token);
-            var newRefreshToken = GenerateRefreshToken(account.Id, 12);
+            var newRefreshToken = GenerateRefreshToken(account.Id, 48);
 
             newRefreshToken.UserId = account.Id;
             await _refreshTokenRepository.AddAsync(newRefreshToken);
@@ -135,7 +189,7 @@ namespace Service.Services
             try
             {
                 var roles = await _userManager.GetRolesAsync(account);
-                var jwtToken = await GenerateJwtToken(account, roles, 48);
+                var jwtToken = await GenerateJwtToken(account, roles, 24);
                 var response = _mapper.UserToLoginResponseDto(account);
                 response.Token = jwtToken;
                 response.RefreshToken = newRefreshToken.Token;
@@ -256,10 +310,10 @@ namespace Service.Services
             claims.AddRange(new[]
             {
                 new Claim(ClaimTypes.Sid, loggedUser.Id.ToString()),
-                new Claim("UserName", loggedUser.UserName),
-                new Claim(ClaimTypes.Name, loggedUser.FullName),
-                new Claim(ClaimTypes.Email, loggedUser.Email),
-                new Claim(ClaimTypes.MobilePhone, loggedUser.PhoneNumber),
+                new Claim("UserName", loggedUser.UserName ?? string.Empty),
+                new Claim(ClaimTypes.Name, loggedUser.FullName ?? string.Empty),
+                new Claim(ClaimTypes.Email, loggedUser.Email ?? string.Empty),
+                new Claim(ClaimTypes.MobilePhone, loggedUser.PhoneNumber ?? string.Empty),
                 new Claim(ClaimTypes.Expired, CoreHelper.SystemTimeNow.AddHours(hour).Date.ToShortDateString())
             });
 
@@ -282,7 +336,7 @@ namespace Service.Services
 
         private async Task RemoveOldRefreshTokens(ICollection<RefreshToken> refreshTokens)
         {
-            var removeList = refreshTokens.Where(x => !x.IsActive 
+            var removeList = refreshTokens.Where(x => !x.IsActive
                                                       && x.CreatedTime.AddDays(2) <= CoreHelper.SystemTimeNow).ToList();
             if (removeList.Any())
             {
@@ -293,8 +347,8 @@ namespace Service.Services
         private async Task<(RefreshToken, UserEntity)> GetRefreshToken(string token)
         {
             var account = await _userRepository.GetSingleAsync(y
-                    => y.RefreshTokens.Any(t => t.Token == token)
-                , _ => _.RefreshTokens);
+                                => y.RefreshTokens.Any(t => t.Token == token)
+                            , _ => _.RefreshTokens);
             if (account == null || account.DeletedTime != null)
             {
                 throw new AppException(ErrorCode.TokenInvalid, ResponseMessageIdentity.TOKEN_INVALID, StatusCodes.Status401Unauthorized);
