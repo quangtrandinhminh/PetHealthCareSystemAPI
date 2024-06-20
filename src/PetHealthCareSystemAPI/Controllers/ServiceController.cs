@@ -12,6 +12,7 @@ namespace PetHealthCareSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ServiceController : ControllerBase
     {
         private IService _iservice;
@@ -23,8 +24,8 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // GET: api/<ServiceController>
         [HttpGet]
-        [Authorize(Roles = "Customer")]
-        [Route("GetAllServiceAsync")]
+        [AllowAnonymous]
+        [Route("get-all")]
         public async Task<IActionResult> Get()
         {
             var list = await _iservice.GetAllServiceAsync();
@@ -41,7 +42,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // POST api/<ServiceController>
         [HttpPost]
-        [Route("Create Service")]
+        [Route("add")]
         public async Task<OkObjectResult> PostAsync([FromBody] ServiceResponseDto dto)
         {
             await _iservice.CreateServiceAsync(dto);
@@ -50,9 +51,11 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         // PUT api/<ServiceController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [Route("update")]
+        public void Put([FromBody] ServiceRequestDto serviceRequestDto)
         {
+
         }
 
         // DELETE api/<ServiceController>/5
