@@ -46,7 +46,19 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         }
 
         var response = _mapper.Map(transactions);
-        return await PaginatedList<TransactionResponseDto>.CreateAsync(response, pageNumber, pageSize);
+        var reponsePages = await PaginatedList<TransactionResponseDto>.CreateAsync(response, pageNumber, pageSize);
+        // for each response in reponse page set customer name
+        foreach (var transaction in reponsePages.Items)
+        {
+            var customer = await _userRepository.GetSingleAsync(u => u.Id == transaction.CustomerId);
+            var createBy = await _userRepository.GetSingleAsync(u => u.Id == transaction.CreatedBy);
+            var updateBy = await _userRepository.GetSingleAsync(u => u.Id == transaction.LastUpdatedBy);
+            transaction.CustomerName = customer?.FullName ?? string.Empty;
+            transaction.CreatedByName = createBy?.FullName ?? string.Empty;
+            transaction.LastUpdatedByName = updateBy?.FullName ?? string.Empty;
+        }
+
+        return reponsePages;
     }
 
     public async Task<PaginatedList<TransactionResponseDto>> GetTransactionsByCustomerIdAsync(int customerId, int pageNumber, int pageSize)
@@ -57,7 +69,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
             t => t.Customer);
         if (transactions == null)
         {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, 
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
                 ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
@@ -81,7 +93,12 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         var response = _mapper.TransactionToTransactionResponseWithDetails(transaction);
         response.TransactionDetails = _mapper.Map(transaction.TransactionDetails.ToList());
         var customer = await _userRepository.GetSingleAsync(u => u.Id == transaction.CustomerId);
-        response.CustomerName = customer.FullName;
+        var createBy = await _userRepository.GetSingleAsync(u => u.Id == transaction.CreatedBy);
+        var updateBy = await _userRepository.GetSingleAsync(u => u.Id == transaction.LastUpdatedBy);
+        response.CustomerName = customer?.FullName ?? string.Empty;
+        response.CreatedByName = createBy?.FullName ?? string.Empty;
+        response.LastUpdatedByName = updateBy?.FullName ?? string.Empty;
+
         return response;
     }
 
@@ -140,7 +157,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
                                        ResponseMessageConstantsTransaction.PAYMENT_REQUIRED,
                                                           StatusCodes.Status400BadRequest);
             }
-            
+
         }
 
         /*if (dto.AppointmentId == null && dto.MedicalRecordId == null &&

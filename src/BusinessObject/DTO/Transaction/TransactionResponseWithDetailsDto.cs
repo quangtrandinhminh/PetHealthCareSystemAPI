@@ -21,9 +21,16 @@ public class TransactionResponseWithDetailsDto
     public int? PaymentStaffId { get; set; }
     public string? PaymentStaffName { get; set; }
     public string? Note { get; set; }
+    public string? RefundPaymentId { get; set; }
     public decimal? RefundPercentage { get; set; }
     public string? RefundReason { get; set; }
     public DateTimeOffset? RefundDate { get; set; }
+    public int? CreatedBy { get; set; }
+    public string? CreatedByName { get; set; }
+    public DateTimeOffset CreatedTime { get; set; }
+    public int? LastUpdatedBy { get; set; }
+    public string? LastUpdatedByName { get; set; }
+    public DateTimeOffset LastUpdatedTime { get; set; }
     public IList<TransactionDetailResponseDto> TransactionDetails { get; set; }
 }
 
