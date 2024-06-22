@@ -19,4 +19,5 @@ public class AppointmentResponseDto
     public UserResponseDto Vet { get; set; }
     public List<PetResponseDto?> Pets { get; set; }
     public List<ServiceResponseDto?> Services { get; set; }
+    public string Status { get; set; }
 }

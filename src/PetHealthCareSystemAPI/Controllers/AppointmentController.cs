@@ -1,5 +1,6 @@
 ﻿using BusinessObject.DTO;
 using BusinessObject.DTO.Appointment;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetHealthCareSystemAPI.Extensions;
@@ -12,6 +13,7 @@ namespace PetHealthCareSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AppointmentController(IServiceProvider serviceProvider) : ControllerBase
     {
         private readonly IAppointmentService _appointmentService =
@@ -19,6 +21,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("customer/time-frames")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTimeFrameForBooking()
         {
 
@@ -30,38 +33,51 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("customer/free-vet-time-frames")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetVetFreeTimeFrame([FromQuery] AppointmentDateTimeQueryDto qo)
         {
-
-            if (!DateOnly.TryParse(qo.Date, out DateOnly date))
-            {
-                return BadRequest(BaseResponseDto.BadRequestResponseDto(ResponseMessageConstantsCommon.DATE_WRONG_FORMAT, null));
-            }
-
-            if (qo.Date == null || qo.TimetableId == null)
-            {
-                return BadRequest(BaseResponseDto.BadRequestResponseDto(ResponseMessageConstantsCommon.DATA_NOT_ENOUGH, null));
-            }
-
-            var freeVetList = await _appointmentService.GetFreeWithTimeFrameAndDateAsync(date, qo.TimetableId);
+            var freeVetList = await _appointmentService.GetFreeWithTimeFrameAndDateAsync(qo);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, freeVetList));
         }
 
         [HttpPost]
         [Route("customer/book")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> BookAppointment([FromBody] AppointmentBookRequestDto dto)
         {
-            await _appointmentService.BookOnlineAppointmentAsync(dto);
+            var ownerId = User.GetUserId();
+
+            await _appointmentService.BookOnlineAppointmentAsync(dto, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, null));
         }
 
         [HttpGet]
         [Route("staff/appointments")]
-        public async Task<IActionResult> GetAllAppointment([FromRoute] int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAppointment([FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var response = await _appointmentService.GetAllAppointmentsAsync(pageNumber, pageSize);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpGet]
+        [Route("vet/appointments/{id:int}")]
+        public async Task<IActionResult> GetAllAppointmentForVet([FromRoute] int id, [FromQuery] string? date, int pageNumber = 1, int pageSize = 10)
+        {
+            var response = await _appointmentService.GetVetAppointmentsAsync(id, date, pageNumber, pageSize);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpGet]
+        [Route("customer/appointments")]
+        public async Task<IActionResult> GetAllAppointmentForCustomer([FromQuery] string? date, int pageNumber = 1, int pageSize = 10)
+        {
+            var userId = User.GetUserId();
+
+            var response = await _appointmentService.GetUserAppointmentsAsync(pageNumber, pageSize, userId, date);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
