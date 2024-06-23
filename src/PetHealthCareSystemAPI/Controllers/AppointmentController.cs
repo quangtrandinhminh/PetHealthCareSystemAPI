@@ -48,9 +48,9 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             var ownerId = User.GetUserId();
 
-            await _appointmentService.BookOnlineAppointmentAsync(dto, ownerId);
+            var response = await _appointmentService.BookOnlineAppointmentAsync(dto, ownerId);
 
-            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, null));
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
 
         [HttpGet]
