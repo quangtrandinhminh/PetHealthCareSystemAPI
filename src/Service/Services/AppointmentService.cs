@@ -326,9 +326,10 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
 
         return new AppointmentResponseDto()
         {
+            Id = e.Id,
             AppointmentDate = e.AppointmentDate,
             Note = e.Note,
-            BookingType = e.BookingType,
+            BookingType = e.BookingType.ToString(),
             Vet = vet,
             Feedback = e.Feedback,
             Pets = _mapper.Map(pets),
