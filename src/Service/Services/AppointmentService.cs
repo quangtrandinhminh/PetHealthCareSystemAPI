@@ -86,7 +86,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         }
     }
 
-    public async Task BookOnlineAppointmentAsync(AppointmentBookRequestDto appointmentBookRequestDto, int ownerId)
+    public async Task<AppointmentResponseDto> BookOnlineAppointmentAsync(AppointmentBookRequestDto appointmentBookRequestDto, int ownerId)
     {
         try
         {
@@ -176,6 +176,12 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
                     AppointmentId = appointment.Id,
                 });
             }
+
+            var appointments = await _appointmentRepo.GetAppointmentsAsync();
+            var returnAppointment = appointments.Where(e => e.Id == appointment.Id).FirstOrDefault();
+            var vets = await _userService.GetVetsAsync();
+
+            return await ToAppointmentResponseDto(appointments, vets, returnAppointment);
         }
         catch (Exception ex)
         {
@@ -203,33 +209,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             var vets = await _userService.GetVetsAsync();
 
             // Fetch related data asynchronously for paginated appointments
-            var appointmentDtos = await Task.WhenAll(paginatedAppointments.Select(async e =>
-            {
-                var vet = vets.FirstOrDefault(ee => ee.Id == e.VetId);
-
-                var pets = e.AppointmentPets.Select(ap => ap.Pet).ToList();
-
-                var timeTable = (await _timeTableRepo.FindByConditionAsync(tt => tt.Id == e.TimeTableId)).FirstOrDefault(); // Adjust this line if `TimeTableId` is not the correct property name
-
-                return new AppointmentResponseDto()
-                {
-                    AppointmentDate = e.AppointmentDate,
-                    Note = e.Note,
-                    BookingType = e.BookingType,
-                    Vet = vet,
-                    Feedback = e.Feedback,
-                    Pets = _mapper.Map(pets),
-                    Rating = e.Rating,
-                    TimeTable = new TimeTableResponseDto()
-                    {
-                        Id = timeTable.Id,
-                        StartTime = timeTable.StartTime, // Assuming `StartTime` is a property in your `TimeTableResponseDto`
-                        EndTime = timeTable.EndTime // Assuming `EndTime` is another property you need
-                    },
-                    Services = _mapper.Map(e.Services),
-                    Status = e.Status.ToString(),
-                };
-            }));
+            var appointmentDtos = await Task.WhenAll(paginatedAppointments.Select(async e => await ToAppointmentResponseDto(appointments, vets, e)));
 
             return new PaginatedList<AppointmentResponseDto>(appointmentDtos, totalAppointments, pageNumber, pageSize);
         }
@@ -276,33 +256,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             var vets = await _userService.GetVetsAsync();
 
             // Fetch related data asynchronously for paginated appointments
-            var appointmentDtos = await Task.WhenAll(paginatedAppointments.Select(async e =>
-            {
-                var vet = vets.FirstOrDefault(ee => ee.Id == e.VetId);
-
-                var pets = e.AppointmentPets.Select(ap => ap.Pet).ToList();
-
-                var timeTable = (await _timeTableRepo.FindByConditionAsync(tt => tt.Id == e.TimeTableId)).FirstOrDefault(); // Adjust this line if `TimeTableId` is not the correct property name
-
-                return new AppointmentResponseDto()
-                {
-                    AppointmentDate = e.AppointmentDate,
-                    Note = e.Note,
-                    BookingType = e.BookingType,
-                    Vet = vet,
-                    Feedback = e.Feedback,
-                    Pets = _mapper.Map(pets),
-                    Rating = e.Rating,
-                    TimeTable = new TimeTableResponseDto()
-                    {
-                        Id = timeTable.Id,
-                        StartTime = timeTable.StartTime, // Assuming `StartTime` is a property in your `TimeTableResponseDto`
-                        EndTime = timeTable.EndTime // Assuming `EndTime` is another property you need
-                    },
-                    Services = _mapper.Map(e.Services),
-                    Status = e.Status.ToString(),
-                };
-            }));
+            var appointmentDtos = await Task.WhenAll(paginatedAppointments.Select(async e => await ToAppointmentResponseDto(appointments, vets, e)));
 
             return new PaginatedList<AppointmentResponseDto>(appointmentDtos, totalAppointments, pageNumber, pageSize);
         }
@@ -350,33 +304,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             var vets = await _userService.GetVetsAsync();
 
             // Fetch related data asynchronously for paginated appointments
-            var appointmentDtos = await Task.WhenAll(paginatedAppointments.Select(async e =>
-            {
-                var vet = vets.FirstOrDefault(ee => ee.Id == e.VetId);
-
-                var pets = e.AppointmentPets.Select(ap => ap.Pet).ToList();
-
-                var timeTable = (await _timeTableRepo.FindByConditionAsync(tt => tt.Id == e.TimeTableId)).FirstOrDefault(); // Adjust this line if `TimeTableId` is not the correct property name
-
-                return new AppointmentResponseDto()
-                {
-                    AppointmentDate = e.AppointmentDate,
-                    Note = e.Note,
-                    BookingType = e.BookingType,
-                    Vet = vet,
-                    Feedback = e.Feedback,
-                    Pets = _mapper.Map(pets),
-                    Rating = e.Rating,
-                    TimeTable = new TimeTableResponseDto()
-                    {
-                        Id = timeTable.Id,
-                        StartTime = timeTable.StartTime, // Assuming `StartTime` is a property in your `TimeTableResponseDto`
-                        EndTime = timeTable.EndTime // Assuming `EndTime` is another property you need
-                    },
-                    Services = _mapper.Map(e.Services),
-                    Status = e.Status.ToString(),
-                };
-            }));
+            var appointmentDtos = await Task.WhenAll(paginatedAppointments.Select(async e => await ToAppointmentResponseDto(appointments, vets, e)));
 
             return new PaginatedList<AppointmentResponseDto>(appointmentDtos, totalAppointments, pageNumber, pageSize);
         }
@@ -385,5 +313,34 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             _logger.Error(ex.Message);
             throw;
         }
+    }
+
+    private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,
+        IList<UserResponseDto> vets, Appointment e)
+    {
+        var vet = vets.FirstOrDefault(ee => ee.Id == e.VetId);
+
+        var pets = e.AppointmentPets.Select(ap => ap.Pet).ToList();
+
+        var timeTable = (await _timeTableRepo.FindByConditionAsync(tt => tt.Id == e.TimeTableId)).FirstOrDefault(); // Adjust this line if `TimeTableId` is not the correct property name
+
+        return new AppointmentResponseDto()
+        {
+            AppointmentDate = e.AppointmentDate,
+            Note = e.Note,
+            BookingType = e.BookingType,
+            Vet = vet,
+            Feedback = e.Feedback,
+            Pets = _mapper.Map(pets),
+            Rating = e.Rating,
+            TimeTable = new TimeTableResponseDto()
+            {
+                Id = timeTable.Id,
+                StartTime = timeTable.StartTime, // Assuming `StartTime` is a property in your `TimeTableResponseDto`
+                EndTime = timeTable.EndTime // Assuming `EndTime` is another property you need
+            },
+            Services = _mapper.Map(e.Services),
+            Status = e.Status.ToString(),
+        };
     }
 }
