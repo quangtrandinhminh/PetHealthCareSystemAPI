@@ -198,6 +198,80 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Register user by admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminAccessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"cus13\",\r\n    \"fullname\": \"cus seven\",\r\n    \"email\": \"qua1555tdmse171391@fpt.edu.vn\",\r\n    \"Password\": \"12345\",\r\n    \"ConfirmPassword\": \"12345\",\r\n    \"phonenumber\": \"0949458323\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/admin/register?role=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"register"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all roles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminAccessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/admin/roles/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"roles",
+								"all"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -524,11 +598,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update payment for staff",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/transaction/staff/update-payment/8",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"transaction",
+								"staff",
+								"update-payment",
+								"8"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "Appointmnet",
+			"item": []
+		},
+		{
+			"name": "User",
 			"item": []
 		}
 	],
