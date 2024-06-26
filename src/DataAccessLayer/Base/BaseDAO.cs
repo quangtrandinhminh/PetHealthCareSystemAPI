@@ -79,16 +79,17 @@ namespace DataAccessLayer.Base
             return await dbSet.FindAsync(id);
         }
 
-        public static async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, 
+        /*public static async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, 
             bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
             return await Get(predicate, isIncludeDeleted, includeProperties)
                 .OrderByDescending(p => p.CreatedTime).FirstOrDefaultAsync();
-        }
-        public async Task<T> GetSingleAsyncWithProperties(Expression<Func<T, bool>> predicate,
+        }*/
+
+        public static async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate,
             bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            using var context = new AppDbContext();
+            await using var context = new AppDbContext();
             var dbSet = context.Set<T>();
             var query = dbSet.AsQueryable();
 
@@ -217,7 +218,7 @@ namespace DataAccessLayer.Base
 
         public static async Task<IList<T?>> FindByConditionAsync(Expression<Func<T?, bool>> expression)
         {
-            using var context = new AppDbContext();
+            await using var context = new AppDbContext();
             var dbSet = context.Set<T>();
             return await dbSet.Where(expression).AsQueryable().AsNoTracking().ToListAsync();
         }
@@ -283,6 +284,13 @@ namespace DataAccessLayer.Base
             catch
             {
             }
+        }
+
+        public static async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            using var context = new AppDbContext();
+            var dbSet = context.Set<T>();
+            return await dbSet.FirstOrDefaultAsync(predicate);
         }
     }
 }
