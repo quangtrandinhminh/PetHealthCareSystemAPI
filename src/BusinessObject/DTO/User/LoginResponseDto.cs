@@ -15,6 +15,7 @@ namespace BusinessObject.DTO.User
         public virtual string? PhoneNumber { get; set; }
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }
+        public DateTimeOffset? RefreshTokenExpiredTime { get; set; }
         public IList<string> Role { get; set; }
     }
 }
