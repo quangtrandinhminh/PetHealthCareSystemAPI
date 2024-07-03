@@ -15,7 +15,7 @@ namespace PetHealthCareSystemAPI.Controllers;
 [Authorize]
 public class TransactionController : Controller
 {
-    
+
     private ITransactionService _transactionService;
 
     public TransactionController(ITransactionService transactionService)
@@ -57,6 +57,22 @@ public class TransactionController : Controller
         return Ok(BaseResponseDto.OkResponseDto(response));
     }
 
+    [HttpGet]
+    [Route("appointment/{id:int}")]
+    public async Task<IActionResult> GetTransactionByAppointmentId(int id)
+    {
+        var response = await _transactionService.GetTransactionByAppointmentIdAsync(id);
+        return Ok(BaseResponseDto.OkResponseDto(response));
+    }
+
+    [HttpGet]
+    [Route("medical-record/{id:int}")]
+    public async Task<IActionResult> GetTransactionByMedicalRecordId(int id)
+    {
+        var response = await _transactionService.GetTransactionByMedicalRecordIdAsync(id);
+        return Ok(BaseResponseDto.OkResponseDto(response));
+    }
+
     [HttpPost]
     [Authorize(Roles = "Customer, Staff")]
     [Route("create")]
@@ -68,8 +84,21 @@ public class TransactionController : Controller
         return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.ADD_TRANSACTION_SUCCESS));
     }
 
+    [HttpPost]
+    [Authorize(Roles = "Staff")]
+    [Route("hospitalization/create")]
+    public async Task<IActionResult> CreateTransactionForHospitalization([FromBody] TransactionRequestDto dto)
+    {
+
+        var userId = User.GetUserId();
+        await _transactionService.CreateTransactionForHospitalization(dto, userId);
+
+        return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.ADD_TRANSACTION_SUCCESS));
+
+    }
+
     [HttpPut]
-    //[Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff")]
     [Route("staff/update-payment/{id:int}")]
     public async Task<IActionResult> UpdatePaymentByStaff(int id)
     {

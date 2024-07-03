@@ -120,7 +120,7 @@ namespace DataAccessLayer.Base
 
         public static async Task<T> AddAsync(T entity)
         {
-            using var context = new AppDbContext();
+            await using var context = new AppDbContext();
             var dbSet = context.Set<T>();
             await dbSet.AddAsync(entity);
             await context.SaveChangesAsync();

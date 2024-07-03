@@ -155,7 +155,6 @@ builder.Services.AddScoped<IAppointmentPetRepository, AppointmentPetRepository>(
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IHospitalizationService, HospitalizationService>();
-builder.Services.AddScoped<IMedicalItemService, MedicalItemService>();
 builder.Services.AddScoped<IMedicalService, MedicalService>();
 builder.Services.AddScoped<IPetService, PetService>();
 builder.Services.AddScoped<IService, ServiceService>();

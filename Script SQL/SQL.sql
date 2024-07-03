@@ -175,3 +175,7 @@ VALUES
     (1, 1, N'Bravecto Chews',50000, 5, 250000),
     (2, 2, N'Heartgard Plus',45000, 3, 135000);
 
+INSERT INTO Configurations (ConfigKey, Value, CreatedTime, LastUpdatedTime)
+VALUES 
+    (N'HospitalizationPrice', '100000', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET()),
+    (N'RefundPercentage', '0.7', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET());
