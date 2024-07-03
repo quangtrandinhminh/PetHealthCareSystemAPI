@@ -200,7 +200,7 @@
 					"response": []
 				},
 				{
-					"name": "Register user by admin",
+					"name": "Register user with all role by admin",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -216,7 +216,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"cus13\",\r\n    \"fullname\": \"cus seven\",\r\n    \"email\": \"qua1555tdmse171391@fpt.edu.vn\",\r\n    \"Password\": \"12345\",\r\n    \"ConfirmPassword\": \"12345\",\r\n    \"phonenumber\": \"0949458323\"\r\n}",
+							"raw": "{\r\n    \"username\": \"staff1\",\r\n    \"fullname\": \"Nguyen Van A\",\r\n    \"email\": \"staff1@staff.com\",\r\n    \"Password\": \"12345\",\r\n    \"ConfirmPassword\": \"12345\",\r\n    \"phonenumber\": \"0949458324\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -224,7 +224,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/auth/admin/register?role=1",
+							"raw": "{{baseUrl}}/auth/admin/register?role=2",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -236,7 +236,7 @@
 							"query": [
 								{
 									"key": "role",
-									"value": "1"
+									"value": "2"
 								}
 							]
 						}
@@ -350,7 +350,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"string\",\r\n  \"species\": \"string\",\r\n  \"breed\": \"string\",\r\n  \"gender\": \"string\",\r\n  \"dateOfBirth\": \"2024-06-13T04:17:29.103Z\",\r\n  \"isNeutered\": true,\r\n  \"ownerID\": 0\r\n}",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"species\": \"string\",\r\n  \"breed\": \"string\",\r\n  \"gender\": \"string\",\r\n  \"dateOfBirth\": \"2024-06-13T04:17:29.103Z\",\r\n  \"isNeutered\": true,\r\n  \"ownerID\": 6\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -444,6 +444,66 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pet/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{accessToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -467,7 +527,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"paymentMethod\": 1,\r\n  \"paymentDate\": \"\",\r\n  \"status\": 1,\r\n  \"services\": [\r\n    {\r\n      \"serviceId\": 1,\r\n      \"quantity\": 1\r\n    }\r\n  ]\r\n}\r\n",
+							"raw": "{\r\n \"appointmentId\": 1,\r\n  \"paymentMethod\": 1,\r\n  \"paymentDate\": \"\",\r\n  \"status\": 1,\r\n  \"services\": [\r\n    {\r\n      \"serviceId\": 1,\r\n      \"quantity\": 1\r\n    }\r\n  ]\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -633,11 +693,202 @@
 		},
 		{
 			"name": "Appointmnet",
-			"item": []
+			"item": [
+				{
+					"name": "Book appointment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"serviceIdList\": [\r\n    1,2\r\n  ],\r\n  \"vetId\": 3,\r\n  \"note\": \"string\",\r\n  \"timetableId\": 1,\r\n  \"appointmentDate\": \"2024-07-05\",\r\n  \"petIdList\": [\r\n    1\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/appointment/customer/book",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"appointment",
+								"customer",
+								"book"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{accessToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		},
 		{
 			"name": "User",
 			"item": []
+		},
+		{
+			"name": "Medical record",
+			"item": [
+				{
+					"name": "Get all medical record",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminAccessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/medicalrecord/get-all?pageNumber=1&pageSize=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicalrecord",
+								"get-all"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create medical record",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{vetAccessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"appointmentId\": 1,\r\n  \"petId\": 1,\r\n  \"recordDetails\": \"string\",\r\n  \"date\": \"2024-07-03T11:08:07.943Z\",\r\n  \"diagnosis\": \"string\",\r\n  \"treatment\": \"string\",\r\n  \"note\": \"string\",\r\n  \"petWeight\": 1,\r\n  \"medicalItems\": [\r\n    {\r\n      \"medicalItemId\": 1,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"admissionDate\": \"2024-07-06T11:08:07.943Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/medicalrecord/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicalrecord",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/medicalrecord/8",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicalrecord",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{adminAccessToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		}
 	],
 	"auth": {
