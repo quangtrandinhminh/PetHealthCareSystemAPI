@@ -12,11 +12,11 @@ namespace PetHealthCareSystemAPI.Controllers
     [ApiController]
     public class MedicalItemController : Controller
     {
-        private IMedicalItemService _medicalItemRepo;
+        private IMedicalService _medicalService;
 
-        public MedicalItemController(IMedicalItemService medicalItem)
+        public MedicalItemController(IMedicalService medicalService)
         {
-            _medicalItemRepo = medicalItem;
+            _medicalService = medicalService;
         }
 
         // GET: api/<MedicalItemController>
@@ -25,7 +25,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("GetAllMedicalItem")]
         public async Task<IActionResult> Get()
         {
-            var list = await _medicalItemRepo.GetAllMedicalItem();
+            var list = await _medicalService.GetAllMedicalItem();
 
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
@@ -41,7 +41,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("Create MedicalItem")]
         public async Task<OkObjectResult> PostAsync([FromBody] MedicalResponseDto dto)
         {
-            await _medicalItemRepo.CreateMedicalItem(dto);
+            await _medicalService.CreateMedicalItem(dto);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
