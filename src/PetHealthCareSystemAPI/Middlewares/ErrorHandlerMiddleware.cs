@@ -6,17 +6,17 @@ using Utility.Constants;
 using Utility.Exceptions;
 using ILogger = Serilog.ILogger;
 
-
 namespace PetHealthCareSystemAPI.Middlewares
 {
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger _logger = Log.Logger;
+        private readonly ILogger _logger;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -25,15 +25,14 @@ namespace PetHealthCareSystemAPI.Middlewares
             {
                 await _next(context);
 
-                // Check for specific status codes and handle them
                 if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
                 {
                     await HandleUnauthorizedAsync(context);
                 }
                 else if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
                 {
-                    var role = GetRequiredRole(context);
-                    await HandleForbiddenAsync(context, role);
+                    var roles = GetRequiredRoles(context);
+                    await HandleForbiddenAsync(context, roles);
                 }
             }
             catch (AppException ex)
@@ -42,24 +41,18 @@ namespace PetHealthCareSystemAPI.Middlewares
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "An unhandled exception has occurred.");
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private string GetRequiredRole(HttpContext context)
+        private static string GetRequiredRoles(HttpContext context)
         {
             var endpoint = context.GetEndpoint();
+            var authorizeData = endpoint?.Metadata?.GetMetadata<IAuthorizeData>();
 
-            if (endpoint?.Metadata?.GetMetadata<IAuthorizeData>() is IAuthorizeData authorizeData)
-            {
-                // Extract roles from Authorize attribute
-                var roles = authorizeData.Roles;
-                return roles;
-            }
-
-            return null; // No specific role required
+            return authorizeData?.Roles;
         }
-
 
         private static Task HandleUnauthorizedAsync(HttpContext context)
         {
@@ -68,59 +61,44 @@ namespace PetHealthCareSystemAPI.Middlewares
 
             var message = ResponseMessageIdentity.UNAUTHENTICATED + " You need AccessToken to access this resource.";
 
-            var data = new BaseResponseDto(statusCode: StatusCodes.Status401Unauthorized, code: "Unauthorized", message: message);
-            var result = JsonConvert.SerializeObject(data, 
-                new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var data = new BaseResponseDto(StatusCodes.Status401Unauthorized, "Unauthorized", message);
+            var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return context.Response.WriteAsync(result);
         }
 
-        private static Task HandleForbiddenAsync(HttpContext context, string requiredRole = null)
+        private static Task HandleForbiddenAsync(HttpContext context, string requiredRoles = null)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
-            var message = requiredRole != null 
-                    ? ResponseMessageIdentity.USER_NOT_ALLOWED + $" You need '{requiredRole}' role to access this resource." 
-                    : "ResponseMessageIdentity.USER_NOT_ALLOWED";
+            var message = !string.IsNullOrEmpty(requiredRoles)
+                ? ResponseMessageIdentity.USER_NOT_ALLOWED + $" You need '{requiredRoles}' role to access this resource."
+                : ResponseMessageIdentity.USER_NOT_ALLOWED;
 
-            var data = new BaseResponseDto(statusCode: StatusCodes.Status403Forbidden, code: "Forbidden", message: message);
-            var result = JsonConvert.SerializeObject(data, 
-                new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var data = new BaseResponseDto(StatusCodes.Status403Forbidden, "Forbidden", message);
+            var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return context.Response.WriteAsync(result);
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, AppException ex)
+        private static async Task HandleExceptionAsync(HttpContext context, AppException ex)
         {
             var response = context.Response;
-
             response.ContentType = "application/json";
-            response.StatusCode = ex switch
-            {
-                AppException e => e.StatusCode,
-                _ => StatusCodes.Status500InternalServerError
-            };
+            response.StatusCode = ex.StatusCode;
 
-            BaseResponseDto data;
-            if (ex is AppException error)
-                data = new BaseResponseDto(statusCode: response.StatusCode, code: error.Code, message: error.Message);
-            else
-                data = new BaseResponseDto(statusCode: response.StatusCode, code: ResponseCodeConstants.FAILED, data: ex, message: ex.Message);
-
-            var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var data = new BaseResponseDto(response.StatusCode, ex.Code, ex.Message);
+            var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             await response.WriteAsync(result);
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            _logger.Error(ex, "An unhandled exception has occurred.");
             var response = context.Response;
-
             response.ContentType = "application/json";
             response.StatusCode = StatusCodes.Status500InternalServerError;
 
-            var data = new BaseResponseDto(statusCode: response.StatusCode, code: ResponseCodeConstants.FAILED, data: ex, message: ex.Message);
-
-            var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.FAILED, ex.Message);
+            var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             await response.WriteAsync(result);
         }
     }
