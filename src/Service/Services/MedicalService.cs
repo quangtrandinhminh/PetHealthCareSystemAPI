@@ -203,6 +203,15 @@ public class MedicalService(IServiceProvider serviceProvider) : IMedicalService
                                    ResponseMessageConstantsAppointment.APPOINTMENT_PET_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
+        // check if pet have medical record for this appointment
+        var existedMedicalRecord = await _medicalRecordRepository.GetSingleAsync(mr =>
+                       mr.AppointmentId == dto.AppointmentId && mr.PetId == dto.PetId);
+        if (existedMedicalRecord != null)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
+                                              ResponseMessageConstantsMedicalRecord.MEDICAL_RECORD_EXISTED, StatusCodes.Status400BadRequest);
+        }
+
         // check next appointment valid
         if (dto.NextAppointment != null && dto.NextAppointment < DateTime.Now)
         {
