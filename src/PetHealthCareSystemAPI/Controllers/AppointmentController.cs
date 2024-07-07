@@ -41,6 +41,14 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, freeVetList));
         }
 
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetAppointmentById([FromRoute] int id)
+        {
+            var response = await _appointmentService.GetAppointmentByAppointmentId(id);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
         [HttpPost]
         [Route("customer/book")]
         [Authorize(Roles = "Customer")]

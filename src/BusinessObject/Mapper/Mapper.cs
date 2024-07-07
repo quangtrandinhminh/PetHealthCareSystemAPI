@@ -1,5 +1,6 @@
 ﻿using BusinessObject.DTO.MedicalItem;
 using System.Globalization;
+using BusinessObject.DTO.Appointment;
 using BusinessObject.DTO.MedicalRecord;
 using BusinessObject.DTO.Pet;
 using BusinessObject.DTO.Service;
@@ -54,7 +55,7 @@ public partial class MapperlyMapper
     {
         return entities.Select(Map).ToList();
     }
-    public List<PetResponseDto?> Map(List<Pet?> entities)
+    public List<PetResponseDto?> Map(List<Pet> entities)
     {
         return entities.Select(Map).ToList();
     }
@@ -98,8 +99,11 @@ public partial class MapperlyMapper
     public partial MedicalRecord Map(MedicalRecordRequestDto request);
     public partial MedicalRecordResponseDto Map(MedicalRecord entity);
 
-    public partial MedicalRecordResponseDtoWithDetails MedicalRecordToMedicalRecordResponseDtoWithDetails(
+    public partial MedicalRecordResponseDtoWithDetails? MedicalRecordToMedicalRecordResponseDtoWithDetails(
         MedicalRecord entity);
     public partial void Map(MedicalRecordResponseDto request, MedicalRecord entity);
     public partial IQueryable<MedicalRecordResponseDto> Map(IQueryable<MedicalRecord> entity);
+
+    // appointment
+    public partial AppointmentResponseDto Map(Appointment entity);
 }
