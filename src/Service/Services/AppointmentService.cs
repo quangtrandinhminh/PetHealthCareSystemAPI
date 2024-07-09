@@ -70,7 +70,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
 
         _logger.Information("Get free vet with time frame and date");
 
-        var vetList = await _userService.GetAllUsersByRoleAsync((int)UserRole.Vet);
+        var vetList = await _userService.GetAllUsersByRoleAsync(UserRole.Vet);
 
         var appointmentList = _appointmentRepo.GetAllWithCondition(e => e.AppointmentDate == date 
                                                                         && e.TimeTableId == qo.TimetableId 
@@ -174,11 +174,13 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         IQueryable<Appointment> appointments = new List<Appointment>().AsQueryable();
         if (date != DateOnly.MinValue)
         {
-            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId && a.AppointmentDate == date);
+            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId && a.AppointmentDate == date,
+                a => a.AppointmentPets);
         }
         else
         {
-            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId);
+            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId,
+                a => a.AppointmentPets);
         }
 
         var response = _mapper.Map(appointments);
@@ -230,11 +232,13 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         IQueryable<Appointment> appointments = new List<Appointment>().AsQueryable();
         if (date != DateOnly.MinValue)
         {
-            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.CustomerId == ownerId && a.AppointmentDate == date);
+            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.CustomerId == ownerId && a.AppointmentDate == date,
+                a => a.AppointmentPets);
         }
         else
         {
-            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.CustomerId == ownerId);
+            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.CustomerId == ownerId,
+                a => a.AppointmentPets);
         }
 
         var response = _mapper.Map(appointments);
@@ -433,6 +437,8 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         appointment.Services = services;
         appointment.AppointmentDate = date;
         appointment.CreatedBy = appointment.LastUpdatedBy = createdById;
+        appointment.BookingType = appointment.CustomerId == appointment.CreatedBy 
+            ? AppointmentBookingType.Online : AppointmentBookingType.WalkIn;
 
 
         var addedAppointment = await _appointmentRepo.AddAppointmentAsync(appointment);
@@ -469,7 +475,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         return await GetAppointmentByAppointmentId(appointmentId);
     }
 
-    private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,
+    /*private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,
         IList<UserResponseDto> vets, Appointment e)
     {
         var vet = vets.FirstOrDefault(ee => ee.Id == e.VetId);
@@ -517,5 +523,5 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             Services = _mapper.Map(e.Services),
             Status = e.Status.ToString(),
         };
-    }
+    }*/
 }

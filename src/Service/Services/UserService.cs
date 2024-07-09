@@ -25,17 +25,17 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
     private readonly ILogger _logger = Log.Logger;
     private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
 
-    public async Task<IList<UserResponseDto>> GetAllUsersByRoleAsync(int role)
+    public async Task<IList<UserResponseDto>> GetAllUsersByRoleAsync(UserRole role)
     {
         switch (role)
         {
-            case (int)UserRole.Admin:
+            case UserRole.Admin:
                 return await GetAdminsAsync();
-            case (int)UserRole.Staff:
+            case UserRole.Staff:
                 return await GetStaffAsync();
-            case (int)UserRole.Vet:
+            case UserRole.Vet:
                 return await GetVetsAsync();
-            case (int)UserRole.Customer:
+            case UserRole.Customer:
                 return await GetCustomersAsync();
             default:
                 throw new AppException(ResponseCodeConstants.INVALID_INPUT, ResponseMessageIdentity.ROLE_INVALID, StatusCodes.Status400BadRequest);
