@@ -26,7 +26,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("list")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _userService.GetVetsAsync());
+            return Ok(await _userService.GetAllUsersByRoleAsync(3));
         }
 
         // GET api/<VetController>/5

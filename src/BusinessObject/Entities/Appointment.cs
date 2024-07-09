@@ -8,6 +8,7 @@ namespace BusinessObject.Entities;
 [Table("Appointment")]
 public class Appointment : BaseEntity
 {
+    public int CustomerId { get; set; }
     public int TimeTableId { get; set; }
     public DateOnly AppointmentDate { get; set; }
     public string? Note { get; set; }

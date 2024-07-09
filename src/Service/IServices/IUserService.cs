@@ -6,9 +6,7 @@ namespace Service.IServices;
 public interface IUserService
 {
     Task CreateVetAsync(VetRequestDto dto);
-    Task<IList<UserResponseDto>> GetVetsAsync();
-    Task<IList<UserResponseDto>> GetStaffAsync();
-    Task<IList<UserResponseDto>> GetCustomersAsync();
+    Task<IList<UserResponseDto>> GetAllUsersByRoleAsync(int role);
     Task CreateUserAsync(UserCreateRequestDto dto);
     Task UpdateUserAsync(UserUpdateRequestDto dto);
     Task<UserResponseDto> GetByIdAsync(int id);
