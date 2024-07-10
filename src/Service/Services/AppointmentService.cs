@@ -174,7 +174,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         IQueryable<Appointment> appointments = new List<Appointment>().AsQueryable();
         if (date != DateOnly.MinValue)
         {
-            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId && a.AppointmentDate == date,
+            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId && a.AppointmentDate == date, 
                 a => a.AppointmentPets);
         }
         else
@@ -457,7 +457,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
     }
     public async Task<AppointmentResponseDto> UpdateStatusToDone(int appointmentId, int vetId)
     {
-        _logger.Information($"Update status to done for appointment {appointmentId}");
+        _logger.Information($"Update status to done for appointment {appointmentId} by vet id {vetId}");
 
         var appointment = await _appointmentRepo.GetSingleAsync(a => a.Id == appointmentId);
 
@@ -475,7 +475,27 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         return await GetAppointmentByAppointmentId(appointmentId);
     }
 
-    /*private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,
+    public async Task<AppointmentResponseDto> UpdateStatusToCancel(int appointmentId, int updatedById)
+    {
+        _logger.Information($"Update status to cancel for appointment {appointmentId} by user id {updatedById}");
+
+        var appointment = await _appointmentRepo.GetSingleAsync(a => a.Id == appointmentId);
+
+        if (appointment == null)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        appointment.Status = AppointmentStatus.Cancelled;
+        appointment.LastUpdatedBy = updatedById;
+        appointment.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+        await _appointmentRepo.UpdateAsync(appointment);
+
+        return await GetAppointmentByAppointmentId(appointmentId);
+    }
+
+    private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,
         IList<UserResponseDto> vets, Appointment e)
     {
         var vet = vets.FirstOrDefault(ee => ee.Id == e.VetId);
@@ -523,5 +543,5 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             Services = _mapper.Map(e.Services),
             Status = e.Status.ToString(),
         };
-    }*/
+    }
 }
