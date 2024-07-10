@@ -24,7 +24,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("get-all")]
-        public async Task<IActionResult> Get([FromRoute] int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> Get([FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var list = await _medicalService.GetAllMedicalRecord(pageNumber, pageSize);
             return Ok(BaseResponseDto.OkResponseDto(list));
@@ -40,7 +40,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("pet/{petId:int}")]
-        public async Task<IActionResult> GetByPetId([FromRoute] int petId, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetByPetId([FromQuery] int petId, int pageNumber = 1, int pageSize = 10)
         {
             var medicalRecord = await _medicalService.
                 GetAllMedicalRecordByPetId(petId, pageNumber, pageSize);
@@ -49,7 +49,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("hospitalization")]
-        public async Task<IActionResult> GetHospitalization([FromRoute] int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetHospitalization([FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var medicalRecord = await _medicalService.GetAllMedicalRecordForHospitalization(pageNumber, pageSize);
             return Ok(BaseResponseDto.OkResponseDto(medicalRecord));

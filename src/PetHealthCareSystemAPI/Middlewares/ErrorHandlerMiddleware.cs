@@ -1,4 +1,5 @@
 ﻿using BusinessObject.DTO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Serilog;
@@ -24,12 +25,12 @@ namespace PetHealthCareSystemAPI.Middlewares
             try
             {
                 await _next(context);
-
                 if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
                 {
                     await HandleUnauthorizedAsync(context);
                 }
-                else if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
+
+                if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
                 {
                     var roles = GetRequiredRoles(context);
                     await HandleForbiddenAsync(context, roles);
@@ -54,28 +55,29 @@ namespace PetHealthCareSystemAPI.Middlewares
             return authorizeData?.Roles;
         }
 
-        private static Task HandleUnauthorizedAsync(HttpContext context)
+        public static Task HandleUnauthorizedAsync(HttpContext context)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            var response = context.Response;
+            response.ContentType = "application/json";
+            response.StatusCode = StatusCodes.Status401Unauthorized;
 
-            var message = ResponseMessageIdentity.UNAUTHENTICATED + " You need AccessToken to access this resource.";
-
-            var data = new BaseResponseDto(StatusCodes.Status401Unauthorized, "Unauthorized", message);
+            var message = "You need AccessToken to access this resource. If token was provided, it may be invalid or expired";
+            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.UNAUTHORIZED, message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return context.Response.WriteAsync(result);
         }
 
         private static Task HandleForbiddenAsync(HttpContext context, string requiredRoles = null)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            var response = context.Response;
+            response.ContentType = "application/json";
+            response.StatusCode = StatusCodes.Status403Forbidden;
 
             var message = !string.IsNullOrEmpty(requiredRoles)
                 ? ResponseMessageIdentity.USER_NOT_ALLOWED + $" You need '{requiredRoles}' role to access this resource."
                 : ResponseMessageIdentity.USER_NOT_ALLOWED;
 
-            var data = new BaseResponseDto(StatusCodes.Status403Forbidden, "Forbidden", message);
+            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.FORBIDDEN, message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return context.Response.WriteAsync(result);
         }
@@ -97,7 +99,7 @@ namespace PetHealthCareSystemAPI.Middlewares
             response.ContentType = "application/json";
             response.StatusCode = StatusCodes.Status500InternalServerError;
 
-            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.FAILED, ex.Message);
+            var data = new BaseResponseDto(response.StatusCode, ResponseCodeConstants.INTERNAL_SERVER_ERROR, ex.Message);
             var result = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             await response.WriteAsync(result);
         }

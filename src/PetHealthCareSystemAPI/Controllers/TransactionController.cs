@@ -25,7 +25,7 @@ public class TransactionController : Controller
 
     [HttpGet]
     [Route("get-all")]
-    public async Task<IActionResult> GetAllTransaction([FromRoute] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> GetAllTransaction([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
         var response = await _transactionService.GetAllTransactionsAsync(pageNumber, pageSize);
         return Ok(BaseResponseDto.OkResponseDto(response));
@@ -49,7 +49,7 @@ public class TransactionController : Controller
     [HttpGet]
     [Route("customer/your-transactions")]
     [Authorize(Roles = "Customer")]
-    public async Task<IActionResult> GetTransactionsByCustomerId([FromRoute] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> GetTransactionsByCustomerId([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
         var customerId = User.GetUserId();
         var response = await _transactionService.

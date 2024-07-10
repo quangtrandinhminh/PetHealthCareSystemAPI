@@ -126,6 +126,7 @@ builder.Services.AddAuthorization(cfg =>
 {
     cfg.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
     cfg.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
+    cfg.AddPolicy("RequireStaffRole", policy => policy.RequireRole("Staff"));
 });
 
 builder.Services.AddHttpContextAccessor();

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.IServices;
 using Service.Services;
 using Utility.Constants;
+using Utility.Enum;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,7 +27,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("list")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _userService.GetVetsAsync());
+            return Ok(await _userService.GetAllUsersByRoleAsync(UserRole.Vet));
         }
 
         // GET api/<VetController>/5

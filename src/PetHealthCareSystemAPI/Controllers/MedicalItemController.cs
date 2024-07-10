@@ -21,8 +21,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // GET: api/<MedicalItemController>
         [HttpGet]
-        [Authorize(Roles = "Staff")]
-        [Route("GetAllMedicalItem")]
+        [Route("all")]
         public async Task<IActionResult> Get()
         {
             var list = await _medicalService.GetAllMedicalItem();
@@ -38,7 +37,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Staff")]
-        [Route("Create MedicalItem")]
+        [Route("create")]
         public async Task<OkObjectResult> PostAsync([FromBody] MedicalResponseDto dto)
         {
             await _medicalService.CreateMedicalItem(dto);

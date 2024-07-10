@@ -20,8 +20,7 @@ namespace PetHealthCareSystemAPI.Controllers
             serviceProvider.GetRequiredService<IAppointmentService>();
 
         [HttpGet]
-        [Route("customer/time-frames")]
-        [AllowAnonymous]
+        [Route("time-frames")]
         public async Task<IActionResult> GetTimeFrameForBooking()
         {
 
@@ -32,9 +31,8 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpGet]
-        [Route("customer/free-vet-time-frames")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetVetFreeTimeFrame([FromQuery] AppointmentDateTimeQueryDto qo)
+        [Route("free-vet-time-frames")]
+        public async Task<IActionResult> GetVetFreeTimeFrame([FromQuery] DateTimeQueryDto qo)
         {
             var freeVetList = await _appointmentService.GetFreeWithTimeFrameAndDateAsync(qo);
 
@@ -50,19 +48,19 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpPost]
-        [Route("customer/book")]
-        [Authorize(Roles = "Customer")]
+        [Route("book")]
+        [Authorize(Roles = "Customer, Staff")]
         public async Task<IActionResult> BookAppointment([FromBody] AppointmentBookRequestDto dto)
         {
             var ownerId = User.GetUserId();
 
-            var response = await _appointmentService.BookOnlineAppointmentAsync(dto, ownerId);
+            var response = await _appointmentService.BookAppointmentAsync(dto, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
 
         [HttpGet]
-        [Route("staff/appointments")]
+        [Route("appointments")]
         public async Task<IActionResult> GetAllAppointment([FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var response = await _appointmentService.GetAllAppointmentsAsync(pageNumber, pageSize);
@@ -89,5 +87,27 @@ namespace PetHealthCareSystemAPI.Controllers
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
+
+        [HttpGet]
+        [Route("filter")]
+        public async Task<IActionResult> GetAppointmentWithFilter([FromQuery] AppointmentFilterDto filter,
+            int pageNumber = 1, int pageSize = 10)
+        {
+            var response = await _appointmentService.GetAppointmentWithFilter(filter, pageNumber, pageSize);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpPut]
+        [Route("{appointmentId:int}")]
+        [Authorize(Roles = "Vet, Staff")]
+        public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, [FromBody] AppointmentBookRequestDto dto)
+        {
+            var updatedById = User.GetUserId();
+
+            var response = await _appointmentService.UpdateStatusToDone(appointmentId, updatedById);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
     }
 }
