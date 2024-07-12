@@ -1,4 +1,9 @@
-﻿using BusinessObject.DTO.Hospitalization;
+﻿using BusinessObject.DTO;
+using BusinessObject.DTO.Appointment;
+using BusinessObject.DTO.Cage;
+using BusinessObject.DTO.Hospitalization;
+using BusinessObject.DTO.TimeTable;
+using BusinessObject.DTO.User;
 using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +22,21 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
     private readonly IMedicalRecordRepository _medicalRecordRepo = serviceProvider.GetRequiredService<IMedicalRecordRepository>();
     private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
 
+    public Task<List<TimeTableResponseDto>> GetAllTimeFramesForHospitalizationAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDateAsync(DateTimeQueryDto qo)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<CageResponseDto>> GetAvailableCageByDate(DateTimeQueryDto qo)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<PaginatedList<HospitalizationResponseDto>> GetAllHospitalization(int pageNumber, int pageSize)
     {
         _logger.Information("Get all hospitalization");
@@ -29,21 +49,27 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         throw new NotImplementedException();
     }
 
-    public Task<HospitalizationResponseDto> GetHospitalizationById(int id)
+    public Task<HospitalizationResponseDtoWithDetails> GetHospitalizationById(int hospitalizationId)
     {
-        _logger.Information($"Get hospitalization by id {id}");
+        _logger.Information($"Get hospitalization by id {hospitalizationId}");
         throw new NotImplementedException();
     }
 
-    public Task CreateHospitalization(/*HospitalizationResquestDto dto, */ int staffId)
+    public List<EnumResponseDto> GetHospitalizationStatus()
     {
-        _logger.Information("Create hospitalization {@dto} by staff id {staffId}"/*, dto*/, staffId);
+        _logger.Information("Get hospitalization status");
         throw new NotImplementedException();
     }
 
-    public Task UpdateHospitalization(/*HospitalizationResquestDto dto, */ int vetId)
+    public Task CreateHospitalization(HospitalizationRequestDto dto, int staffId)
     {
-        _logger.Information("Create hospitalization {@dto} by staff id {vetId}"/*, dto*/, vetId);
+        _logger.Information("Create hospitalization {@dto} by {staffId}", dto, staffId);
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateHospitalization(HospitalizationRequestDto dto, int vetId)
+    {
+        _logger.Information("Update hospitalization {@dto} by {vetId}", dto, vetId);
         throw new NotImplementedException();
     }
 
