@@ -9,6 +9,7 @@ using BusinessObject.DTO.User;
 using BusinessObject.DTO.Vet;
 using BusinessObject.Entities;
 using BusinessObject.Mapper;
+using DataAccessLayer.DAO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -72,8 +73,8 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
 
         var vetList = await _userService.GetAllUsersByRoleAsync(UserRole.Vet);
 
-        var appointmentList = _appointmentRepo.GetAllWithCondition(e => e.AppointmentDate == date 
-                                                                        && e.TimeTableId == qo.TimetableId 
+        var appointmentList = _appointmentRepo.GetAllWithCondition(e => e.AppointmentDate == date
+                                                                        && e.TimeTableId == qo.TimetableId
                                                                         && e.Status != AppointmentStatus.Cancelled);
 
         var freeVetList = vetList.Where(e => !appointmentList.Any(ee => ee.VetId == e.Id)).ToList();
@@ -106,6 +107,9 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         foreach (var pet in response.Pets)
         {
             if (pet != null) pet.OwnerName = owner?.FullName;
+
+            pet.HasMedicalRecord = await _medicalRecordRepository
+                .GetSingleAsync(e => e.PetId == pet.Id && e.AppointmentId == appointmentId) != null;
         }
 
         if (vet != null)
@@ -147,13 +151,16 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             foreach (var apoPet in appointmentPet)
             {
                 var pet = await _petRepository.GetSingleAsync(p => p.Id == apoPet.PetId);
-                
+
                 pets.Add(pet);
             }
             item.Pets = _mapper.Map(pets);
             foreach (var pet in item.Pets)
             {
                 if (pet != null) pet.OwnerName = customer?.FullName;
+
+                pet.HasMedicalRecord = await _medicalRecordRepository
+                    .GetSingleAsync(e => e.PetId == pet.Id && e.AppointmentId == item.Id) != null;
             }
         }
         return paginatedList;
@@ -174,7 +181,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         IQueryable<Appointment> appointments = new List<Appointment>().AsQueryable();
         if (date != DateOnly.MinValue)
         {
-            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId && a.AppointmentDate == date, 
+            appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.VetId == vetId && a.AppointmentDate == date,
                 a => a.AppointmentPets);
         }
         else
@@ -211,6 +218,9 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             foreach (var pet in item.Pets)
             {
                 if (pet != null) pet.OwnerName = customer?.FullName;
+
+                pet.HasMedicalRecord = await _medicalRecordRepository
+                    .GetSingleAsync(e => e.PetId == pet.Id && e.AppointmentId == item.Id) != null;
             }
         }
         return paginatedList;
@@ -270,6 +280,9 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             foreach (var pet in item.Pets)
             {
                 if (pet != null) pet.OwnerName = customer?.FullName;
+
+                pet.HasMedicalRecord = await _medicalRecordRepository
+                    .GetSingleAsync(e => e.PetId == pet.Id && e.AppointmentId == item.Id) != null;
             }
         }
         return paginatedList;
@@ -358,6 +371,23 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             {
                 item.Customer = _mapper.UserToUserResponseDto(customer);
             }
+
+            var appointmentPet = (await appointments.FirstOrDefaultAsync(x => x.Id == item.Id))?.AppointmentPets!;
+            var pets = new List<Pet>();
+            foreach (var apoPet in appointmentPet)
+            {
+                var pet = await _petRepository.GetSingleAsync(p => p.Id == apoPet.PetId);
+
+                pets.Add(pet);
+            }
+            item.Pets = _mapper.Map(pets);
+            foreach (var pet in item.Pets)
+            {
+                if (pet != null) pet.OwnerName = customer?.FullName;
+
+                pet.HasMedicalRecord = await _medicalRecordRepository
+                    .GetSingleAsync(e => e.PetId == pet.Id && e.AppointmentId == item.Id) != null;
+            }
         }
 
         var paginatedList = await PaginatedList<AppointmentResponseDto>.CreateAsync(response, pageNumber, pageSize);
@@ -437,7 +467,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         appointment.Services = services;
         appointment.AppointmentDate = date;
         appointment.CreatedBy = appointment.LastUpdatedBy = createdById;
-        appointment.BookingType = appointment.CustomerId == appointment.CreatedBy 
+        appointment.BookingType = appointment.CustomerId == appointment.CreatedBy
             ? AppointmentBookingType.Online : AppointmentBookingType.WalkIn;
 
 
