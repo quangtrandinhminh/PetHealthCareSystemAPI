@@ -162,6 +162,28 @@ public class MedicalService(IServiceProvider serviceProvider) : IMedicalService
         return response;
     }
 
+    public async Task<MedicalRecordResponseDtoWithDetails> GetMedicalRecordByPetIdAndAppointmentId(int petId, int appointmentId)
+    {
+        _logger.Information($"Get medical record with {petId} and {appointmentId}");
+        var medicalRecord = await _medicalRecordRepository.GetSingleAsync(mr => mr.AppointmentId == appointmentId && mr.PetId == petId,
+            false, mr => mr.MedicalItems, mr => mr.Pet);
+        if (medicalRecord == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                ResponseMessageConstantsMedicalRecord.MEDICAL_RECORD_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+        var response = _mapper.MedicalRecordToMedicalRecordResponseDtoWithDetails(medicalRecord);
+
+        var vet = await _userRepository.GetSingleAsync(u => u.Id == response.VetId);
+        var createBy = await _userRepository.GetSingleAsync(u => u.Id == response.CreatedBy);
+        var updateBy = await _userRepository.GetSingleAsync(u => u.Id == response.LastUpdatedBy);
+        response.VetName = vet?.FullName ?? string.Empty;
+        response.CreatedByName = createBy?.FullName ?? string.Empty;
+        response.LastUpdatedByName = updateBy?.FullName ?? string.Empty;
+
+        return response;
+    }
+
     public async Task<MedicalRecordResponseDtoWithDetails> CreateMedicalRecord(MedicalRecordRequestDto dto, int vetId)
     {
         _logger.Information("Create medical record {@dto} by vet id {@vetId}", dto, vetId);

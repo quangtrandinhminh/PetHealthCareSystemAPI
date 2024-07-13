@@ -64,6 +64,15 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(await _medicalService.CreateMedicalRecord(medicalRecordDto, vetId)));
         }
 
+        [HttpGet]
+        [Route("pet/{petId:int}/appointment/{appointmentId:int}")]
+        public async Task<IActionResult> GetByPetIdAndAppointmentId([FromRoute] int petId, int appointmentId, [FromQuery] int pageNumber = 1, int pageSize = 10)
+        {
+            var medicalRecord = await _medicalService.
+                GetMedicalRecordByPetIdAndAppointmentId(petId, appointmentId);
+            return Ok(BaseResponseDto.OkResponseDto(medicalRecord));
+        }
+
         /*[HttpPut]
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] MedicalRecordRequestDto medicalRecordDto)
