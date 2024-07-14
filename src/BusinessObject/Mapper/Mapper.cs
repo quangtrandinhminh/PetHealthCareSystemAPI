@@ -53,7 +53,11 @@ public partial class MapperlyMapper
         return response;
     }
     // Custom mapping method for IList<Pet> to IList<PetResponseDto> with date formatting
-    public partial List<PetResponseDto?> Map(List<Pet> entities);
+    public List<PetResponseDto?> Map(List<Pet> entities)
+    {
+        return entities.Select(e => Map(e)).ToList();
+    }
+
     public partial Pet Map(PetUpdateRequestDto request);
     public partial void Map(PetRequestDto request, Pet entity);
 
@@ -120,4 +124,9 @@ public partial class MapperlyMapper
     public partial CageResponseDto Map(Cage entity);
     public partial IQueryable<CageResponseDto> Map(IQueryable<Cage> entity);
     public partial IList<CageResponseDto> Map(IList<Cage> entity);
+    // datetimeoffset to dateonly
+    public DateOnly Map(DateTimeOffset dateTimeOffset)
+    {
+        return DateOnly.FromDateTime(dateTimeOffset.DateTime);
+    }
 }
