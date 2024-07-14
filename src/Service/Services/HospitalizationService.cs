@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO;
+﻿using Azure;
+using BusinessObject.DTO;
 using BusinessObject.DTO.Appointment;
 using BusinessObject.DTO.Cage;
 using BusinessObject.DTO.Hospitalization;
@@ -76,9 +77,9 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         return (List<CageResponseDto>)listCageDto;
     }
 
-    public async Task<List<HospitalizationResponseDto>> GetAllHospitalization()
+    public async Task<PaginatedList<HospitalizationResponseDto>> GetAllHospitalization(int pageNumber, int pageSize)
     {
-        var list = await _hospitalizationRepo.GetAllHospitalization();
+        var list = _hospitalizationRepo.GetAll();
 
         foreach (var hospitalization in list)
         {
@@ -87,21 +88,23 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
 
         var listDto = _mapper.Map(list);
 
-        foreach (var hospitalization in listDto)
-        {
-            hospitalization.Vet = await _userService.GetVetByIdAsync(hospitalization.VetId);
-        }
+       var paginatedList = await PaginatedList<HospitalizationResponseDto>.CreateAsync(listDto, pageNumber, pageSize);
 
-        return listDto.ToList();
+        foreach (var item in paginatedList.Items)
+        {
+            var vet = await _userRepository.GetSingleAsync(e => e.Id == item.VetId);
+            if (vet != null) item.Vet = _mapper.UserToUserResponseDto(vet);
+        }
+        return paginatedList;
     }
 
-    public async Task<List<HospitalizationResponseDto>> GetAllHospitalizationByMedicalRecordId(int medicalRecordId)
+    public async Task<PaginatedList<HospitalizationResponseDto>> GetAllHospitalizationByMedicalRecordId(int medicalRecordId, int pageNumber, int pageSize)
     {
-        var findHospitalization = _hospitalizationRepo.GetAll().Where(x => x.MedicalRecordId == medicalRecordId).ToList();
+        var findHospitalization = _hospitalizationRepo.GetAll().Where(x => x.MedicalRecordId == medicalRecordId);
 
         var findHospitalizationDto = _mapper.Map(findHospitalization);
 
-        return (List<HospitalizationResponseDto>)findHospitalizationDto;
+        return await PaginatedList<HospitalizationResponseDto>.CreateAsync(findHospitalizationDto, pageNumber, pageSize);
     }
 
     public async Task<HospitalizationResponseDto> GetHospitalizationById(int hospitalizationId)
@@ -121,12 +124,10 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
 
     public async Task CreateHospitalization(HospitalizationRequestDto dto, int staffId)
     {
-        var vetList = await _userService.GetAllUsersByRoleAsync(UserRole.Vet);
-
         var hospitalizationsList = _hospitalizationRepo.GetAllWithCondition(e => e.Date == dto.Date
                                                                         && e.TimeTableId == dto.TimeTableId);
 
-        var VetList = vetList.Where(e => hospitalizationsList.Any(ee => ee.VetId == e.Id)).FirstOrDefault();
+        var VetList = _userRepository.GetSingleAsync(e => hospitalizationsList.Any(ee => ee.VetId == e.Id));
 
         if (VetList != null)
         {

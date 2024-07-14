@@ -49,9 +49,9 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("all")]
-        public async Task<IActionResult> GetAllHospitalization()
+        public async Task<IActionResult> GetAllHospitalization(int pageNumber, int pageSize)
         {
-            var hospitalization = await hospitalizationService.GetAllHospitalization();
+            var hospitalization = await hospitalizationService.GetAllHospitalization(pageNumber, pageSize);
             return Ok(BaseResponseDto.OkResponseDto(hospitalization));
         }
 
@@ -63,9 +63,10 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpGet("medical-record/{medicalRecordId}")]
-        public async Task<IActionResult> GetAllHospitalizationByMedicalRecordId(int medicalRecordId)
+        public async Task<IActionResult> GetAllHospitalizationByMedicalRecordId(int medicalRecordId, int pageNumber,
+            int pageSize)
         {
-            var hospitalization = await hospitalizationService.GetAllHospitalizationByMedicalRecordId(medicalRecordId);
+            var hospitalization = await hospitalizationService.GetAllHospitalizationByMedicalRecordId(medicalRecordId, pageNumber, pageSize);
             return Ok(BaseResponseDto.OkResponseDto(hospitalization));
         }
 
