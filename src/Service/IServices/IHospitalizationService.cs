@@ -25,4 +25,5 @@ public interface IHospitalizationService
     Task HospitalDischarge(int medicalRecordId, int VetId);
     HospitalizaionDropdownDto GetHospitalizaionDropdownData();
     Task<List<MedicalRecordResponseDto>> CheckCreateHospitalizaion();
+    Task<List<HospitalizationResponseDto>> CheckHospitalizaionByVetId(int vetId);
 }
