@@ -70,6 +70,15 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpGet]
+        [Route("cancel-appointments")]
+        public async Task<IActionResult> GetAllCancelAppointment([FromQuery] int pageNumber = 1, int pageSize = 10)
+        {
+            var response = await _appointmentService.GetAllCancelAppointmentsAsync(pageNumber, pageSize);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpGet]
         [Route("vet/appointments/{id:int}")]
         public async Task<IActionResult> GetAllAppointmentForVet([FromRoute] int id, [FromQuery] string? date, int pageNumber = 1, int pageSize = 10)
         {
@@ -111,8 +120,30 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpPut]
+        [Route("online-payment-status/{appointmentId:int}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> UpdateOnlinePaymentStatusToTrue([FromRoute] int appointmentId)
+        {
+            var updatedById = User.GetUserId();
+
+            var response = await _appointmentService.UpdateOnlinePaymentToTrue(appointmentId, updatedById);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpPut]
+        [Route("refund-status/{appointmentId:int}")]
+        public async Task<IActionResult> UpdateRefundPaymentStatusToTrue([FromRoute] int appointmentId)
+        {
+            var updatedById = User.GetUserId();
+
+            var response = await _appointmentService.UpdateRefundStatusToTrue(appointmentId, updatedById);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpPut]
         [Route("cancel/{appointmentId:int}")]
-        [Authorize(Roles = "Staff, Customer")]
         public async Task<IActionResult> UpdateAppointmentToCancel([FromRoute] int appointmentId)
         {
             var updatedById = User.GetUserId();

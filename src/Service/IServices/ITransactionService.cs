@@ -15,5 +15,5 @@ public interface ITransactionService
     Task CreateTransactionAsync(TransactionRequestDto dto, int userId);
     Task CreateTransactionForHospitalization(TransactionRequestDto dto, int staffId);
     Task UpdatePaymentByStaffAsync(int transactionId, int updatedById);
-    Task<TransactionPayOsResponseDto> CreatePayOsTransaction(int appointmentId);
+    Task<TransactionPayOsResponseDto> CreatePayOsTransaction();
 }

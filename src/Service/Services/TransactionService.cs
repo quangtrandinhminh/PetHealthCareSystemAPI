@@ -401,21 +401,15 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         await _transactionRepository.UpdateAsync(transaction);
     }
 
-    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction(int appointmentId)
+    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction()
     {
-        var appointment = (await _appointmentRepository.FindByConditionAsync(e => e.Id == appointmentId)).FirstOrDefault();
-
-        if (appointment == null)
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsCommon.NOT_FOUND, StatusCodes.Status404NotFound);
-        }
-
         var clientId = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsClientId)).Value;
         var apiKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsApiKey)).Value;
         var checksumKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsChecksumKey)).Value;
-        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsChecksumKey)).Value;
+        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.BookPrice)).Value;
+        var orderIdString = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsOrderId)).Value;
         bool bookPriceSuccess = int.TryParse(bookPriceString, out int bookPrice);
-        bool OrderIdSuccess = long.TryParse(bookPriceString, out long orderId);
+        bool OrderIdSuccess = long.TryParse(orderIdString, out long orderId);
 
         if (bookPrice == 0)
         {
@@ -434,7 +428,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         PayOS payOs = new PayOS(clientId, apiKey, checksumKey);
 
-        var itemDataName = $"Thanh toan cuoc hen {appointmentId}";
+        var itemDataName = $"Thanh toan cuoc hen";
         var itemDataQuantity = 1;
         var itemDataPrice = bookPrice == 0 ? 10000 : bookPrice;
 
@@ -444,11 +438,11 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         };
 
         PaymentData paymentData = new PaymentData(orderId, bookPrice,
-            $"Thanh toan lich hen {appointmentId}", items, "", "");
+            $"Thanh toan lich hen", items, "", "");
 
         CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
 
-        await _configurationService.UpdateConfiguration( new ConfigurationUpdateRequestDto()
+        await _configurationService.UpdateConfiguration(new ConfigurationUpdateRequestDto()
         {
             Value = (orderId + 1).ToString(),
             Key = ConfigurationKey.PayOsOrderId,
