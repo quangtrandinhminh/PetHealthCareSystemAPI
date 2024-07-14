@@ -17,6 +17,7 @@ public interface IMedicalService
     Task<PaginatedList<MedicalRecordResponseDto>> GetAllMedicalRecordForHospitalization (int pageNumber, int pageSize);
     Task<PaginatedList<MedicalRecordResponseDto>> GetAllMedicalRecordByPetId(int petId, int pageNumber, int pageSize);
     Task<MedicalRecordResponseDtoWithDetails> GetMedicalRecordById(int medicalRecordId);
+    Task<MedicalRecordResponseDtoWithDetails> GetMedicalRecordByPetIdAndAppointmentId(int petId, int appointmentId);
     Task<MedicalRecordResponseDtoWithDetails> CreateMedicalRecord(MedicalRecordRequestDto dto, int vetId);
     Task UpdateMedicalRecord(MedicalRecordResponseDto dto, int staffId);
     Task DeleteMedicalRecord(int id, int deleteBy);
