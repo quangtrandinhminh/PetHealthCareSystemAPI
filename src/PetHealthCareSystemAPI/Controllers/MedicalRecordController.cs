@@ -40,7 +40,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("pet/{petId:int}")]
-        public async Task<IActionResult> GetByPetId([FromQuery] int petId, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetByPetId(int petId, [FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var medicalRecord = await _medicalService.
                 GetAllMedicalRecordByPetId(petId, pageNumber, pageSize);
