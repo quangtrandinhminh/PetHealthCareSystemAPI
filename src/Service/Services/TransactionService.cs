@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Extensions;
 using Repository.Interfaces;
 using Serilog;
@@ -33,6 +34,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
     private readonly IHospitalizationRepository _hospitalizationRepository = serviceProvider.GetRequiredService<IHospitalizationRepository>();
     private readonly IServiceRepository _serviceRepository = serviceProvider.GetRequiredService<IServiceRepository>();
     private readonly IMedicalItemRepository _medicalItemRepository = serviceProvider.GetRequiredService<IMedicalItemRepository>();
+    private readonly IConfigurationRepository _configurationRepository = serviceProvider.GetRequiredService<IConfigurationRepository>();
 
     public async Task<PaginatedList<TransactionResponseDto>> GetAllTransactionsAsync(int pageNumber, int pageSize)
     {
@@ -393,6 +395,25 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         transaction.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
         await _transactionRepository.UpdateAsync(transaction);
+    }
+
+    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction(int appointmentId)
+    {
+        var appointment = (await _appointmentRepository.FindByConditionAsync(e => e.Id == appointmentId)).FirstOrDefault();
+
+        if (appointment == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND, ResponseMessageConstantsCommon.NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var clientId = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsClientId)).Value;
+        var apiKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsApiKey)).Value;
+        var checksumKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsChecksumKey)).Value;
+
+        if (clientId.IsNullOrEmpty() || apiKey.IsNullOrEmpty() || checksumKey.IsNullOrEmpty())
+        {
+            throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH, StatusCodes.Status500InternalServerError);
+        }
     }
 
     public static async Task<List<TransactionDetail>> CheckMedicalItemsAsync(List<TransactionMedicalItemsDto> medicalItems,

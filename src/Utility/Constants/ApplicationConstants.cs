@@ -21,10 +21,11 @@ namespace Utility.Constants
         public const string INVALID_INPUT = "Invalid input!";
         public const string UNAUTHORIZED = "Unauthorized!";
         public const string FORBIDDEN = "Forbidden!";
-        public const string EXPIRED = "Expired!"; 
+        public const string EXPIRED = "Expired!";
     }
     public class ResponseMessageConstantsCommon
     {
+        public const string NOT_FOUND = "Không tìm thấy dữ liệu";
         public const string EXISTED = "Already existed!";
         public const string SUCCESS = "Thao tác thành công";
         public const string NO_DATA = "Không có dữ liệu trả về";
@@ -157,6 +158,7 @@ namespace Utility.Constants
         public const string APPOINTMENT_ID_REQUIRED = "Id lich hen khong duoc de trong";
         public const string APPOINTMENT_PET_NOT_FOUND = "Khong tim thay thong tin thú cưng trong lich hen";
         public const string APPOINTMENT_COMPLETED = "Lich hen da hoan thanh";
+        public const string APPOINTMENT_NOT_COMPLETED = "Lịch hẹn chưa hoàn thành";
     }
 
     public class ResponseMessageConstantsMedicalRecord

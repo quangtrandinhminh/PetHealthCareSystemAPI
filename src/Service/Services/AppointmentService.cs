@@ -525,6 +525,38 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         return await GetAppointmentByAppointmentId(appointmentId);
     }
 
+    public async Task<AppointmentResponseDto> FeedbackAppointmentAsync(AppointmentFeedbackRequestDto dto, int ownerId)
+    {
+        if (dto.Rating < 0 || dto.Rating > 5)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
+        }
+
+        var appointment = await _appointmentRepo.GetByIdAsync(dto.AppointmentId);
+
+        if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Scheduled)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_COMPLETED);
+        }
+
+        if (appointment.CustomerId != ownerId)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        if (appointment == null)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        appointment.Rating = dto.Rating;
+        appointment.Feedback = dto.Feedback;
+
+        await _appointmentRepo.UpdateAsync(appointment);
+
+        return await GetAppointmentByAppointmentId(dto.AppointmentId);
+    }
+
     private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,
         IList<UserResponseDto> vets, Appointment e)
     {
