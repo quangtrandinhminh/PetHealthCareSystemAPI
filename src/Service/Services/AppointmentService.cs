@@ -517,6 +517,7 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         }
 
         appointment.Status = AppointmentStatus.Cancelled;
+        appointment.CancelDate = DateOnly.FromDateTime(DateTime.Today);
         appointment.LastUpdatedBy = updatedById;
         appointment.LastUpdatedTime = CoreHelper.SystemTimeNow;
 

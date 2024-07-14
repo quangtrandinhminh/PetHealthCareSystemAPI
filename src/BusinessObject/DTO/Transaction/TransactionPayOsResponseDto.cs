@@ -2,6 +2,6 @@
 
 public class TransactionPayOsResponseDto
 {
-    public int OrderId { get; set; }    
-    public string checkoutUrl { get; set; }
+    public long OrderId { get; set; }    
+    public string CheckoutUrl { get; set; }
 }
