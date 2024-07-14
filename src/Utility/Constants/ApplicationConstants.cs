@@ -183,6 +183,8 @@ namespace Utility.Constants
         public const string ADD_HOSPITALIZATION_SUCCESS = "Them ho so luu chuong thanh cong";
         public const string UPDATE_HOSPITALIZATION_SUCCESS = "Cap Nhat ho so luu chuong thanh cong";
         public const string DELETE_HOSPITALIZATION_SUCCESS = "Xoa ho so luu chuong thanh cong";
+
+        public const string MEDICAL_RECORD_NOT_FOUND = "Khong co ho so de tao";
     }
 
     public class ResponseMessageConstantsCage

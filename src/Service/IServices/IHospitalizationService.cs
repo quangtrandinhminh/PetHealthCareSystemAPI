@@ -2,6 +2,7 @@
 using BusinessObject.DTO.Appointment;
 using BusinessObject.DTO.Cage;
 using BusinessObject.DTO.Hospitalization;
+using BusinessObject.DTO.MedicalRecord;
 using BusinessObject.DTO.TimeTable;
 using BusinessObject.DTO.User;
 using Repository.Extensions;
@@ -23,4 +24,5 @@ public interface IHospitalizationService
     Task DeleteHospitalization(int id, int deleteBy);
     Task HospitalDischarge(int medicalRecordId, int VetId);
     HospitalizaionDropdownDto GetHospitalizaionDropdownData();
+    Task<List<MedicalRecordResponseDto>> CheckCreateHospitalizaion();
 }

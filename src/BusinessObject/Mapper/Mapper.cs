@@ -102,6 +102,7 @@ public partial class MapperlyMapper
         MedicalRecord entity);
     public partial void Map(MedicalRecordResponseDto request, MedicalRecord entity);
     public partial IQueryable<MedicalRecordResponseDto> Map(IQueryable<MedicalRecord> entity);
+    public partial IList<MedicalRecordResponseDto> Map(IList<MedicalRecord> entity);
 
     // appointment
     public partial AppointmentResponseDto Map(Appointment entity);

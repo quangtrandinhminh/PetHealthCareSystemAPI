@@ -3,6 +3,7 @@ using BusinessObject.DTO;
 using BusinessObject.DTO.Appointment;
 using BusinessObject.DTO.Cage;
 using BusinessObject.DTO.Hospitalization;
+using BusinessObject.DTO.MedicalRecord;
 using BusinessObject.DTO.TimeTable;
 using BusinessObject.DTO.Transaction;
 using BusinessObject.DTO.User;
@@ -291,5 +292,32 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         };
 
         return response;
+    }
+
+    public async Task<List<MedicalRecordResponseDto>> CheckCreateHospitalizaion()
+    {
+        var listMedicalRecord = _medicalRecordRepo.GetAll().Where(e => e.AdmissionDate == DateTime.Now).ToList();
+
+        var listHospitalization = new List<MedicalRecord>();
+
+        foreach (var record in listMedicalRecord)
+        {
+            var e = _hospitalizationRepo.GetAll().Where(e => e.MedicalRecordId == record.Id
+                                                    && e.HospitalizationDateStatus != HospitalizationStatus.DischargeDate).ToList();
+            if (e == null)
+            {
+                listHospitalization.Add(record);
+            }
+        }
+
+        if (listHospitalization == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                ResponseMessageConstantsHospitalization.MEDICAL_RECORD_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var listMedicalRecordDto = _mapper.Map(listHospitalization);
+
+        return (List<MedicalRecordResponseDto>)listMedicalRecordDto;
     }
 }

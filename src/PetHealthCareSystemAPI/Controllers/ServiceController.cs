@@ -35,9 +35,11 @@ namespace PetHealthCareSystemAPI.Controllers
 
         // GET api/<ServiceController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var list = await _iservice.GetBydId(id);
+
+            return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
 
         // POST api/<ServiceController>
@@ -53,15 +55,20 @@ namespace PetHealthCareSystemAPI.Controllers
         // PUT api/<ServiceController>/5
         [HttpPut]
         [Route("update")]
-        public void Put([FromBody] ServiceRequestDto serviceRequestDto)
+        public async Task<OkObjectResult> Put([FromBody] ServiceResponseDto serviceRequestDto)
         {
+            await _iservice.UpdateServiceAsync(serviceRequestDto);
 
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS));
         }
 
         // DELETE api/<ServiceController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<OkObjectResult> Delete(int id, int deleteBy)
         {
+            await _iservice.DeleteServiceAsync(id, deleteBy);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.DELETE_PET_SUCCESS));
         }
     }
 }

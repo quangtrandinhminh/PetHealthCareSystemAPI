@@ -20,7 +20,7 @@ namespace PetHealthCareSystemAPI.Controllers
     {
         [HttpGet]
         [Route("time-frames")]
-        public async Task<IActionResult> GetTimeFrameForBooking()
+        public async Task<IActionResult> GetTimeFrameForHospitalization()
         {
 
             var timeframes = await hospitalizationService.GetAllTimeFramesForHospitalizationAsync();
@@ -116,6 +116,15 @@ namespace PetHealthCareSystemAPI.Controllers
         public IActionResult GetHospitalizaionDropdownData()
         {
             var response = hospitalizationService.GetHospitalizaionDropdownData();
+            return Ok(BaseResponseDto.OkResponseDto(response));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Staff")]
+        [Route("CheckCreateHospitalizaion")]
+        public IActionResult CheckCreateHospitalizaion()
+        {
+            var response = hospitalizationService.CheckCreateHospitalizaion();
             return Ok(BaseResponseDto.OkResponseDto(response));
         }
     }
