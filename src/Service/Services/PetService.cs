@@ -19,6 +19,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
     private readonly ILogger _logger = Log.Logger;
     private readonly IPetRepository _petRepo = serviceProvider.GetRequiredService<IPetRepository>();
     private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
+    private readonly IUserService _userService = serviceProvider.GetRequiredService<IUserService>();
 
     public async Task<List<PetResponseDto?>> GetAllPetsForCustomerAsync(int id)
     {
@@ -61,7 +62,9 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
         var petDto = _mapper.Map(pet);
 
-        petDto.OwnerName = pet.Owner.FullName;
+        var owner = await _userService.GetByIdAsync(pet.OwnerID);
+
+        petDto.OwnerName = owner.FullName;
 
         return petDto;
     }
