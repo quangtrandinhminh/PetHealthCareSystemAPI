@@ -2,7 +2,7 @@
 
 public enum HospitalizationStatus
 {
-    AdmissionsDate = 1,
+    Admissions = 1,
     Monitoring,
     DischargeDate,
 }
