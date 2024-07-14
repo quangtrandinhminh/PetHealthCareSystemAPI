@@ -18,4 +18,6 @@ public interface ITransactionService
     Task UpdateTransactionToRefundAsync(TransactionRefundRequestDto dto, int updatedById);
     Task<RefundConditionsResponseDto> GetRefundConditionsAsync();
     Task<TransactionPayOsResponseDto> CreatePayOsTransaction();
+    Task<HospitalizationPriceResponseDto> CalculateHospitalizationPriceAsync(
+        int medicalRecordId);
 }

@@ -261,16 +261,18 @@ public class MedicalService(IServiceProvider serviceProvider) : IMedicalService
         medicalRecord.VetId = vetId;
         medicalRecord.CreatedBy = medicalRecord.LastUpdatedBy = vetId;
         medicalRecord.CreatedTime = medicalRecord.LastUpdatedTime = medicalRecord.Date = CoreHelper.SystemTimeNow;
-
-        // if medical item is not null, check if it exists
-        if (dto.MedicalItems != null)
+        medicalRecord.MedicalItems = new List<MedicalItem>();
+        Transaction? transaction = null;
+        if (dto.MedicalItems is { Count: > 0 })
         {
-            medicalRecord.MedicalItems = new List<MedicalItem>();
-            var transaction = new Transaction
+            transaction = new Transaction
             {
                 CustomerId = customerId,
                 CreatedBy = vetId,
                 LastUpdatedBy = vetId,
+                CreatedTime = CoreHelper.SystemTimeNow,
+                LastUpdatedTime = CoreHelper.SystemTimeNow,
+                Status = TransactionStatus.Pending,
                 TransactionDetails = new List<TransactionDetail>()
             };
 
@@ -284,13 +286,15 @@ public class MedicalService(IServiceProvider serviceProvider) : IMedicalService
                     Id = item.MedicalItemId,
                 });
             }
-
-            await _transactionRepository.AddAsync(transaction);
         }
 
         var addedMedicalRecord = await _medicalRecordRepository.AddMedicalRecordAsync(medicalRecord);
-        
 
+        if (transaction != null)
+        {
+            transaction.MedicalRecordId = addedMedicalRecord.Id;
+            await _transactionRepository.AddAsync(transaction);
+        }
         return await GetMedicalRecordById(addedMedicalRecord.Id);
     }
 
@@ -301,12 +305,6 @@ public class MedicalService(IServiceProvider serviceProvider) : IMedicalService
 
     private async Task<MedicalRecordResponseDtoWithDetails> MedicalRecordToMedicalRecordResponseDtoWithDetails(MedicalRecord medicalRecord)
     {
-        var transaction = await _transactionRepository.GetSingleAsync(t => t.MedicalRecordId == medicalRecord.Id, false, t => t.TransactionDetails);
-        if (transaction == null)
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND,
-                ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
-        }
         var response = _mapper.MedicalRecordToMedicalRecordResponseDtoWithDetails(medicalRecord);
         var vet = await _userRepository.GetSingleAsync(u => u.Id == response.VetId);
         var createBy = await _userRepository.GetSingleAsync(u => u.Id == response.CreatedBy);
@@ -314,10 +312,15 @@ public class MedicalService(IServiceProvider serviceProvider) : IMedicalService
         response.VetName = vet?.FullName ?? string.Empty;
         response.CreatedByName = createBy?.FullName ?? string.Empty;
         response.LastUpdatedByName = updateBy?.FullName ?? string.Empty;
-        foreach (var item in response.MedicalItems)
+        if (response.MedicalItems != null)
         {
-            item.Quantity = (int)(transaction.TransactionDetails.FirstOrDefault(td => td.MedicalItemId == item.Id)?.Quantity ?? null)!;
+            var transaction = await _transactionRepository.GetSingleAsync(t => t.MedicalRecordId == medicalRecord.Id, false, t => t.TransactionDetails);
+            foreach (var item in response.MedicalItems)
+            {
+                item.Quantity = (int)(transaction.TransactionDetails.FirstOrDefault(td => td.MedicalItemId == item.Id)?.Quantity ?? null)!;
+            }
         }
+
         return response;
     }
 }
