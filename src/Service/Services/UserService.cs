@@ -154,9 +154,11 @@ public class UserService(IServiceProvider serviceProvider) : IUserService
         throw new NotImplementedException();
     }
 
-    public Task<UserResponseDto> GetByIdAsync(int id)
+    public async Task<UserResponseDto> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetSingleAsync(e => e.Id == id);
+
+        return _mapper.UserToUserResponseDto(user);
     }
 
     public Task DeleteUserAsync(int id)
