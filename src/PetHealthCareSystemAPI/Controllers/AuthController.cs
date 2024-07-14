@@ -25,9 +25,11 @@ namespace PetHealthCareSystemAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public AuthController(IAuthService authSevices)
+        public AuthController(IAuthService authSevices, IUserService userService)
         {
+            _userService = userService;
             _authService = authSevices;
         }
 
@@ -50,6 +52,21 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(roles));
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("customer-account")]
+        public async Task<IActionResult> GetAllAccount([FromQuery] string? phoneNumber)
+        {
+            var accounts = await _userService.GetAllUsersByRoleAsync(UserRole.Customer);
+
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                accounts = accounts.Where(e => e.PhoneNumber.ToLower().Contains(phoneNumber.ToLower())).ToList();
+            }
+
+            return Ok(BaseResponseDto.OkResponseDto(accounts));
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("admin/register")]
@@ -59,7 +76,7 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
         }
 
-        
+
         [HttpPost]
         [AllowAnonymous]
         [Route("authenticate")]
