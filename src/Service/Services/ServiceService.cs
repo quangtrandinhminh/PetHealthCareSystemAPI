@@ -29,9 +29,14 @@ namespace Service.Services
             await _serviceRepo.CreateServiceAsync(_mapper.Map(service));
         }
 
-        public Task DeleteServiceAsync(int id, int deleteBy)
+        public async Task DeleteServiceAsync(int id, int deleteBy)
         {
-            throw new NotImplementedException();
+            var findService = _serviceRepo.GetAllWithCondition(x =>x.Id == id).FirstOrDefault();
+
+            findService.DeletedBy = deleteBy;
+            findService.DeletedTime = DateTime.Now;
+
+            await _serviceRepo.UpdateAsync(findService);
         }
 
         public async Task<List<ServiceResponseDto>> GetAllServiceAsync()
@@ -43,9 +48,9 @@ namespace Service.Services
             return listDto.ToList();
         }
 
-        public Task UpdateServiceAsync(ServiceResponseDto service)
+        public async Task UpdateServiceAsync(ServiceResponseDto service)
         {
-            throw new NotImplementedException();
+            await _serviceRepo.UpdateServiceAsync(_mapper.Map(service));
         }
     }
 }

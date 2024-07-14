@@ -96,6 +96,8 @@ namespace Utility.Constants
         public const string DELETE_USER_SUCCESS = "Xóa người dùng thành công";
         public const string ADMIN_NOT_FOUND = "Không tìm thấy quản trị viên";
         public const string CUSTOMER_NOT_FOUND = "Không tìm thấy khách hàng";
+
+        public const string VET_EXISTED = "Bác sĩ đã tồn tại";
     }
 
     public class ResponseMessageConstantsTimetable
@@ -181,6 +183,8 @@ namespace Utility.Constants
         public const string MEDICAL_RECORD_NOT_ADMITTED = "Ho so benh an khong co luu chuong";
         public const string MEDICAL_RECORD_ALREADY_DISCHARGED = "Ho so benh an da xuat chuong";
         public const string ADD_HOSPITALIZATION_SUCCESS = "Them ho so luu chuong thanh cong";
+        public const string UPDATE_HOSPITALIZATION_SUCCESS = "Cap Nhat ho so luu chuong thanh cong";
+        public const string DELETE_HOSPITALIZATION_SUCCESS = "Xoa ho so luu chuong thanh cong";
     }
 
     public class ResponseMessageConstantsCage
