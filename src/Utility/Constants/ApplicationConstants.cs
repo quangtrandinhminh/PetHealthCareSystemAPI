@@ -170,7 +170,7 @@ namespace Utility.Constants
         public const string DELETE_MEDICAL_RECORD_SUCCESS = "Xoa ho so benh an thanh cong";
         public const string MEDICAL_RECORD_VET_NOT_ALLOWED = "Yeu cau bac si duoc hen tao ho so benh an";
         public const string NEXT_APPOINTMENT_INVALID = "Ngay hen tiep theo khong hop le";
-        public const string ADMISSION_DATE_INVALID = "Ngay nhap vien khong hop le";
+        public const string ADMISSION_DATE_INVALID = "Ngay nhap vien khong hop le. Chua toi thoi gian kham";
         public const string DISCHARGE_DATE_INVALID = "Ngay xuat vien khong hop le";
         public const string PET_WEIGHT_INVALID = "Can nang khong hop le";
     }
