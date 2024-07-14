@@ -48,6 +48,15 @@ namespace Service.Services
             return listDto.ToList();
         }
 
+        public async Task<ServiceResponseDto> GetBydId(int id)
+        {
+            var list = _serviceRepo.GetById(id);
+
+            var listDto = _mapper.Map(list);
+
+            return listDto;
+        }
+
         public async Task UpdateServiceAsync(ServiceResponseDto service)
         {
             await _serviceRepo.UpdateServiceAsync(_mapper.Map(service));
