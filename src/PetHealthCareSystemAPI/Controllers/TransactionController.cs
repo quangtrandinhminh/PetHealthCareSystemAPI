@@ -84,6 +84,14 @@ public class TransactionController : Controller
         return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.ADD_TRANSACTION_SUCCESS));
     }
 
+    [HttpGet]
+    [Route("hospitalization-price/{id:int}")]
+    public async Task<IActionResult> CalculateHospitalizationPrice(int id)
+    {
+        var response = await _transactionService.CalculateHospitalizationPriceAsync(id);
+        return Ok(BaseResponseDto.OkResponseDto(response));
+    }
+
     [HttpPost]
     [Authorize(Roles = "Staff")]
     [Route("hospitalization/create")]

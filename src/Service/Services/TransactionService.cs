@@ -327,44 +327,87 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         }
 
-        if (dto.MedicalRecordId != null)
+        if (dto.MedicalRecordId == null)
         {
-            var transactionByMedicalRecord = await _transactionRepository.GetSingleAsync(t => t.MedicalRecordId == dto.MedicalRecordId);
-            if (transactionByMedicalRecord != null)
-            {
-                throw new AppException(ResponseCodeConstants.EXISTED,
-                                                          ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho lịch hẹn số {dto.AppointmentId}",
-                                                                                                StatusCodes.Status400BadRequest);
-            }
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                               ResponseMessageConstantsMedicalRecord.MEDICAL_RECORD_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
         var medicalRecord = await _medicalRecordRepository.GetSingleAsync(mr => mr.Id == dto.MedicalRecordId, false,
             mr => mr.Appointment, mr => mr.Hospitalization);
-        var days = 0;
-        if (medicalRecord != null && medicalRecord.Hospitalization is not null)
+        if (medicalRecord == null)
         {
-            foreach (var hospitalization in medicalRecord.Hospitalization)
-            {
-                days++;
-            }
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                ResponseMessageConstantsMedicalRecord.MEDICAL_RECORD_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var hospitalizationDays = medicalRecord.Hospitalization.Count;
+        if (hospitalizationDays == 0)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
+                ResponseMessageConstantsHospitalization.MEDICAL_RECORD_NOT_ADMITTED, StatusCodes.Status400BadRequest);
+        }
+
+        var hospitalizationPrice = await _configurationRepository.GetValueByKey(ConfigurationKey.HospitalizationPrice);
+        if (hospitalizationPrice == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                               ResponseMessageConstantsConfiguration.CONFIGURATION_NOT_FOUND, StatusCodes.Status404NotFound);
         }
 
         var transaction = _mapper.Map(dto);
-        transaction.CreatedBy = userEntity.Id;
-        transaction.CustomerId = (int)medicalRecord.Appointment.CreatedBy;
+        transaction.CreatedBy = transaction.LastUpdatedBy = userEntity.Id;
+        transaction.CreatedTime = transaction.LastUpdatedTime = CoreHelper.SystemTimeNow;
+        transaction.CustomerId = medicalRecord.Appointment.CustomerId;
         transaction.PaymentStaffId = userEntity.Id;
         transaction.PaymentStaffName = userEntity.FullName;
-        transaction.Total = transaction.TransactionDetails.Sum(detail => detail.SubTotal);
-        /*transaction.TransactionDetails.Add(new TransactionDetail
+        transaction.TransactionDetails.Add(new TransactionDetail
         {
-            Name = "Phí nhập viện",
-            Quantity = days,
-            Price = hospitalizationEntity.Price,
-            SubTotal = hospitalizationEntity.Price * hospitalization.Quantity,
-            TransactionId = dto.Id,
-        });*/
-
+            Name = "Phí lưu chuồng",
+            Quantity = hospitalizationDays,
+            Price = decimal.Parse(hospitalizationPrice.Value),
+            SubTotal = hospitalizationDays * decimal.Parse(hospitalizationPrice.Value),
+        });
+        transaction.Total = transaction.TransactionDetails.Sum(detail => detail.SubTotal);
+        // if paymentId != null CreatePayOsTransaction(price, id)
+        // transactionEntity.checkoutUrl = await CreatePayOsTransaction(transactionEntity.Total, transactionEntity.paymentId);
         await _transactionRepository.AddAsync(transaction);
+    }
+
+    public async Task<HospitalizationPriceResponseDto> CalculateHospitalizationPriceAsync(int medicalRecordId)
+    {
+        _logger.Information($"Calculate hospitalization price for medical record {medicalRecordId}");
+        var medicalRecord = await _medicalRecordRepository.GetSingleAsync(mr => mr.Id == medicalRecordId, false,
+                       mr => mr.Hospitalization);
+        if (medicalRecord == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                               ResponseMessageConstantsMedicalRecord.MEDICAL_RECORD_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var hospitalizationDays = medicalRecord.Hospitalization.Count;
+        if (hospitalizationDays == 0)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
+                               ResponseMessageConstantsHospitalization.MEDICAL_RECORD_NOT_ADMITTED, StatusCodes.Status400BadRequest);
+        }
+
+        var hospitalizationPrice = await _configurationRepository.GetValueByKey(ConfigurationKey.HospitalizationPrice);
+        if (hospitalizationPrice == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                                              ResponseMessageConstantsConfiguration.CONFIGURATION_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        return new HospitalizationPriceResponseDto
+        {
+            MedicalRecordId = medicalRecordId,
+            PricePerDay = decimal.Parse(hospitalizationPrice.Value),
+            Days = hospitalizationDays,
+            AdmissionDate = medicalRecord.AdmissionDate,
+            DischargeDate = medicalRecord.DischargeDate,
+            TotalPrice = hospitalizationDays * decimal.Parse(hospitalizationPrice.Value),
+        };
     }
 
     public async Task UpdatePaymentByStaffAsync(int transactionId, int updatedById)
