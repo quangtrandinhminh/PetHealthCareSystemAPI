@@ -107,4 +107,23 @@ public class TransactionController : Controller
 
         return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.UPDATE_PAYMENT_SUCCESS));
     }
+
+    [HttpPut]
+    [Authorize(Roles = "Staff, Customer")]
+    [Route("staff/update-refund")]
+    public async Task<IActionResult> UpdateTransactionToRefund([FromBody] TransactionRefundRequestDto dto)
+    {
+        var userId = User.GetUserId();
+        await _transactionService.UpdateTransactionToRefundAsync(dto, userId);
+
+        return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsTransaction.UPDATE_REFUND_SUCCESS));
+    }
+
+    [HttpGet]
+    [Route("refund-conditions")]
+    public async Task<IActionResult> GetRefundPercentage()
+    {
+        var response = await _transactionService.GetRefundConditionsAsync();
+        return Ok(BaseResponseDto.OkResponseDto(response));
+    }
 }

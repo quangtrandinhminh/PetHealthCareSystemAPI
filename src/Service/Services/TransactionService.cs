@@ -177,6 +177,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
                 StatusCodes.Status400BadRequest);
         }
 
+        // if status is paid then payment method must be an online method, here is payos
         if (dto.Status == (int)TransactionStatus.Paid)
         {
             if (dto.PaymentMethod != (int)PaymentMethod.Cash)
@@ -192,7 +193,6 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
                                        ResponseMessageConstantsTransaction.PAYMENT_REQUIRED,
                                                           StatusCodes.Status400BadRequest);
             }
-
         }
 
         if (dto.AppointmentId == null && dto.MedicalRecordId == null)
@@ -252,10 +252,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
                 ResponseMessageConstantsTransaction.TRANSACTION_DETAIL_REQUIRED,
                 StatusCodes.Status400BadRequest);
         }
-
-
         #endregion
-
 
         var transactionEntity = _mapper.Map(dto);
         transactionEntity.CreatedBy = userEntity.Id;
@@ -290,6 +287,8 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         transactionEntity.TransactionDetails = transactionDetails;
         transactionEntity.Total = transactionDetails.Sum(detail => detail.SubTotal);
 
+        // if paymentId != null CreatePayOsTransaction(price, id)
+        // transactionEntity.checkoutUrl = await CreatePayOsTransaction(transactionEntity.Total, transactionEntity.paymentId);
         await _transactionRepository.AddAsync(transactionEntity);
     }
 
@@ -400,6 +399,68 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         transaction.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
         await _transactionRepository.UpdateAsync(transaction);
+    }
+
+    public async Task UpdateTransactionToRefundAsync(TransactionRefundRequestDto dto, int updatedById)
+    {
+        _logger.Information("Update transaction {@dto} to refund by user {updatedById}", dto, updatedById);
+        var userEntity = await _userManager.FindByIdAsync(updatedById.ToString());
+        if (userEntity == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                               ResponseMessageIdentity.INVALID_USER, StatusCodes.Status404NotFound);
+        }
+
+        var transaction = await _transactionRepository.GetSingleAsync(t => t.Id == dto.TransactionId);
+        if (transaction == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                                              ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        if (transaction.Status == TransactionStatus.Cancelled || transaction.Status == TransactionStatus.Refund)
+        {
+            throw new AppException(ResponseCodeConstants.BAD_REQUEST,
+                                              ResponseMessageConstantsTransaction.INVALID_TRANSACTION_STATUS,
+                                                                                           StatusCodes.Status400BadRequest);
+        }
+
+        transaction.RefundReason = dto.RefundReason;
+        transaction.RefundPercentage = dto.RefundPercentage;
+        transaction.RefundPaymentId = dto.RefundPaymentId;
+        transaction.RefundDate = dto.RefundDate;
+        transaction.Status = TransactionStatus.Refund;
+        transaction.LastUpdatedBy = userEntity.Id;
+        transaction.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+        await _transactionRepository.UpdateAsync(transaction);
+    }
+
+    public async Task<RefundConditionsResponseDto> GetRefundConditionsAsync()
+    {
+        throw new NotImplementedException();
+        /*_logger.Information("Get refund conditions");
+        var refundPercentage = await _configurationRepository.GetValueByKey(ConfigurationKey.RefundPercentage);
+        if (refundPercentage == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                               ResponseMessageConstantsConfiguration.CONFIGURATION_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var refundForDays = await _configurationRepository.GetValueByKey(ConfigurationKey.RefundForDays);
+        if (refundForDays == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                ResponseMessageConstantsConfiguration.CONFIGURATION_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        var response = new RefundConditionsResponseDto
+        {
+            RefundPercentage = decimal.Parse(refundPercentage.Value),
+            RefundForDays = int.Parse(refundForDays.Value),
+        };
+
+        return response;*/
     }
 
     public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction()
