@@ -260,3 +260,17 @@ VALUES
  	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
  	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1);
  GO
+
+ USE [PetHealthCareSys]
+GO
+
+INSERT INTO [dbo].[Configurations] (ConfigKey, Value, CreatedBy, LastUpdatedBy, CreatedTime, LastUpdatedTime, Description)
+VALUES 
+('BookPrice', '10000', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'Price of booking services'),
+('HospitalizationPrice', '100000', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'Price for hospitalization services'),
+('PayOsApiKey', '39491ec9-d79e-466a-bd14-bf206c564492', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'API key for PayOS'),
+('PayOsChecksumKey', '30eb12ef50dce4a960b7f9bfb18fc180f3d8ce3f12ccc3b9c4aabd0c0b2ab738', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'Checksum key for PayOS'),
+('PayOsClientId', 'e3d6d3ea-234b-450f-b6a7-bd50cd5d78d8', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'Client ID for PayOS'),
+('PayOsOrderId', '10001', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'Order ID for PayOS'),
+('RefundPercentage', '0.7', NULL, NULL, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 'Refund percentage');
+GO
