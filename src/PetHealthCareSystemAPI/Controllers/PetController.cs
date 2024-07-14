@@ -21,6 +21,16 @@ namespace PetHealthCareSystemAPI.Controllers
             _petService = petService;
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("customer/all/{id:int}")]
+        public async Task<IActionResult> GetAllPetsForCustomerById([FromRoute] int id)
+        {
+            var list = await _petService.GetAllPetsForCustomerAsync(id);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, list));
+        }
+
         [Authorize(Roles = "Customer")]
         [HttpGet]
         [Route("customer/all")]
