@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO;
+﻿using Azure;
+using BusinessObject.DTO;
 using BusinessObject.DTO.Appointment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -69,6 +70,15 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpGet]
+        [Route("cancel-appointments")]
+        public async Task<IActionResult> GetAllCancelAppointment([FromQuery] int pageNumber = 1, int pageSize = 10)
+        {
+            var response = await _appointmentService.GetAllCancelAppointmentsAsync(pageNumber, pageSize);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpGet]
         [Route("vet/appointments/{id:int}")]
         public async Task<IActionResult> GetAllAppointmentForVet([FromRoute] int id, [FromQuery] string? date, int pageNumber = 1, int pageSize = 10)
         {
@@ -98,9 +108,9 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpPut]
-        [Route("{appointmentId:int}")]
+        [Route("done/{appointmentId:int}")]
         [Authorize(Roles = "Vet, Staff")]
-        public async Task<IActionResult> UpdateAppointment([FromRoute] int appointmentId, [FromBody] AppointmentBookRequestDto dto)
+        public async Task<IActionResult> UpdateAppointmentToDone([FromRoute] int appointmentId)
         {
             var updatedById = User.GetUserId();
 
@@ -109,5 +119,50 @@ namespace PetHealthCareSystemAPI.Controllers
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
 
+        [HttpPut]
+        [Route("online-payment-status/{appointmentId:int}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> UpdateOnlinePaymentStatusToTrue([FromRoute] int appointmentId)
+        {
+            var updatedById = User.GetUserId();
+
+            var response = await _appointmentService.UpdateOnlinePaymentToTrue(appointmentId, updatedById);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpPut]
+        [Route("refund-status/{appointmentId:int}")]
+        public async Task<IActionResult> UpdateRefundPaymentStatusToTrue([FromRoute] int appointmentId)
+        {
+            var updatedById = User.GetUserId();
+
+            var response = await _appointmentService.UpdateRefundStatusToTrue(appointmentId, updatedById);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpPut]
+        [Route("cancel/{appointmentId:int}")]
+        public async Task<IActionResult> UpdateAppointmentToCancel([FromRoute] int appointmentId)
+        {
+            var updatedById = User.GetUserId();
+
+            var response = await _appointmentService.UpdateStatusToCancel(appointmentId, updatedById);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpPost]
+        [Route("feedback")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> AddFeedbackToAppointment([FromBody] AppointmentFeedbackRequestDto dto)
+        {
+            var ownerId = User.GetUserId();
+
+            var response = await _appointmentService.FeedbackAppointmentAsync(dto, ownerId);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
     }
 }

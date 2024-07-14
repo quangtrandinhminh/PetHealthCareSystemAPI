@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 using BusinessObject.DTO;
+using BusinessObject.DTO.Configuration;
 using BusinessObject.DTO.Transaction;
 using BusinessObject.Entities;
 using BusinessObject.Entities.Identity;
@@ -10,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Net.payOS;
+using Net.payOS.Types;
 using Repository.Extensions;
 using Repository.Interfaces;
 using Serilog;
@@ -33,6 +37,8 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
     private readonly IHospitalizationRepository _hospitalizationRepository = serviceProvider.GetRequiredService<IHospitalizationRepository>();
     private readonly IServiceRepository _serviceRepository = serviceProvider.GetRequiredService<IServiceRepository>();
     private readonly IMedicalItemRepository _medicalItemRepository = serviceProvider.GetRequiredService<IMedicalItemRepository>();
+    private readonly IConfigurationRepository _configurationRepository = serviceProvider.GetRequiredService<IConfigurationRepository>();
+    private readonly IConfigurationService _configurationService = serviceProvider.GetRequiredService<IConfigurationService>();
 
     public async Task<PaginatedList<TransactionResponseDto>> GetAllTransactionsAsync(int pageNumber, int pageSize)
     {
@@ -201,7 +207,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
             if (transactionByMedicalRecord != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED,
-                                       ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho lịch hẹn số {dto.AppointmentId}", 
+                                       ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho lịch hẹn số {dto.AppointmentId}",
                                        StatusCodes.Status400BadRequest);
             }
         }
@@ -212,7 +218,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
             if (transactionByAppointment != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED,
-                                                          ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho hồ sơ bệnh án số {dto.MedicalRecordId}", 
+                                                          ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho hồ sơ bệnh án số {dto.MedicalRecordId}",
                                                           StatusCodes.Status400BadRequest);
             }
         }
@@ -246,10 +252,10 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
                 ResponseMessageConstantsTransaction.TRANSACTION_DETAIL_REQUIRED,
                 StatusCodes.Status400BadRequest);
         }
-        
+
 
         #endregion
-        
+
 
         var transactionEntity = _mapper.Map(dto);
         transactionEntity.CreatedBy = userEntity.Id;
@@ -327,7 +333,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
             if (transactionByMedicalRecord != null)
             {
                 throw new AppException(ResponseCodeConstants.EXISTED,
-                                                          ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho lịch hẹn số {dto.AppointmentId}", 
+                                                          ResponseMessageConstantsTransaction.TRANSACTION_EXISTED + $" cho lịch hẹn số {dto.AppointmentId}",
                                                                                                 StatusCodes.Status400BadRequest);
             }
         }
@@ -393,6 +399,62 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         transaction.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
         await _transactionRepository.UpdateAsync(transaction);
+    }
+
+    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction()
+    {
+        var clientId = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsClientId)).Value;
+        var apiKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsApiKey)).Value;
+        var checksumKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsChecksumKey)).Value;
+        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.BookPrice)).Value;
+        var orderIdString = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsOrderId)).Value;
+        bool bookPriceSuccess = int.TryParse(bookPriceString, out int bookPrice);
+        bool OrderIdSuccess = long.TryParse(orderIdString, out long orderId);
+
+        if (bookPrice == 0)
+        {
+            throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
+        }
+
+        if (orderId == 0)
+        {
+            throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
+        }
+
+        if (clientId.IsNullOrEmpty() || apiKey.IsNullOrEmpty() || checksumKey.IsNullOrEmpty())
+        {
+            throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
+        }
+
+        PayOS payOs = new PayOS(clientId, apiKey, checksumKey);
+
+        var itemDataName = $"Thanh toan cuoc hen";
+        var itemDataQuantity = 1;
+        var itemDataPrice = bookPrice == 0 ? 10000 : bookPrice;
+
+        List<ItemData> items = new()
+        {
+            new(itemDataName,itemDataQuantity,itemDataPrice),
+        };
+
+        PaymentData paymentData = new PaymentData(orderId, bookPrice,
+            $"Thanh toan lich hen", items, "", "");
+
+        CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
+
+        await _configurationService.UpdateConfiguration(new ConfigurationUpdateRequestDto()
+        {
+            Value = (orderId + 1).ToString(),
+            Key = ConfigurationKey.PayOsOrderId,
+        });
+
+        var response = new TransactionPayOsResponseDto()
+        {
+            CheckoutUrl = createPayment.checkoutUrl,
+            OrderId = orderId,
+        };
+
+        return response;
     }
 
     public static async Task<List<TransactionDetail>> CheckMedicalItemsAsync(List<TransactionMedicalItemsDto> medicalItems,

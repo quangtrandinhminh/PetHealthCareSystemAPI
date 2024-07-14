@@ -151,6 +151,8 @@ builder.Services.AddScoped<ITimeTableRepository, TimeTableRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAppointmentPetRepository, AppointmentPetRepository>();
+builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
+
 
 // Service
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
@@ -161,6 +163,8 @@ builder.Services.AddScoped<IPetService, PetService>();
 builder.Services.AddScoped<IService, ServiceService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();

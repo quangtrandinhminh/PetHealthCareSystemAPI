@@ -38,6 +38,8 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         serviceProvider.GetRequiredService<IUserRepository>();
     private readonly IMedicalRecordRepository _medicalRecordRepository =
         serviceProvider.GetRequiredService<IMedicalRecordRepository>();
+    private readonly ITransactionService _transactionService =
+        serviceProvider.GetRequiredService<ITransactionService>();
     private readonly IPetRepository _petRepository =
         serviceProvider.GetRequiredService<IPetRepository>();
     private readonly IAppointmentPetRepository _appointmentPetRepo =
@@ -463,7 +465,10 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             });
         }
 
+        var payOsTransaction = await _transactionService.CreatePayOsTransaction();
+
         var appointment = _mapper.Map(appointmentBookRequestDto);
+        appointment.CheckoutUrl = payOsTransaction.CheckoutUrl;
         appointment.Services = services;
         appointment.AppointmentDate = date;
         appointment.CreatedBy = appointment.LastUpdatedBy = createdById;
@@ -505,6 +510,87 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         return await GetAppointmentByAppointmentId(appointmentId);
     }
 
+    public async Task<AppointmentResponseDto> UpdateOnlinePaymentToTrue(int appointmentId, int updatedById)
+    {
+        _logger.Information($"Update online payment status to done for appointment {appointmentId}");
+
+        var appointment = await _appointmentRepo.GetSingleAsync(a => a.Id == appointmentId);
+
+        if (appointment == null)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        appointment.OnlinePaymentStatus = true;
+        appointment.LastUpdatedBy = updatedById;
+        appointment.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+        await _appointmentRepo.UpdateAsync(appointment);
+
+        return await GetAppointmentByAppointmentId(appointmentId);
+    }
+
+    public async Task<PaginatedList<AppointmentResponseDto>> GetAllCancelAppointmentsAsync(int pageNumber, int pageSize)
+    {
+        _logger.Information("Get all appointments");
+
+        var appointments = _appointmentRepo.GetAllWithCondition(a => a.DeletedTime == null && a.Status == AppointmentStatus.Cancelled, a => a.AppointmentPets);
+        var response = _mapper.Map(appointments);
+        var paginatedList = await PaginatedList<AppointmentResponseDto>.CreateAsync(response, pageNumber, pageSize);
+        foreach (var item in paginatedList.Items)
+        {
+            var vet = await _userRepository.GetSingleAsync(u => u.Id == item.VetId);
+            if (vet != null)
+            {
+                item.Vet = _mapper.UserToUserResponseDto(vet);
+            }
+
+            var customer = await _userRepository.GetSingleAsync(u => u.Id == item.CustomerId);
+            if (customer != null)
+            {
+                item.Customer = _mapper.UserToUserResponseDto(customer);
+            }
+
+            var appointmentPet = (await appointments.FirstOrDefaultAsync(x => x.Id == item.Id))?.AppointmentPets!;
+            var pets = new List<Pet>();
+            foreach (var apoPet in appointmentPet)
+            {
+                var pet = await _petRepository.GetSingleAsync(p => p.Id == apoPet.PetId);
+
+                pets.Add(pet);
+            }
+            item.Pets = _mapper.Map(pets);
+            foreach (var pet in item.Pets)
+            {
+                if (pet != null) pet.OwnerName = customer?.FullName;
+
+                pet.HasMedicalRecord = await _medicalRecordRepository
+                    .GetSingleAsync(e => e.PetId == pet.Id && e.AppointmentId == item.Id) != null;
+            }
+        }
+        return paginatedList;
+    }
+
+    public async Task<AppointmentResponseDto> UpdateRefundStatusToTrue(int appointmentId, int updatedById)
+    {
+        _logger.Information($"Update online payment status to done for appointment {appointmentId}");
+
+        var appointment = await _appointmentRepo.GetSingleAsync(a => a.Id == appointmentId);
+
+        if (appointment == null)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        appointment.RefundStatus = true;
+        appointment.LastUpdatedBy = updatedById;
+        appointment.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+        await _appointmentRepo.UpdateAsync(appointment);
+
+        return await GetAppointmentByAppointmentId(appointmentId);
+    }
+
     public async Task<AppointmentResponseDto> UpdateStatusToCancel(int appointmentId, int updatedById)
     {
         _logger.Information($"Update status to cancel for appointment {appointmentId} by user id {updatedById}");
@@ -517,12 +603,45 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
         }
 
         appointment.Status = AppointmentStatus.Cancelled;
+        appointment.CancelDate = DateOnly.FromDateTime(DateTime.Today);
         appointment.LastUpdatedBy = updatedById;
         appointment.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
         await _appointmentRepo.UpdateAsync(appointment);
 
         return await GetAppointmentByAppointmentId(appointmentId);
+    }
+
+    public async Task<AppointmentResponseDto> FeedbackAppointmentAsync(AppointmentFeedbackRequestDto dto, int ownerId)
+    {
+        if (dto.Rating < 0 || dto.Rating > 5)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
+        }
+
+        var appointment = await _appointmentRepo.GetByIdAsync(dto.AppointmentId);
+
+        if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Scheduled)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_COMPLETED);
+        }
+
+        if (appointment.CustomerId != ownerId)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        if (appointment == null)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsAppointment.APPOINTMENT_NOT_FOUND);
+        }
+
+        appointment.Rating = dto.Rating;
+        appointment.Feedback = dto.Feedback;
+
+        await _appointmentRepo.UpdateAsync(appointment);
+
+        return await GetAppointmentByAppointmentId(dto.AppointmentId);
     }
 
     private async Task<AppointmentResponseDto> ToAppointmentResponseDto(IEnumerable<Appointment> appointments,

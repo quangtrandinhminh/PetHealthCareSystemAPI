@@ -180,83 +180,83 @@ VALUES
     (N'HospitalizationPrice', '100000', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET()),
     (N'RefundPercentage', '0.7', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET());
 
--- INSERT INTO Users (FullName, UserName, Email, EmailConfirmed, PasswordHash, NormalizedUserName, ConcurrencyStamp, CreatedTime, LastUpdatedTime, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnabled, AccessFailedCount)
--- VALUES
--- 	(N'System Admin', N'petsystemadmin', N'PetSystemAdmin@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'PETSYSADMIN', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334455', 0, 0, 0, 1),
--- 	(N'System Staff', N'systemstaff', N'staff@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'SYSTEMSTAFF', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334465', 0, 0, 0, 1),
--- 	(N'Dr. Duy Anh', N'duyanhvet', N'duyanhvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'DUYANHVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334466', 0, 0, 0, 1),
--- 	(N'Dr. Phúc', N'phucvet', N'phucvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'PHUCVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334467', 0, 0, 0, 1),
--- 	(N'Dr. Luân', N'luanvet', N'luanvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'LUANVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334468', 0, 0, 0, 1),
--- 	(N'Dr. Phong', N'phongvet', N'phongvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'PHONGVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334469', 0, 0, 0, 1),
--- 	(N'Dr. Quang', N'quangvet', N'quangvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'QUANGVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334470', 0, 0, 0, 1),
--- 	(N'Dr. Nam', N'namvet', N'namvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'NAMVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334471', 0, 0, 0, 1),
--- 	(N'Duy Anh', N'duyanh', N'duyanh@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'DUYANH', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334472', 0, 0, 0, 1),
--- 	(N'Việt Phúc', N'vietphuc', N'vietphuc@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'VIETPHUC', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334473', 0, 0, 0, 1),
--- 	(N'Trọng Luân', N'trongluan', N'trongluan@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'TRONGLUAN', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334474', 0, 0, 0, 1),
--- 	(N'Thanh Phong', N'thanhphong', N'thanhphong@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'THANHPHONG', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334475', 0, 0, 0, 1),
--- 	(N'Minh Quang', N'minhquang', N'minhquang@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'MINHQUANG', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334476', 0, 0, 0, 1),
--- 	(N'Nhật Nam', N'nhatnam', N'nhatnam@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'NHATNAM', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334477', 0, 0, 0, 1);
--- GO
+ INSERT INTO Users (FullName, UserName, Email, EmailConfirmed, PasswordHash, NormalizedUserName, ConcurrencyStamp, CreatedTime, LastUpdatedTime, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnabled, AccessFailedCount)
+ VALUES
+ 	(N'System Admin', N'petsystemadmin', N'PetSystemAdmin@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'PETSYSADMIN', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334455', 0, 0, 0, 1),
+ 	(N'System Staff', N'systemstaff', N'staff@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'SYSTEMSTAFF', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334465', 0, 0, 0, 1),
+ 	(N'Dr. Duy Anh', N'duyanhvet', N'duyanhvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'DUYANHVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334466', 0, 0, 0, 1),
+ 	(N'Dr. Phúc', N'phucvet', N'phucvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'PHUCVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334467', 0, 0, 0, 1),
+ 	(N'Dr. Luân', N'luanvet', N'luanvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'LUANVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334468', 0, 0, 0, 1),
+ 	(N'Dr. Phong', N'phongvet', N'phongvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'PHONGVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334469', 0, 0, 0, 1),
+ 	(N'Dr. Quang', N'quangvet', N'quangvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'QUANGVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334470', 0, 0, 0, 1),
+ 	(N'Dr. Nam', N'namvet', N'namvet@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'NAMVET', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334471', 0, 0, 0, 1),
+ 	(N'Duy Anh', N'duyanh', N'duyanh@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'DUYANH', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334472', 0, 0, 0, 1),
+ 	(N'Việt Phúc', N'vietphuc', N'vietphuc@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'VIETPHUC', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334473', 0, 0, 0, 1),
+ 	(N'Trọng Luân', N'trongluan', N'trongluan@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'TRONGLUAN', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334474', 0, 0, 0, 1),
+ 	(N'Thanh Phong', N'thanhphong', N'thanhphong@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'THANHPHONG', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334475', 0, 0, 0, 1),
+ 	(N'Minh Quang', N'minhquang', N'minhquang@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'MINHQUANG', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334476', 0, 0, 0, 1),
+ 	(N'Nhật Nam', N'nhatnam', N'nhatnam@email.com', 0, N'$2a$11$wrSjvVjywF3E9WLIfzTLveB5AvKxNHfIWN3QZLWlg6Dw6LybZ65fW', N'NHATNAM', N'bc87b618-69da-46d1-900b-713028dac9f9', SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), N'0122334477', 0, 0, 0, 1);
+ GO
 
--- INSERT INTO UserRoles (UserId, RoleId, Discriminator)
--- VALUES
--- 	(7, 1, N'UserRoleEntity'),
--- 	(8, 2, N'UserRoleEntity'),
--- 	(9, 3, N'UserRoleEntity'),
--- 	(10, 3, N'UserRoleEntity'),
--- 	(11, 3, N'UserRoleEntity'),
--- 	(12, 3, N'UserRoleEntity'),
--- 	(13, 3, N'UserRoleEntity'),
--- 	(14, 3, N'UserRoleEntity'),
--- 	(15, 4, N'UserRoleEntity'),
--- 	(16, 4, N'UserRoleEntity'),
--- 	(17, 4, N'UserRoleEntity'),
--- 	(18, 4, N'UserRoleEntity'),
--- 	(19, 4, N'UserRoleEntity'),
--- 	(20, 4, N'UserRoleEntity');
--- GO
+ INSERT INTO UserRoles (UserId, RoleId, Discriminator)
+ VALUES
+ 	(7, 1, N'UserRoleEntity'),
+ 	(8, 2, N'UserRoleEntity'),
+ 	(9, 3, N'UserRoleEntity'),
+ 	(10, 3, N'UserRoleEntity'),
+ 	(11, 3, N'UserRoleEntity'),
+ 	(12, 3, N'UserRoleEntity'),
+ 	(13, 3, N'UserRoleEntity'),
+ 	(14, 3, N'UserRoleEntity'),
+ 	(15, 4, N'UserRoleEntity'),
+ 	(16, 4, N'UserRoleEntity'),
+ 	(17, 4, N'UserRoleEntity'),
+ 	(18, 4, N'UserRoleEntity'),
+ 	(19, 4, N'UserRoleEntity'),
+ 	(20, 4, N'UserRoleEntity');
+ GO
 
--- INSERT INTO Pet (Name, Species, Breed, Gender, DateOfBirth, OwnerID, CreatedTime, LastUpdatedTime, IsNeutered)
--- VALUES
--- 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ INSERT INTO Pet (Name, Species, Breed, Gender, DateOfBirth, OwnerID, CreatedTime, LastUpdatedTime, IsNeutered)
+ VALUES
+ 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 15, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
 
--- 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 16, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
 
--- 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 17, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
 
--- 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Nam', N'Mèo', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Nam', N'Mèo', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 18, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
 
--- 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 19, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
 
--- 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
--- 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1);
--- GO
+ 	(N'Duy Anh', N'Chó', N'Chó cỏ', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Minh Quang', N'Chó', N'Corgy', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Thanh Phong', N'Chó', N'Husky', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Việt Phúc', N'Mèo', N'Vàng lắm lông', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Trọng Luân', N'Mèo', N'Tabi', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1),
+ 	(N'Nam', N'Mèo', N'Mun', N'Đực', SYSDATETIMEOFFSET(), 20, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET(), 1);
+ GO

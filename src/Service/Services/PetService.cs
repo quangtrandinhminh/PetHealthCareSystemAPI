@@ -59,7 +59,11 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
                 StatusCodes.Status400BadRequest);
         }
 
-        return _mapper.Map(pet);
+        var petDto = _mapper.Map(pet);
+
+        petDto.OwnerName = pet.Owner.FullName;
+
+        return petDto;
     }
 
     public async Task CreatePetAsync(PetRequestDto pet, int ownerId)

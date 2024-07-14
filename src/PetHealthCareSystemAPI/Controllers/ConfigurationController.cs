@@ -1,43 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObject.DTO;
+using BusinessObject.DTO.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Service.IServices;
+using Service.Services;
+using Utility.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PetHealthCareSystemAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ConfigurationController : ControllerBase
     {
-        // GET: api/<ConfigurationController>
+        private readonly IConfigurationService _configurationService;
+
+        public ConfigurationController(IConfigurationService configurationService)
+        {
+            _configurationService = configurationService;
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Route("all")]
+        public async Task<IActionResult> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            var response = await _configurationService.GetConfigurationsAsync();
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
 
-        // GET api/<ConfigurationController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> Update([FromBody] ConfigurationUpdateRequestDto dto)
         {
-            return "value";
-        }
+            var response = await _configurationService.UpdateConfiguration(dto);
 
-        // POST api/<ConfigurationController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ConfigurationController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ConfigurationController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
     }
 }
