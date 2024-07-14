@@ -465,16 +465,12 @@ public class AppointmentService(IServiceProvider serviceProvider) : IAppointment
             });
         }
 
-        var payOsTransaction = await _transactionService.CreatePayOsTransaction();
-
         var appointment = _mapper.Map(appointmentBookRequestDto);
-        appointment.CheckoutUrl = payOsTransaction.CheckoutUrl;
         appointment.Services = services;
         appointment.AppointmentDate = date;
         appointment.CreatedBy = appointment.LastUpdatedBy = createdById;
         appointment.BookingType = appointment.CustomerId == appointment.CreatedBy
             ? AppointmentBookingType.Online : AppointmentBookingType.WalkIn;
-
 
         var addedAppointment = await _appointmentRepo.AddAppointmentAsync(appointment);
 

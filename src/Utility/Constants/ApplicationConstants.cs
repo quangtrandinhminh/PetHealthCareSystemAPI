@@ -148,6 +148,7 @@ namespace Utility.Constants
         public const string UPDATE_PAYMENT_SUCCESS = "Cap nhat thanh toan thanh cong";
         public const string DELETE_TRANSACTION_SUCCESS = "Xoa giao dich thanh cong";
         public const string TRANSACTION_PAID = "Giao dich da thanh toan";
+        public const string UPDATE_REFUND_SUCCESS = "Hoan tien thanh cong";
     }
 
     public class ResponseMessageConstantsAppointment
@@ -192,5 +193,14 @@ namespace Utility.Constants
     public class ResponseMessageConstantsCage
     {
         public const string CAGE_NOT_FOUND = "Khong tim thay chuong nuoi";
+    }
+
+    public class ResponseMessageConstantsConfiguration
+    {
+        public const string CONFIGURATION_NOT_FOUND = "Khong tim thay cau hinh";
+        public const string CONFIGURATION_EXISTED = "Cau hinh da ton tai";
+        public const string ADD_CONFIGURATION_SUCCESS = "Them cau hinh thanh cong";
+        public const string UPDATE_CONFIGURATION_SUCCESS = "Cap nhat cau hinh thanh cong";
+        public const string DELETE_CONFIGURATION_SUCCESS = "Xoa cau hinh thanh cong";
     }
 }
