@@ -40,18 +40,18 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("cage/available")]
-        public async Task<IActionResult> GetAvailableCageByDate([FromQuery] DateTimeQueryDto qo)
+        public async Task<IActionResult> GetAvailableCageByDate()
         {
-            var cages = await hospitalizationService.GetAvailableCageByDate(qo);
+            var cages = await hospitalizationService.GetAvailableCageByDate();
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, cages));
         }
 
         [HttpGet]
         [Route("all")]
-        public async Task<IActionResult> GetAllHospitalization(int pageNumber, int pageSize)
+        public async Task<IActionResult> GetAllHospitalization()
         {
-            var hospitalization = await hospitalizationService.GetAllHospitalization(pageNumber, pageSize);
+            var hospitalization = await hospitalizationService.GetAllHospitalization();
             return Ok(BaseResponseDto.OkResponseDto(hospitalization));
         }
 
@@ -63,10 +63,9 @@ namespace PetHealthCareSystemAPI.Controllers
         }
 
         [HttpGet("medical-record/{medicalRecordId}")]
-        public async Task<IActionResult> GetAllHospitalizationByMedicalRecordId(int medicalRecordId, int pageNumber,
-            int pageSize)
+        public async Task<IActionResult> GetAllHospitalizationByMedicalRecordId(int medicalRecordId)
         {
-            var hospitalization = await hospitalizationService.GetAllHospitalizationByMedicalRecordId(medicalRecordId, pageNumber, pageSize);
+            var hospitalization = await hospitalizationService.GetAllHospitalizationByMedicalRecordId(medicalRecordId);
             return Ok(BaseResponseDto.OkResponseDto(hospitalization));
         }
 
@@ -89,19 +88,34 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Vet")]
-        public async Task<IActionResult> UpdateHospitalization( /*[FromBody] HospitalizationRequestDto dto*/)
+        public async Task<IActionResult> UpdateHospitalization([FromBody] HospitalizationRequestDto dto, int vetId)
         {
-            //var vetId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            //await _hospitalizationService.UpdateHospitalization(dto, vetId);
-            return Ok();
+            await hospitalizationService.UpdateHospitalization(dto, vetId);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsHospitalization.UPDATE_HOSPITALIZATION_SUCCESS));
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteHospitalization(int id)
+        public async Task<IActionResult> DeleteHospitalization(int id, int deleteBy)
         {
-            //var deleteBy = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            //await _hospitalizationService.DeleteHospitalization(id, deleteBy);
-            return Ok();
+            await hospitalizationService.DeleteHospitalization(id, deleteBy);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsHospitalization.DELETE_HOSPITALIZATION_SUCCESS));
+        }
+
+        [HttpPut]
+        [Route("HospitalDischarge")]
+        [Authorize(Roles = "Vet")]
+        public async Task<IActionResult> HospitalDischarge(int medicalRecordId, int VetId)
+        {
+            await hospitalizationService.HospitalDischarge(medicalRecordId, VetId);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsHospitalization.UPDATE_HOSPITALIZATION_SUCCESS));
+        }
+
+        [HttpGet]
+        [Route("dropdown-data")]
+        public IActionResult GetHospitalizaionDropdownData()
+        {
+            var response = hospitalizationService.GetHospitalizaionDropdownData();
+            return Ok(BaseResponseDto.OkResponseDto(response));
         }
     }
 }

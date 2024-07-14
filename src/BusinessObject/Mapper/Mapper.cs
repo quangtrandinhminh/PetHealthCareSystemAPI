@@ -108,6 +108,8 @@ public partial class MapperlyMapper
     public partial HospitalizationResponseDto Map(Hospitalization entity);
     public partial IQueryable<HospitalizationResponseDto> Map(IQueryable<Hospitalization> entity);
 
+    public partial IList<HospitalizationResponseDto> Map(IList<Hospitalization> entity);
+
     public partial HospitalizationResponseDtoWithDetails HospitalizationToHospitalizationResponseDtoWithDetails(
                Hospitalization entity);
 
@@ -117,4 +119,5 @@ public partial class MapperlyMapper
     // cage
     public partial CageResponseDto Map(Cage entity);
     public partial IQueryable<CageResponseDto> Map(IQueryable<Cage> entity);
+    public partial IList<CageResponseDto> Map(IList<Cage> entity);
 }
