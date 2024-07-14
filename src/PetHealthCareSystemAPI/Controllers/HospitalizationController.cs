@@ -127,5 +127,14 @@ namespace PetHealthCareSystemAPI.Controllers
             var response = hospitalizationService.CheckCreateHospitalizaion();
             return Ok(BaseResponseDto.OkResponseDto(response));
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Vet")]
+        [Route("CheckHospitalizaionByVetId")]
+        public async Task<IActionResult> CheckHospitalizaionByVetId(int id)
+        {
+            var response = await hospitalizationService.CheckHospitalizaionByVetId(id);
+            return Ok(BaseResponseDto.OkResponseDto(response));
+        }
     }
 }

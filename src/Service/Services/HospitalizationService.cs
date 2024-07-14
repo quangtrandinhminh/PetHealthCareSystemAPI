@@ -125,7 +125,12 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
 
     public async Task CreateHospitalization(HospitalizationRequestDto dto, int staffId)
     {
-        var hospitalizationsList = _hospitalizationRepo.GetAllWithCondition(e => e.Date == dto.Date
+        if (!DateOnly.TryParse(dto.Date , out DateOnly date))
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsCommon.DATE_WRONG_FORMAT);
+        }
+
+        var hospitalizationsList = _hospitalizationRepo.GetAllWithCondition(e => e.Date == date
                                                                         && e.TimeTableId == dto.TimeTableId);
 
         var VetList = _userRepository.GetSingleAsync(e => hospitalizationsList.Any(ee => ee.VetId == e.Id));
@@ -186,6 +191,7 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
             var hospitalzation = _mapper.Map(dto);
             hospitalzation.CreatedBy = staffId;
             hospitalzation.HospitalizationDateStatus = HospitalizationStatus.Admissions;
+            hospitalzation.Date = date;
 
             cage.IsAvailable = false;
 
@@ -200,6 +206,12 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         var medicalRecord = await _medicalRecordRepo.GetSingleAsync(mr => mr.Id == dto.MedicalRecordId,
             false, mr => mr.MedicalItems, mr => mr.Pet,
             mr => mr.Hospitalization);
+        
+        if (!DateOnly.TryParse(dto.Date, out DateOnly date))
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsCommon.DATE_WRONG_FORMAT);
+        }
+
         if (medicalRecord == null)
         {
             throw new AppException(ResponseCodeConstants.NOT_FOUND,
@@ -247,6 +259,7 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         hospitalzation.HospitalizationDateStatus = HospitalizationStatus.Monitoring;
         hospitalzation.LastUpdatedBy = vetId;
         hospitalzation.LastUpdatedTime = DateTimeOffset.Now;
+        hospitalzation.Date = date;
 
         await _hospitalizationRepo.UpdateAsync(hospitalzation);
     }
@@ -320,4 +333,31 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
 
         return (List<MedicalRecordResponseDto>)listMedicalRecordDto;
     }
+
+    public async Task<List<HospitalizationResponseDto>> CheckHospitalizaionByVetId(int vetId)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var hospitalizationList = _hospitalizationRepo.GetAll().Where(e => e.Date == today && e.VetId == vetId).ToList();
+
+        if (hospitalizationList == null || !hospitalizationList.Any())
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsHospitalization.DO_NOT_HAVE_TIMETABLE);
+        }
+
+        foreach (var ho in hospitalizationList)
+        {
+            ho.TimeTable = _timeTableRepo.GetAll().Where(x => x.Id == ho.TimeTableId).FirstOrDefault();
+        }
+
+        var hospitalizationResponseList = _mapper.Map(hospitalizationList);
+
+        foreach (var item in hospitalizationResponseList)
+        {
+            var vet = await _userRepository.GetSingleAsync(e => e.Id == item.VetId);
+            if (vet != null) item.Vet = _mapper.UserToUserResponseDto(vet);
+        }
+
+        return (List<HospitalizationResponseDto>)hospitalizationResponseList;
+    }
+
 }

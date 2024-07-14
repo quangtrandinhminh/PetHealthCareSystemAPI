@@ -185,6 +185,7 @@ namespace Utility.Constants
         public const string DELETE_HOSPITALIZATION_SUCCESS = "Xoa ho so luu chuong thanh cong";
 
         public const string MEDICAL_RECORD_NOT_FOUND = "Khong co ho so de tao";
+        public const string DO_NOT_HAVE_TIMETABLE = "Khong lich lam";
     }
 
     public class ResponseMessageConstantsCage
