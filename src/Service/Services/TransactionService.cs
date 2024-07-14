@@ -160,7 +160,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
     public async Task CreateTransactionAsync(TransactionRequestDto dto, int userId)
     {
-        _logger.Information("Create transaction {@dto} by {@userId}", dto, userId);
+        _logger.Information("Create transaction {@dto} by user {@userId}", dto, userId);
 
         #region validate dto
         var userEntity = await _userManager.FindByIdAsync(userId.ToString());
@@ -265,6 +265,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         {
             transactionEntity.PaymentStaffId = userEntity.Id;
             transactionEntity.PaymentStaffName = userEntity.FullName;
+            transactionEntity.CustomerId = userEntity.Id;
         }
         else if (roles.Contains(UserRole.Customer.ToString()))
         {
