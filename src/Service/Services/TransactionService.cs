@@ -158,7 +158,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         return response;
     }
 
-    public async Task CreateTransactionAsync(TransactionRequestDto dto, int userId)
+    public async Task<TransactionPayOsResponseDto> CreateTransactionAsync(TransactionRequestDto dto, int userId)
     {
         _logger.Information("Create transaction {@dto} by user {@userId}", dto, userId);
 
@@ -290,6 +290,22 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         // if paymentId != null CreatePayOsTransaction(price, id)
         // transactionEntity.checkoutUrl = await CreatePayOsTransaction(transactionEntity.Total, transactionEntity.paymentId);
         await _transactionRepository.AddAsync(transactionEntity);
+
+        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.BookPrice)).Value;
+        bool bookPriceSuccess = int.TryParse(bookPriceString, out int bookPrice);
+
+        var itemDataName = $"Thanh toan cuoc hen";
+        var itemDataQuantity = 1;
+        var itemDataPrice = bookPrice == 0 ? 10000 : bookPrice;
+
+        List<ItemData> items = new()
+        {
+            new(itemDataName,itemDataQuantity,itemDataPrice),
+        };
+
+        var response = await CreatePayOsTransaction(items, bookPrice == 0 ? 150000 : bookPrice, $"Thanh toan don dat lich voi ma gia dich {transactionEntity.Id}", transactionEntity.Id);
+
+        return response;
     }
 
     public async Task CreateTransactionForHospitalization(TransactionRequestDto dto, int staffId)
@@ -492,7 +508,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         var refundForDays = await _configurationRepository.GetValueByKey(ConfigurationKey.RefundForDays);
         if (refundForDays == null)
-        {
+        { 
             throw new AppException(ResponseCodeConstants.NOT_FOUND,
                 ResponseMessageConstantsConfiguration.CONFIGURATION_NOT_FOUND, StatusCodes.Status404NotFound);
         }
@@ -506,20 +522,14 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         return response;*/
     }
 
-    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction()
+    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction(List<ItemData> items, int totalAmount, string payDescription, int transactionId)
     {
         var clientId = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsClientId)).Value;
         var apiKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsApiKey)).Value;
         var checksumKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsChecksumKey)).Value;
-        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.BookPrice)).Value;
-        var orderIdString = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsOrderId)).Value;
-        bool bookPriceSuccess = int.TryParse(bookPriceString, out int bookPrice);
-        bool OrderIdSuccess = long.TryParse(orderIdString, out long orderId);
 
-        if (bookPrice == 0)
-        {
-            throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
-        }
+        var orderIdString = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsOrderId)).Value;
+        bool OrderIdSuccess = long.TryParse(orderIdString, out long orderId);
 
         if (orderId == 0)
         {
@@ -533,17 +543,8 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         PayOS payOs = new PayOS(clientId, apiKey, checksumKey);
 
-        var itemDataName = $"Thanh toan cuoc hen";
-        var itemDataQuantity = 1;
-        var itemDataPrice = bookPrice == 0 ? 10000 : bookPrice;
-
-        List<ItemData> items = new()
-        {
-            new(itemDataName,itemDataQuantity,itemDataPrice),
-        };
-
-        PaymentData paymentData = new PaymentData(orderId, bookPrice,
-            $"Thanh toan lich hen", items, "", "");
+        PaymentData paymentData = new PaymentData(orderId, totalAmount,
+            payDescription, items, "", "");
 
         CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
 
@@ -555,6 +556,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         var response = new TransactionPayOsResponseDto()
         {
+            TransactionId = transactionId,
             CheckoutUrl = createPayment.checkoutUrl,
             OrderId = orderId,
         };

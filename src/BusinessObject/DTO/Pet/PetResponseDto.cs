@@ -10,5 +10,7 @@ public class PetResponseDto
     public DateOnly DateOfBirth { get; set; }
     public bool IsNeutered { get; set; }
     public string? OwnerName { get; set; } = string.Empty;
+    public string? OwnerPhone { get; set; } = string.Empty;
+    public string? OwnerEmail { get; set; } = string.Empty;
     public bool? HasMedicalRecord { get; set; } = null;
 }
