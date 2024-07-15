@@ -48,6 +48,8 @@ public partial class MapperlyMapper
             DateOfBirth = DateOnly.FromDateTime(entity.DateOfBirth.Date),
             IsNeutered = entity.IsNeutered,
             OwnerName = entity.Owner?.FullName ?? "N/A",
+            OwnerEmail = entity.Owner?.Email ?? "N/A",
+            OwnerPhone = entity.Owner?.PhoneNumber ?? "N/A",
         };
 
         return response;

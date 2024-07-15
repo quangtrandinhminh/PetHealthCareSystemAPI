@@ -65,6 +65,8 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
         var owner = await _userService.GetByIdAsync(pet.OwnerID);
 
         petDto.OwnerName = owner.FullName;
+        petDto.OwnerEmail = owner.Email;
+        petDto.OwnerPhone = owner.PhoneNumber;
 
         return petDto;
     }
