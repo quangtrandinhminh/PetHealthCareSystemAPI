@@ -24,6 +24,7 @@ public interface IHospitalizationService
     Task DeleteHospitalization(int id, int deleteBy);
     Task HospitalDischarge(int medicalRecordId, int VetId);
     HospitalizaionDropdownDto GetHospitalizaionDropdownData();
-    Task<List<MedicalRecordResponseDto>> CheckCreateHospitalizaion();
+    Task<List<MedicalRecordResponseDto>> GetAllPetInHospitalization();
     Task<List<HospitalizationResponseDto>> CheckHospitalizaionByVetId(int vetId);
+    Task<List<HospitalizationResponseDto>> CheckCreateHospitalization(int medicalRecordId);
 }

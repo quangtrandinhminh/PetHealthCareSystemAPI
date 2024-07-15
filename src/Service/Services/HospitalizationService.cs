@@ -20,6 +20,7 @@ using Repository.Repositories;
 using Serilog;
 using Service.IServices;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using Utility.Constants;
 using Utility.Enum;
 using Utility.Exceptions;
@@ -307,31 +308,13 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         return response;
     }
 
-    public async Task<List<MedicalRecordResponseDto>> CheckCreateHospitalizaion()
+    public async Task<List<MedicalRecordResponseDto>> GetAllPetInHospitalization()
     {
-        var listMedicalRecord = _medicalRecordRepo.GetAll().Where(e => e.AdmissionDate == DateTime.Now).ToList();
+        var medicalRecordList = _medicalRecordRepo.GetAll().Where(e => e.AdmissionDate != null && e.DischargeDate == null);
 
-        var listHospitalization = new List<MedicalRecord>();
+        var medicalRecordListDto = _mapper.Map(medicalRecordList);
 
-        foreach (var record in listMedicalRecord)
-        {
-            var e = _hospitalizationRepo.GetAll().Where(e => e.MedicalRecordId == record.Id
-                                                    && e.HospitalizationDateStatus != HospitalizationStatus.DischargeDate).ToList();
-            if (e == null)
-            {
-                listHospitalization.Add(record);
-            }
-        }
-
-        if (listHospitalization == null)
-        {
-            throw new AppException(ResponseCodeConstants.NOT_FOUND,
-                ResponseMessageConstantsHospitalization.MEDICAL_RECORD_NOT_FOUND, StatusCodes.Status404NotFound);
-        }
-
-        var listMedicalRecordDto = _mapper.Map(listHospitalization);
-
-        return (List<MedicalRecordResponseDto>)listMedicalRecordDto;
+        return (List<MedicalRecordResponseDto>)medicalRecordListDto;
     }
 
     public async Task<List<HospitalizationResponseDto>> CheckHospitalizaionByVetId(int vetId)
@@ -358,6 +341,34 @@ public class HospitalizationService(IServiceProvider serviceProvider) : IHospita
         }
 
         return (List<HospitalizationResponseDto>)hospitalizationResponseList;
+    }
+
+    public async Task<List<HospitalizationResponseDto>> CheckCreateHospitalization(int medicalRecordId)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var hospitalizationList = _hospitalizationRepo.GetAll().Where(e => e.MedicalRecordId == medicalRecordId).OrderByDescending(x => x.Date);
+
+        if (hospitalizationList.Any() && hospitalizationList.First().Date == today)
+        {
+            foreach (var ho in hospitalizationList)
+            {
+                ho.TimeTable = _timeTableRepo.GetAll().FirstOrDefault(x => x.Id == ho.TimeTableId);
+            }
+
+            var hospitalizationResponseList = _mapper.Map(hospitalizationList.ToList());
+
+            foreach (var item in hospitalizationResponseList)
+            {
+                var vet = await _userRepository.GetSingleAsync(e => e.Id == item.VetId);
+                if (vet != null) item.Vet = _mapper.UserToUserResponseDto(vet);
+            }
+
+            return (List<HospitalizationResponseDto>)hospitalizationResponseList;
+        }
+        else
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsHospitalization.HOSPITALIZATION_NOT_FOUND);
+        }
     }
 
 }
