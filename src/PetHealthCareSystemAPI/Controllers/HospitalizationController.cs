@@ -121,10 +121,10 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Staff")]
-        [Route("CheckCreateHospitalizaion")]
-        public IActionResult CheckCreateHospitalizaion()
+        [Route("GetAllPetInHospitalization")]
+        public IActionResult GetAllPetInHospitalization()
         {
-            var response = hospitalizationService.CheckCreateHospitalizaion();
+            var response = hospitalizationService.GetAllPetInHospitalization();
             return Ok(BaseResponseDto.OkResponseDto(response));
         }
 
@@ -134,6 +134,15 @@ namespace PetHealthCareSystemAPI.Controllers
         public async Task<IActionResult> CheckHospitalizaionByVetId(int id)
         {
             var response = await hospitalizationService.CheckHospitalizaionByVetId(id);
+            return Ok(BaseResponseDto.OkResponseDto(response));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Staff")]
+        [Route("CheckCreateHospitalization")]
+        public async Task<IActionResult> CheckCreateHospitalization(int medicalRecordId)
+        {
+            var response = await hospitalizationService.CheckCreateHospitalization(medicalRecordId);
             return Ok(BaseResponseDto.OkResponseDto(response));
         }
     }
