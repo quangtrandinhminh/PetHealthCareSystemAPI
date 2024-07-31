@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.Entities.Base;
+using BusinessObject.Entities.Identity;
 using Utility.Enum;
 
 namespace BusinessObject.Entities;
@@ -7,17 +9,15 @@ namespace BusinessObject.Entities;
 [Table("Transaction")]
 public class Transaction : BaseEntity
 {
-    protected Transaction()
+    public Transaction()
     {
         Status = TransactionStatus.Pending;
     }
     
     // Payment
-    public string CustomerId { get; set; }
-    public string? AppointmentId { get; set; }
-    public string? MedicalRecordId { get; set; }
-    
-    public string? HospitalizationId { get; set; }
+    public int CustomerId { get; set; }
+    public int? AppointmentId { get; set; }
+    public int? MedicalRecordId { get; set; }
     
     [Column(TypeName = "decimal(18, 0)")]
     [Range(0, Double.MaxValue)]
@@ -27,6 +27,7 @@ public class Transaction : BaseEntity
     public PaymentMethod? PaymentMethod { get; set; }
     public string? PaymentNote { get; set; }
     public string? PaymentId { get; set; }
+    public int? PaymentStaffId { get; set; }
     public string? PaymentStaffName { get; set; }
     public string? Note { get; set; }
     
@@ -34,11 +35,12 @@ public class Transaction : BaseEntity
     [Column(TypeName = "decimal(5, 2)")]
     [Range(0, 1)]
     public  decimal? RefundPercentage { get; set; }
+    public string ? RefundPaymentId { get; set; }
     public string? RefundReason { get; set; }
     public DateTimeOffset? RefundDate { get; set; }
     
     [ForeignKey(nameof(CustomerId))]
-    public User Customer { get; set; }
+    public UserEntity Customer { get; set; }
     
     // pay for appointment in the first time
     [ForeignKey(nameof(AppointmentId))]

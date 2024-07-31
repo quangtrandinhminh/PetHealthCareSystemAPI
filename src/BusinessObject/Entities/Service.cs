@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.Entities.Base;
 
 namespace BusinessObject.Entities;
 
@@ -14,5 +15,5 @@ public class  Service : BaseEntity
     public decimal Price { get; set; }
     
     public virtual ICollection<Appointment>? Appointments { get; set; }
-    public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
+    public virtual ICollection<MedicalRecord>? AppointmentServices { get; set; }
 }

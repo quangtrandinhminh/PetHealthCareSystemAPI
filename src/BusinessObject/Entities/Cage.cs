@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
+using BusinessObject.Entities.Base;
 
 namespace BusinessObject.Entities;
 
@@ -12,6 +13,7 @@ public class Cage : BaseEntity
     public string? Address { get; set; }
     public string? Description { get; set; }
     public string? Note { get; set; }
+    public bool IsAvailable { get; set; }
     
-    public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
+    public virtual ICollection<Hospitalization> Hospitalizations  { get; set; }
 }
