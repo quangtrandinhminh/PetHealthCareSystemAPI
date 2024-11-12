@@ -789,6 +789,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update appointment to done",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiVmV0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc2lkIjoiOSIsIlVzZXJOYW1lIjoiZHV5YW5odmV0IiwidW5pcXVlX25hbWUiOiJEci4gRHV5IEFuaCIsImVtYWlsIjoiZHV5YW5odmV0QGVtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDEyMjMzNDQ2NiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvZXhwaXJlZCI6IjcvMTQvMjAyNCIsIm5iZiI6MTcyMDg1OTgxMCwiZXhwIjoxNzIwOTQ2MjEwLCJpYXQiOjE3MjA4NTk4MTB9.vGRlNtEpC7_oMseOa8spHuNonRP_HI8bC79pvSYOfI8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/appointment/done/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"appointment",
+								"done",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"auth": {
@@ -876,7 +905,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"appointmentId\": 6,\r\n  \"petId\": 1,\r\n  \"recordDetails\": \"string\",\r\n  \"diagnosis\": \"string\",\r\n  \"treatment\": \"string\",\r\n  \"note\": \"string\",\r\n  \"petWeight\": 1,\r\n  \"medicalItems\": [\r\n    {\r\n      \"medicalItemId\": 1,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"admissionDate\": \"2024-07-10T11:08:07.943Z\"\r\n}",
+							"raw": "{\r\n  \"appointmentId\": 6,\r\n  \"petId\": 1,\r\n  \"recordDetails\": \"string\",\r\n  \"diagnosis\": \"string\",\r\n  \"treatment\": \"string\",\r\n  \"note\": \"string\",\r\n  \"petWeight\": 1,\r\n  \"medicalItems\": [\r\n  ],\r\n  \"admissionDate\": \"2024-07-10T11:08:07.943Z\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -913,6 +942,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get by petId, appointmentId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/MedicalRecord/pet/1/appointment/1?pageNumber=1&pageSize=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"MedicalRecord",
+								"pet",
+								"1",
+								"appointment",
+								"1"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by pet id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			],
 			"auth": {
@@ -920,7 +988,7 @@
 				"bearer": [
 					{
 						"key": "token",
-						"value": "{{adminAccessToken}}",
+						"value": "{{vetAccessToken}}",
 						"type": "string"
 					}
 				]
