@@ -1,21 +1,16 @@
-﻿using System.Text.Json.Nodes;
-using BusinessObject.DTO;
-using BusinessObject.DTO.Configuration;
-using BusinessObject.DTO.Transaction;
-using BusinessObject.Entities;
-using BusinessObject.Entities.Identity;
-using BusinessObject.Mapper;
+﻿using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Net.payOS;
 using Net.payOS.Types;
+using Repository.Entities;
+using Repository.Entities.Identity;
 using Repository.Extensions;
 using Repository.Interfaces;
+using Repository.Models;
+using Repository.Models.Configuration;
+using Repository.Models.Transaction;
 using Serilog;
 using Service.IServices;
 using Utility.Constants;
@@ -158,7 +153,83 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         return response;
     }
 
-    public async Task<TransactionPayOsResponseDto> CreateTransactionAsync(TransactionRequestDto dto, int userId)
+    public async Task<PaginatedList<TransactionResponseDto>> GetTransactionsByFilterAsync(TransactionFilterDto filter,
+        int pageNumber, int pageSize)
+    {
+        _logger.Information("Get all transactions by filter {@filter}", filter);
+        var transactions = _transactionRepository.GetAllWithCondition(t => t.DeletedTime == null);
+        if (transactions == null)
+        {
+            throw new AppException(ResponseCodeConstants.NOT_FOUND,
+                               ResponseMessageConstantsTransaction.TRANSACTION_NOT_FOUND, StatusCodes.Status404NotFound);
+        }
+
+        if (filter.CustomerId != null)
+        {
+            transactions = transactions.Where(t => t.CustomerId == filter.CustomerId);
+        }
+
+        if (filter.AppointmentId != null)
+        {
+            transactions = transactions.Where(t => t.AppointmentId == filter.AppointmentId);
+        }
+
+        if (filter.MedicalRecordId != null)
+        {
+            transactions = transactions.Where(t => t.MedicalRecordId == filter.MedicalRecordId);
+        }
+
+        if (filter.PaymentDate != null && DateTimeOffset.TryParse(filter.PaymentDate, out var date))
+        {
+            transactions = transactions.Where(t => t.PaymentDate == date);
+        }
+        else if (filter.FromPaymentDate != null && DateTimeOffset.TryParse(filter.FromPaymentDate, out var fromDate)
+                                                &&
+                                                filter.ToPaymentDate != null &&
+                                                DateTimeOffset.TryParse(filter.ToPaymentDate, out var toDate))
+        {
+            transactions = transactions.Where(t => t.PaymentDate >= fromDate && t.PaymentDate <= toDate);
+        }
+
+        if (filter.PaymentMethod != null)
+        {
+            transactions = transactions.Where(t => t.PaymentMethod == (PaymentMethod)filter.PaymentMethod);
+        }
+
+        if (filter.PaymentStaffId != null)
+        {
+            transactions = transactions.Where(t => t.PaymentStaffId == filter.PaymentStaffId);
+        }
+        else if (filter.PaymentStaffName != null)
+        {
+            transactions = transactions.Where(t => t.PaymentStaffName != null && t.PaymentStaffName.Contains(filter.PaymentStaffName));
+        }
+
+        if (filter.IsPending != null)
+        {
+            transactions = transactions.Where(t => t.Status == TransactionStatus.Pending);
+        }
+
+        if (filter.IsPaid != null)
+        {
+            transactions = transactions.Where(t => t.Status == TransactionStatus.Paid);
+        }
+
+        if (filter.IsRefunded != null)
+        {
+            transactions = transactions.Where(t => t.Status == TransactionStatus.Refund);
+        }
+
+        if (filter.IsDecreasingByCreatedTime != null)
+        {
+            transactions = transactions.OrderByDescending(t => t.CreatedTime);
+        }
+
+        var response = _mapper.Map(transactions);
+        return await PaginatedList<TransactionResponseDto>.CreateAsync(response, pageNumber, pageSize);
+    }
+
+    public async Task CreateTransactionAsync(TransactionRequestDto dto, int userId)
     {
         _logger.Information("Create transaction {@dto} by user {@userId}", dto, userId);
 
@@ -180,7 +251,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         // if status is paid then payment method must be an online method, here is payos
         if (dto.Status == (int)TransactionStatus.Paid)
         {
-            if (dto.PaymentMethod != (int)PaymentMethod.Cash)
+            if (dto.PaymentMethod != (int)PaymentMethod.Cash && dto.PaymentMethod != (int)PaymentMethod.VnPay)
             {
                 throw new AppException(ResponseCodeConstants.BAD_REQUEST,
                     ResponseMessageConstantsTransaction.INVALID_PAYMENT_METHOD,
@@ -283,6 +354,16 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
             medicalItemDetails = await CheckMedicalItemsAsync(dto.MedicalItems, _medicalItemRepository);
         }
 
+        if(dto.Status == 2)
+        {
+            transactionEntity.Status = TransactionStatus.Paid;
+        }
+
+        if (dto.PaymentMethod == 2)
+        {
+            transactionEntity.PaymentMethod = PaymentMethod.VnPay;
+        }
+
         var transactionDetails = serviceDetails.Concat(medicalItemDetails).ToList();
         transactionEntity.TransactionDetails = transactionDetails;
         transactionEntity.Total = transactionDetails.Sum(detail => detail.SubTotal);
@@ -290,22 +371,6 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         // if paymentId != null CreatePayOsTransaction(price, id)
         // transactionEntity.checkoutUrl = await CreatePayOsTransaction(transactionEntity.Total, transactionEntity.paymentId);
         await _transactionRepository.AddAsync(transactionEntity);
-
-        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.BookPrice)).Value;
-        bool bookPriceSuccess = int.TryParse(bookPriceString, out int bookPrice);
-
-        var itemDataName = $"Thanh toan cuoc hen";
-        var itemDataQuantity = 1;
-        var itemDataPrice = bookPrice == 0 ? 10000 : bookPrice;
-
-        List<ItemData> items = new()
-        {
-            new(itemDataName,itemDataQuantity,itemDataPrice),
-        };
-
-        var response = await CreatePayOsTransaction(items, bookPrice == 0 ? 150000 : bookPrice, $"Thanh toan don dat lich voi ma gia dich {transactionEntity.Id}", transactionEntity.Id);
-
-        return response;
     }
 
     public async Task CreateTransactionForHospitalization(TransactionRequestDto dto, int staffId)
@@ -508,7 +573,7 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         var refundForDays = await _configurationRepository.GetValueByKey(ConfigurationKey.RefundForDays);
         if (refundForDays == null)
-        { 
+        {
             throw new AppException(ResponseCodeConstants.NOT_FOUND,
                 ResponseMessageConstantsConfiguration.CONFIGURATION_NOT_FOUND, StatusCodes.Status404NotFound);
         }
@@ -522,29 +587,44 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
         return response;*/
     }
 
-    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction(List<ItemData> items, int totalAmount, string payDescription, int transactionId)
+    public async Task<TransactionPayOsResponseDto> CreatePayOsTransaction()
     {
         var clientId = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsClientId)).Value;
         var apiKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsApiKey)).Value;
         var checksumKey = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsChecksumKey)).Value;
-
+        var bookPriceString = (await _configurationRepository.GetValueByKey(ConfigurationKey.BookPrice)).Value;
         var orderIdString = (await _configurationRepository.GetValueByKey(ConfigurationKey.PayOsOrderId)).Value;
+        bool bookPriceSuccess = int.TryParse(bookPriceString, out int bookPrice);
         bool OrderIdSuccess = long.TryParse(orderIdString, out long orderId);
+
+        if (bookPrice == 0)
+        {
+            throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
+        }
 
         if (orderId == 0)
         {
             throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
         }
 
-        if (clientId.IsNullOrEmpty() || apiKey.IsNullOrEmpty() || checksumKey.IsNullOrEmpty())
+        if (clientId == null || apiKey == null || checksumKey == null)
         {
             throw new AppException(ResponseCodeConstants.INTERNAL_SERVER_ERROR, ResponseMessageConstantsCommon.DATA_NOT_ENOUGH);
         }
 
         PayOS payOs = new PayOS(clientId, apiKey, checksumKey);
 
-        PaymentData paymentData = new PaymentData(orderId, totalAmount,
-            payDescription, items, "", "");
+        var itemDataName = $"Thanh toan cuoc hen";
+        var itemDataQuantity = 1;
+        var itemDataPrice = bookPrice == 0 ? 10000 : bookPrice;
+
+        List<ItemData> items = new()
+        {
+            new(itemDataName,itemDataQuantity,itemDataPrice),
+        };
+
+        PaymentData paymentData = new PaymentData(orderId, bookPrice,
+            $"Thanh toan lich hen", items, "", "");
 
         CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
 
@@ -556,7 +636,6 @@ public class TransactionService(IServiceProvider serviceProvider) : ITransaction
 
         var response = new TransactionPayOsResponseDto()
         {
-            TransactionId = transactionId,
             CheckoutUrl = createPayment.checkoutUrl,
             OrderId = orderId,
         };

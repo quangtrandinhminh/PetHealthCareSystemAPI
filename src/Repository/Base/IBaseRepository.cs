@@ -5,12 +5,12 @@ namespace Repository.Base;
 public interface IBaseRepository<T> where T : class, new()
 {
     IQueryable<T?> GetAll();
-    Task<IList<T>?> GetAllAsync();
+    Task<IList<T?>> GetAllAsync();
     IQueryable<T> GetAllWithCondition(Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includeProperties);
     T? GetById(int id);
     Task<T?> GetByIdAsync(int id);
     Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool isIncludeDeleted = false, params Expression<Func<T, object>>[] includeProperties);
-    void Add(T? entity);
+    T Add(T? entity);
     Task<T> AddAsync(T entity);
     void AddRange(IEnumerable<T?> entities);
     Task AddRangeAsync(IEnumerable<T?> entities);

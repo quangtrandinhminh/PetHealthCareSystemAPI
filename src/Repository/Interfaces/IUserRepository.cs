@@ -1,7 +1,6 @@
-using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Repository.Entities.Identity;
 using System.Linq.Expressions;
-using Repository.Base;
 
 namespace Repository.Interfaces
 {

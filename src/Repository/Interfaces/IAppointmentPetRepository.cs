@@ -1,5 +1,4 @@
-﻿using BusinessObject;
-using Repository.Base;
+﻿using Repository.Models;
 
 namespace Repository.Interfaces;
 

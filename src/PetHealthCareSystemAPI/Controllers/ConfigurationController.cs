@@ -1,16 +1,15 @@
-﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Configuration;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Models;
+using Repository.Models.Configuration;
 using Service.IServices;
-using Service.Services;
 using Utility.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PetHealthCareSystemAPI.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class ConfigurationController : ControllerBase

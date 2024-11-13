@@ -24,8 +24,4 @@
       <ProjectReference Include="..\Utility\Utility.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DTO\Vet\" />
-    </ItemGroup>
-
 </Project>

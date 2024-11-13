@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
-using BusinessObject.Entities;
 using Microsoft.IdentityModel.Tokens;
 using Utility.Config;
 

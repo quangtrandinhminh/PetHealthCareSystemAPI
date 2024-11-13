@@ -1,5 +1,4 @@
-﻿using BusinessObject.DTO.Configuration;
-using BusinessObject.Entities;
+﻿using Repository.Models.Configuration;
 
 namespace Service.IServices;
 

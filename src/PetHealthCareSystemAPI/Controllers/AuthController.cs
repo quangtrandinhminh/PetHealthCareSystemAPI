@@ -1,19 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure.Core;
-using BusinessObject.DTO;
-using BusinessObject.DTO.RefreshToken;
-using BusinessObject.DTO.User;
-using BusinessObject.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PetHealthCareSystemAPI.Auth;
+using Repository.Models;
+using Repository.Models.RefreshToken;
+using Repository.Models.User;
 using Service.IServices;
-using Service.Services;
 using Utility.Constants;
 using Utility.Enum;
 
@@ -41,6 +31,13 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             await _authService.Register(request);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageIdentitySuccess.REGIST_USER_SUCCESS));
+        }
+
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsers([FromQuery] int pageNumber = 1, int pageSize = 10)
+        {
+            var user = await _userService.GetAllUsersAsync(pageNumber, pageSize);
+            return Ok(BaseResponseDto.OkResponseDto(user));
         }
 
         [HttpGet]

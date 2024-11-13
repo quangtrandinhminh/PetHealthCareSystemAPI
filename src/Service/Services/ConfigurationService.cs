@@ -1,8 +1,7 @@
-﻿using BusinessObject.DTO.Configuration;
-using BusinessObject.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.AspNetCore.Http;
+using Repository.Entities;
 using Repository.Interfaces;
+using Repository.Models.Configuration;
 using Service.IServices;
 using Utility.Constants;
 using Utility.Exceptions;

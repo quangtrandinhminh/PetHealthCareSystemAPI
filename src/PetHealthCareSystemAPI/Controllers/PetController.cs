@@ -1,8 +1,8 @@
-﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Pet;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.Pet;
 using Service.IServices;
 using Utility.Constants;
 
@@ -19,6 +19,14 @@ namespace PetHealthCareSystemAPI.Controllers
         public PetController(IPetService petService)
         {
             _petService = petService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllPets([FromQuery] int customerId, int pageNumber = 1, int pageSize = 10)
+        {
+            var list = await _petService.GetAllPetsAsync(customerId, pageNumber, pageSize);
+
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, list));
         }
 
         [AllowAnonymous]

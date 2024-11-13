@@ -1,10 +1,7 @@
-﻿using Azure.Core;
-using BusinessObject.DTO;
-using BusinessObject.DTO.Vet;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Repository.Models;
+using Repository.Models.Vet;
 using Service.IServices;
-using Service.Services;
 using Utility.Constants;
 using Utility.Enum;
 

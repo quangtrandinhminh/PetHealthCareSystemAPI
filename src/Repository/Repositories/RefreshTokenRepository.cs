@@ -1,5 +1,5 @@
-﻿using BusinessObject.Entities.Identity;
-using Repository.Base;
+﻿using Repository.Base;
+using Repository.Entities.Identity;
 using Repository.Interfaces;
 
 namespace Repository.Repositories;

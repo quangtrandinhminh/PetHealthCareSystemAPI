@@ -1,16 +1,17 @@
-﻿using BusinessObject.DTO.User;
-using BusinessObject.DTO.Vet;
+﻿using Repository.Extensions;
+using Repository.Models.User;
+using Repository.Models.Vet;
 using Utility.Enum;
 
 namespace Service.IServices;
 
 public interface IUserService
 {
-    Task CreateVetAsync(VetRequestDto dto);
+    Task<PaginatedList<UserResponseDto>> GetAllUsersAsync(int pageNumber, int pageSize);
     Task<IList<UserResponseDto>> GetAllUsersByRoleAsync(UserRole role);
-    Task CreateUserAsync(UserCreateRequestDto dto);
-    Task UpdateUserAsync(UserUpdateRequestDto dto);
+    Task UpdateUserAsync(UserUpdateRequestDto dto, int updatedById);
     Task<UserResponseDto> GetByIdAsync(int id);
     Task DeleteUserAsync(int id);
     Task<UserResponseDto> GetVetByIdAsync(int id);
+    Task CreateVetAsync (VetRequestDto dto);
 }

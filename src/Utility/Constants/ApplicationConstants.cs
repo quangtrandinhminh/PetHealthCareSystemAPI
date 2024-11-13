@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Utility.Constants
+﻿namespace Utility.Constants
 {
     public class ApplicationConstants
     {
@@ -32,6 +30,7 @@ namespace Utility.Constants
         public const string SERVER_ERROR = "Lỗi từ phía server vui lòng liên hệ đội ngũ phát triển";
         public const string DATE_WRONG_FORMAT = "Dữ liệu ngày không đúng định dạng yyyy-mm-dd";
         public const string DATA_NOT_ENOUGH = "Dữ liệu đưa vào không đầy đủ";
+        public const string DATA_INVALID = "Dữ liệu đưa vào không hợp lệ";
     }
 
     public class ResponseMessageIdentity
@@ -155,6 +154,7 @@ namespace Utility.Constants
     {
         public const string APPOINTMENT_NOT_FOUND = "Không tìm thấy lịch hẹn";
         public const string APPOINTMENT_EXISTED = "Lịch hẹn đã tồn tại";
+        public const string NOT_YOUR_APPOINTMENT = "Lịch hẹn không phải của bạn";
         public const string ADD_APPOINTMENT_SUCCESS = "Thêm lịch hẹn thành công";
         public const string UPDATE_APPOINTMENT_SUCCESS = "Cập nhật lịch hẹn thành công";
         public const string DELETE_APPOINTMENT_SUCCESS = "Xóa lịch hẹn thành công";
@@ -194,6 +194,7 @@ namespace Utility.Constants
     public class ResponseMessageConstantsCage
     {
         public const string CAGE_NOT_FOUND = "Khong tim thay chuong nuoi";
+        public const string CAGE_NOT_AVAILABLE = "Chuong nuoi khong con trong";
     }
 
     public class ResponseMessageConstantsConfiguration

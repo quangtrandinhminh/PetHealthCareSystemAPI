@@ -1,33 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using BusinessObject.DTO.User;
-using BusinessObject.DTO.Vet;
-using BusinessObject.Entities;
-using BusinessObject.Entities.Identity;
 using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
+using Repository.Entities.Identity;
 using Repository.Interfaces;
-using Repository.Repositories;
+using Repository.Models.User;
 using Serilog;
 using Service.IServices;
 using Service.Utils;
-using Utility.Config;
 using Utility.Constants;
-using Utility.Enum;
 using Utility.Exceptions;
 using Utility.Helpers;
 
@@ -42,6 +27,7 @@ namespace Service.Services
         private readonly ILogger _logger = Log.Logger;
         private readonly SignInManager<UserEntity> _signInManager = serviceProvider.GetRequiredService<SignInManager<UserEntity>>();
         private readonly IRefreshTokenRepository _refreshTokenRepository = serviceProvider.GetRequiredService<IRefreshTokenRepository>();
+        private readonly IEmailService _emailService = serviceProvider.GetRequiredService<IEmailService>();
 
 
         // get all roles
@@ -237,12 +223,13 @@ namespace Service.Services
             
             await _userRepository.UpdateAsync(account);
 
-            var mailRequest = new SendMailModel
+            var mailRequest = new SendMailDto()
             {
                 Name = account.NormalizedUserName,
                 Email = account.Email,
-                Token = account.ResetToken,
-                Type = MailTypeEnum.ResetPassword
+                Token = account.OTP,
+                Expired = account.OTPExpired.ToString(),
+                Type = MailType.ResetPassword
             };
             _emailService.SendMail(mailRequest);*/
         }

@@ -1,13 +1,13 @@
-﻿using BusinessObject.DTO.Service;
-using BusinessObject.DTO;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.IServices;
 using Utility.Constants;
-using BusinessObject.DTO.MedicalItem;
+using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.MedicalItem;
 
 namespace PetHealthCareSystemAPI.Controllers
-{ 
+{
     [Route("api/[controller]")]
     [ApiController]
     public class MedicalItemController : Controller
@@ -38,9 +38,10 @@ namespace PetHealthCareSystemAPI.Controllers
         [HttpPost]
         [Authorize(Roles = "Staff")]
         [Route("create")]
-        public async Task<OkObjectResult> PostAsync([FromBody] MedicalResponseDto dto)
+        public async Task<OkObjectResult> PostAsync([FromBody] MedicalItemRequestDto dto)
         {
-            await _medicalService.CreateMedicalItem(dto);
+            var userId = User.GetUserId();
+            await _medicalService.CreateMedicalItem(dto, userId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
         }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Utility.Constants;
 using TimeZoneConverter;
-using Utility.Constants;
 
 namespace Utility.Helpers
 {

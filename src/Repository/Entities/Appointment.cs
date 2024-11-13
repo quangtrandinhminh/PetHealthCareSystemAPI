@@ -1,0 +1,36 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Repository.Entities.Base;
+using Repository.Models;
+using Utility.Enum;
+
+namespace Repository.Entities;
+
+[Table("Appointment")]
+public class Appointment : BaseEntity
+{
+    public Appointment()
+    {
+        Status = AppointmentStatus.Scheduled;
+    }
+    public int CustomerId { get; set; }
+    public int TimeTableId { get; set; }
+    public DateOnly AppointmentDate { get; set; }
+    public DateOnly? CancelDate { get; set; }
+    public string? CheckoutUrl { get; set; }
+    public bool? RefundStatus { get; set; }
+    public bool? OnlinePaymentStatus { get; set; }
+    public string? Note { get; set; }
+    public AppointmentStatus Status { get; set; }
+    public AppointmentBookingType BookingType { get; set; }
+    public short? Rating { get; set; }
+    public string? Feedback { get; set; }
+    public int VetId { get; set; }
+
+    [ForeignKey(nameof(TimeTableId))]
+    public virtual TimeTable TimeTable { get; set; }
+
+    public virtual ICollection<AppointmentPet> AppointmentPets { get; set; }
+
+    public virtual ICollection<Service> Services { get; set; }
+}
+

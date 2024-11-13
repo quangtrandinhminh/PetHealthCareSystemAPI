@@ -1,11 +1,11 @@
-﻿using BusinessObject.DTO.Pet;
-using BusinessObject.Entities;
-using BusinessObject.Entities.Identity;
-using BusinessObject.Mapper;
+﻿using BusinessObject.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Repository.Entities.Identity;
+using Repository.Extensions;
 using Repository.Interfaces;
+using Repository.Models.Pet;
 using Serilog;
 using Service.IServices;
 using Utility.Constants;
@@ -21,9 +21,40 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
     private readonly UserManager<UserEntity> _userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
     private readonly IUserService _userService = serviceProvider.GetRequiredService<IUserService>();
 
+    public async Task<PaginatedList<PetResponseDto>> GetAllPetsAsync(int? customerId, int pageNumber, int pageSize)
+    {
+        _logger.Information($"Get all pets for customer {customerId}");
+        var pets = _petRepo.GetAllWithCondition(p => p.DeletedTime == null, p => p.Owner);
+        if (customerId != null)
+        {
+            var customer = await _userService.GetByIdAsync(customerId.Value);
+            if (customer == null)
+            {
+                throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.OWNER_NOT_FOUND,
+                                       StatusCodes.Status400BadRequest);
+            }
+
+            pets = pets.Where(p => p.OwnerID == customerId);
+        }
+
+        if (pets == null)
+        {
+            throw new AppException(ResponseCodeConstants.FAILED, ResponseMessageConstantsPet.PET_NOT_FOUND,
+                StatusCodes.Status404NotFound);
+        }
+
+        var response = _mapper.Map(pets);
+        var paginatedResponse = await PaginatedList<PetResponseDto>.CreateAsync(response, pageNumber, pageSize);
+        foreach (var pet in paginatedResponse.Items)
+        {
+            pet.OwnerName = pet.Owner.FullName;
+        }
+        return paginatedResponse;
+    }
+
     public async Task<List<PetResponseDto?>> GetAllPetsForCustomerAsync(int id)
     {
-        _logger.Information("Get all pet for customer");
+        _logger.Information($"Get all pet for customer {id}");
 
         var list = await _petRepo.GetAllPetsByCustomerIdAsync(id);
 
@@ -34,7 +65,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
     public async Task<PetResponseDto> GetPetForCustomerAsync(int ownerId, int petId)
     {
-        _logger.Information("Get pet for customer by id");
+        _logger.Information($"Get pet {petId} for customer by id {ownerId}");
 
         var list = await _petRepo.GetAllPetsByCustomerIdAsync(ownerId);
 
@@ -65,14 +96,13 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
         var owner = await _userService.GetByIdAsync(pet.OwnerID);
 
         petDto.OwnerName = owner.FullName;
-        petDto.OwnerEmail = owner.Email;
-        petDto.OwnerPhone = owner.PhoneNumber;
 
         return petDto;
     }
 
     public async Task CreatePetAsync(PetRequestDto pet, int ownerId)
     {
+        _logger.Information("Create pet {@dto} by user {ownerId}", pet, ownerId);
         var user = await _userManager.FindByIdAsync(ownerId.ToString());
 
         if (user == null)
@@ -89,6 +119,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
     public async Task UpdatePetAsync(PetUpdateRequestDto pet, int ownerId)
     {
+        _logger.Information("Update pet {@dto} by user {ownerId}", pet, ownerId);
         // Checking pet in the database
         var findPet = await _petRepo.FindByConditionAsync(e => e.Id == pet.Id);
 
@@ -114,6 +145,7 @@ public class PetService(IServiceProvider serviceProvider) : IPetService
 
     public async Task DeletePetAsync(int id, int ownerId)
     {
+        _logger.Information("Delete pet by id {id} by user {ownerId}", id, ownerId);
         // Checking pet in the database
         var findPet = await _petRepo.FindByConditionAsync(e => e.Id == id);
 

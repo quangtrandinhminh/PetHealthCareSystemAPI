@@ -1,12 +1,10 @@
-﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Transaction;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.Transaction;
 using Service.IServices;
 using Utility.Constants;
-using Utility.Enum;
-using Utility.Helpers;
 
 namespace PetHealthCareSystemAPI.Controllers;
 

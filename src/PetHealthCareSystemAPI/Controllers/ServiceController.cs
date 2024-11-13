@@ -1,9 +1,9 @@
-﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Service;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.Service;
 using Service.IServices;
-using Service.Services;
 using Utility.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -37,7 +37,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var list = await _iservice.GetBydId(id);
+            var list = await _iservice.GetServiceBydId(id);
 
             return Ok(BaseResponseDto.OkResponseDto(list, "No additional data"));
         }
@@ -45,9 +45,10 @@ namespace PetHealthCareSystemAPI.Controllers
         // POST api/<ServiceController>
         [HttpPost]
         [Route("add")]
-        public async Task<OkObjectResult> PostAsync([FromBody] ServiceResponseDto dto)
+        public async Task<OkObjectResult> PostAsync([FromBody] ServiceRequestDto dto)
         {
-            await _iservice.CreateServiceAsync(dto);
+            var userId = User.GetUserId();
+            await _iservice.CreateServiceAsync(dto, userId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.ADD_PET_SUCCESS));
         }
@@ -55,9 +56,10 @@ namespace PetHealthCareSystemAPI.Controllers
         // PUT api/<ServiceController>/5
         [HttpPut]
         [Route("update")]
-        public async Task<OkObjectResult> Put([FromBody] ServiceResponseDto serviceRequestDto)
+        public async Task<OkObjectResult> Put([FromBody] ServiceUpdateDto serviceRequestDto)
         {
-            await _iservice.UpdateServiceAsync(serviceRequestDto);
+            var userId = User.GetUserId();
+            await _iservice.UpdateServiceAsync(serviceRequestDto, userId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsPet.UPDATE_PET_SUCCESS));
         }

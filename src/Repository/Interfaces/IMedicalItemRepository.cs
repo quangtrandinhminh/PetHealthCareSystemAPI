@@ -1,10 +1,5 @@
-﻿using BusinessObject.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Repository.Base;
+﻿using Repository.Base;
+using Repository.Entities;
 
 namespace Repository.Interfaces
 {

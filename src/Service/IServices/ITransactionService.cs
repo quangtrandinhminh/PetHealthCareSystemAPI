@@ -1,6 +1,5 @@
-﻿using BusinessObject.DTO.Transaction;
-using Net.payOS.Types;
-using Repository.Extensions;
+﻿using Repository.Extensions;
+using Repository.Models.Transaction;
 
 namespace Service.IServices;
 
@@ -13,12 +12,14 @@ public interface ITransactionService
     Task<TransactionResponseDto> GetTransactionByAppointmentIdAsync(int appointmentId);
     Task<TransactionResponseDto> GetTransactionByMedicalRecordIdAsync(int medicalRecordId);
     Task<TransactionResponseWithDetailsDto> GetTransactionByIdAsync(int transactionId);
-    Task<TransactionPayOsResponseDto> CreateTransactionAsync(TransactionRequestDto dto, int userId);
+    Task<PaginatedList<TransactionResponseDto>> GetTransactionsByFilterAsync(TransactionFilterDto filter,
+        int pageNumber, int pageSize);
+    Task CreateTransactionAsync(TransactionRequestDto dto, int userId);
     Task CreateTransactionForHospitalization(TransactionRequestDto dto, int staffId);
     Task UpdatePaymentByStaffAsync(int transactionId, int updatedById);
     Task UpdateTransactionToRefundAsync(TransactionRefundRequestDto dto, int updatedById);
     Task<RefundConditionsResponseDto> GetRefundConditionsAsync();
-    Task<TransactionPayOsResponseDto> CreatePayOsTransaction(List<ItemData> items, int totalAmount, string payDescription, int transactionId);
+    Task<TransactionPayOsResponseDto> CreatePayOsTransaction();
     Task<HospitalizationPriceResponseDto> CalculateHospitalizationPriceAsync(
         int medicalRecordId);
 }

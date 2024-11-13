@@ -1,12 +1,9 @@
-﻿using System.Security.Claims;
-using BusinessObject.DTO;
-using BusinessObject.DTO.MedicalRecord;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.MedicalRecord;
 using Service.IServices;
-using Utility.Constants;
-using Utility.Exceptions;
 
 namespace PetHealthCareSystemAPI.Controllers
 {

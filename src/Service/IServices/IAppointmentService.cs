@@ -1,15 +1,15 @@
-﻿using BusinessObject.DTO.Appointment;
-using BusinessObject.DTO.TimeTable;
-using BusinessObject.DTO.User;
-using BusinessObject.DTO.Vet;
-using BusinessObject.Entities;
+﻿using Repository.Entities;
 using Repository.Extensions;
+using Repository.Models.Appointment;
+using Repository.Models.TimeTable;
+using Repository.Models.User;
 
 namespace Service.IServices;
 
 public interface IAppointmentService
 {
-    Task<List<TimeTableResponseDto>> GetAllTimeFramesForBookingAsync();
+    Task<TimeTableResponseDto> GetTimeTableByIdAsync(int timeTableId);
+    Task<List<TimeTableResponseDto>> GetAllTimeFramesForBookingAsync(int petId, DateOnly date);
     Task<List<UserResponseDto>> GetFreeWithTimeFrameAndDateAsync(DateTimeQueryDto qo);
     Task<AppointmentResponseDto> GetAppointmentByAppointmentId(int appointmentId);
     Task<PaginatedList<AppointmentResponseDto>> GetAllAppointmentsAsync(int pageNumber, int pageSize);
@@ -24,4 +24,6 @@ public interface IAppointmentService
     Task<AppointmentResponseDto> UpdateOnlinePaymentToTrue(int appointmentId, int updatedById);
     Task<PaginatedList<AppointmentResponseDto>> GetAllCancelAppointmentsAsync(int pageNumber, int pageSize);
     Task<AppointmentResponseDto> UpdateRefundStatusToTrue(int appointmentId, int updatedById);
+    Task<Appointment> CheckAppointmentRequestDto(AppointmentBookRequestDto appointmentBookRequestDto, int createdById);
+    Task<bool> DeleteAppointment(int appointmentId);
 }

@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BusinessObject.DTO.User;
-using BusinessObject.DTO.Vet;
-using BusinessObject.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
+using Repository.Models.User;
 
 namespace Service.IServices
 {

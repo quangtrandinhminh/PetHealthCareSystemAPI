@@ -1,14 +1,10 @@
-﻿using BusinessObject.DTO;
-using BusinessObject.DTO.Appointment;
-using BusinessObject.DTO.Hospitalization;
-using BusinessObject.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.Appointment;
+using Repository.Models.Hospitalization;
 using Service.IServices;
-using Service.Services;
-using System.Collections.Generic;
 using Utility.Constants;
 
 namespace PetHealthCareSystemAPI.Controllers
@@ -42,7 +38,7 @@ namespace PetHealthCareSystemAPI.Controllers
         [Route("cage/available")]
         public async Task<IActionResult> GetAvailableCageByDate()
         {
-            var cages = await hospitalizationService.GetAvailableCageByDate();
+            var cages = await hospitalizationService.GetAvailableCage();
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, cages));
         }
@@ -89,7 +85,7 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Vet")]
-        public async Task<IActionResult> UpdateHospitalization([FromBody] HospitalizationRequestDto dto, int vetId)
+        public async Task<IActionResult> UpdateHospitalization([FromBody] HospitalizationUpdateRequestDto dto, int vetId)
         {
             await hospitalizationService.UpdateHospitalization(dto, vetId);
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsHospitalization.UPDATE_HOSPITALIZATION_SUCCESS));

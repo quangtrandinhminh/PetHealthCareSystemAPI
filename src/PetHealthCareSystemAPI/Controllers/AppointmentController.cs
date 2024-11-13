@@ -1,10 +1,8 @@
-﻿using Azure;
-using BusinessObject.DTO;
-using BusinessObject.DTO.Appointment;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHealthCareSystemAPI.Extensions;
+using Repository.Models;
+using Repository.Models.Appointment;
 using Service.IServices;
 using Utility.Constants;
 
@@ -22,10 +20,10 @@ namespace PetHealthCareSystemAPI.Controllers
 
         [HttpGet]
         [Route("time-frames")]
-        public async Task<IActionResult> GetTimeFrameForBooking()
+        public async Task<IActionResult> GetTimeFrameForBooking([FromQuery] int petId, DateOnly date)
         {
 
-            var timeframes = await _appointmentService.GetAllTimeFramesForBookingAsync();
+            var timeframes = await _appointmentService.GetAllTimeFramesForBookingAsync(petId, date);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, timeframes));
 
@@ -38,6 +36,14 @@ namespace PetHealthCareSystemAPI.Controllers
             var freeVetList = await _appointmentService.GetFreeWithTimeFrameAndDateAsync(qo);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, freeVetList));
+        }
+
+        [HttpGet]
+        [Route("timetable/{timetableId}")]
+        public async Task<IActionResult> GetTimeTableById([FromRoute] int timetableId)
+        {
+            var response = await _appointmentService.GetTimeTableByIdAsync(timetableId);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
         }
 
         [HttpGet]
@@ -55,6 +61,7 @@ namespace PetHealthCareSystemAPI.Controllers
         {
             var ownerId = User.GetUserId();
 
+            await _appointmentService.CheckAppointmentRequestDto(dto, ownerId);
             var response = await _appointmentService.BookAppointmentAsync(dto, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
@@ -163,6 +170,14 @@ namespace PetHealthCareSystemAPI.Controllers
             var response = await _appointmentService.FeedbackAppointmentAsync(dto, ownerId);
 
             return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS, response));
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> DeleteAppointment([FromRoute] int id)
+        {
+            await _appointmentService.DeleteAppointment(id);
+            return Ok(BaseResponseDto.OkResponseDto(ResponseMessageConstantsCommon.SUCCESS));
         }
     }
 }

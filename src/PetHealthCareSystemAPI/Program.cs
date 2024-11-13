@@ -2,7 +2,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using PetHealthCareSystemAPI.Middlewares;
@@ -12,15 +11,11 @@ using Service.Utils;
 using Utility.Config;
 using Service.IServices;
 using Service.Services;
-using BusinessObject.Entities.Identity;
 using Repository.Repositories;
-using BusinessObject.Entities;
 using PetHealthCareSystemAPI.Auth;
 using BusinessObject.Mapper;
-using DataAccessLayer;
-using Repository.Base;
 using Repository.Interfaces;
-using Microsoft.Extensions.Options;
+using Repository.Entities.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +60,10 @@ var vnPaySetting = new VnPaySetting();
 builder.Configuration.GetSection("VnPaySetting").Bind(vnPaySetting);
 VnPaySetting.Instance = vnPaySetting;
 
+var mailSettingModel = new MailSettingModel();
+builder.Configuration.GetSection("MailSetting").Bind(mailSettingModel);
+MailSettingModel.Instance = mailSettingModel;
+
 // Add Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -108,6 +107,8 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     options.UseSecurityTokenValidators = true;
     options.TokenValidationParameters = JwtUtils.GetTokenValidationParameters();
 });
+
+// Add Authentication
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -164,10 +165,20 @@ builder.Services.AddScoped<IService, ServiceService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 
 //-----------------------------------------------------------------------------------------------
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    // Apply any pending migrations
+    dbContext.Database.Migrate();
+}
+
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseCors(myAllowSpecificOrigins);
